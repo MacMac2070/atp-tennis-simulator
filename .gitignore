@@ -1,0 +1,15 @@
+# Match data is 113MB and is redistributed under CC BY-NC-SA 4.0.
+# Do not commit it. fetch_data.sh reproduces it.
+data/
+
+# Python
+__pycache__/
+*.pyc
+.venv/
+venv/
+.ipynb_checkpoints/
+
+# Model artefacts
+*.pt
+*.pkl
+runs/
