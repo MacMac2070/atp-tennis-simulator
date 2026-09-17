@@ -84,10 +84,17 @@ def prepare_matches(raw: pd.DataFrame) -> tuple[pd.DataFrame, dict[str, int]]:
     if "season" not in raw.columns:
         raise ValueError("matches need a `season` column (the file year); use load_matches")
     df = apply_id_merges(raw)
-    df["winner_id"] = df["winner_id"].astype("int64")
-    df["loser_id"] = df["loser_id"].astype("int64")
+    for col in ("winner_id", "loser_id", "tourney_date", "match_num"):
+        numeric = pd.to_numeric(df[col], errors="coerce")
+        if numeric.isna().any():
+            raise ValueError(
+                f"{int(numeric.isna().sum())} rows have a missing or non-numeric {col}; "
+                "the archive is malformed and nothing is silently dropped"
+            )
+        df[col] = numeric.astype("int64")
 
     stats = df[STAT_COLS].apply(pd.to_numeric, errors="coerce")
+    df[STAT_COLS] = stats  # normalised dtypes, so the duplicate key compares numbers, not text
     score = df["score"].astype("string").fillna("")
     name = df["tourney_name"].astype("string").fillna("")
     reason = pd.Series(np.full(len(df), None, dtype=object), index=df.index)
@@ -121,8 +128,7 @@ def prepare_matches(raw: pd.DataFrame) -> tuple[pd.DataFrame, dict[str, int]]:
     valid = df[reason.isna()].copy()
     valid[STAT_COLS] = stats.loc[valid.index].astype("int64")
     valid["season"] = valid["season"].astype("int64")
-    valid["tourney_date"] = pd.to_datetime(valid["tourney_date"].astype("int64").astype(str), format="%Y%m%d")
-    valid["match_num"] = valid["match_num"].astype("int64")
+    valid["tourney_date"] = pd.to_datetime(valid["tourney_date"].astype(str), format="%Y%m%d")
     valid["match_id"] = valid["tourney_id"].astype(str) + "#" + valid["match_num"].astype(str)
     valid["retired"] = score.loc[valid.index].str.contains("RET", regex=False).astype(bool).to_numpy()
     valid["defaulted"] = score.loc[valid.index].str.contains("DEF", regex=False).astype(bool).to_numpy()

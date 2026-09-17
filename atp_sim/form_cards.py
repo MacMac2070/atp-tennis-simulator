@@ -133,6 +133,8 @@ def season_priors(log: pd.DataFrame) -> pd.DataFrame:
             "bpc": (g["obpf"] - g["obps"]) / g["obpf"],
         }
     )
+    if pooled.empty:
+        raise ValueError("no valid appearances: cannot compute season priors")
     priors = pooled.copy()
     priors.index = priors.index + 1
     first = int(pooled.index.min())
@@ -277,4 +279,4 @@ def build_cards(
 def standardise(raw: np.ndarray, mean: np.ndarray, std: np.ndarray) -> np.ndarray:
     """Map a raw card to x with given constants; missing values map to 0 (tour average)."""
     z = (raw - mean) / np.where(std > 0, std, 1.0)
-    return np.where(np.isnan(raw), 0.0, z)
+    return np.where(np.isnan(raw) | ~(std > 0), 0.0, z)

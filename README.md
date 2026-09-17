@@ -8,7 +8,8 @@ on his own serve against a given opponent on a given surface. Everything above
 that (games, sets, matches, tournament draws, ranking points) is built by
 repetition.
 
-**Status:** data audited, training table built (`runs/rows.parquet`). Model not yet trained.
+**Status:** data audited, training table built (`runs/rows.parquet`) and independently
+verified against the specification (section 13). Model not yet trained.
 **Scope:** ATP singles, hard / clay / grass. Form cards from 1991, training rows from
 1992 (1991 is the warm-up year for the 52-week windows).
 
