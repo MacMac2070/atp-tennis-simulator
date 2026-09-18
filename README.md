@@ -8,14 +8,18 @@ on his own serve against a given opponent on a given surface. Everything above
 that (games, sets, matches, tournament draws, ranking points) is built by
 repetition.
 
-**Status:** data audited, training pipeline not yet built.
-**Scope:** ATP singles, 1991 onward, hard / clay / grass.
+**Status:** data audited, training table built (`runs/rows.parquet`) and independently
+verified against the specification (section 13). Model not yet trained.
+**Scope:** ATP singles, hard / clay / grass. Form cards from 1991, training rows from
+1992 (1991 is the warm-up year for the 52-week windows).
 
 ## Quick start
 
 ```bash
-./fetch_data.sh        # download the match archive (~138MB) into data/
-python3 audit_data.py  # coverage, surfaces, baselines, data hazards
+./fetch_data.sh                 # download the match archive (~138MB) into data/
+python3 audit_data.py           # coverage, surfaces, baselines, data hazards
+python3 scripts/build_rows.py   # build runs/rows.parquet, cards, constants, report (about 1 s)
+python3 -m pytest -q            # leakage tests first, then cards, validity, rows, model
 ```
 
 ## Repository layout
@@ -25,6 +29,11 @@ python3 audit_data.py  # coverage, surfaces, baselines, data hazards
 | `fetch_data.sh` | Downloads the ATP match archive from the mirror |
 | `audit_data.py` | Reports what the data can support. Run this first |
 | `data/` | The raw archive. Git-ignored, not redistributed |
+| `atp_sim/` | The package: `data.py` (loading, validity rules), `form_cards.py` (cards), `dataset.py` (the table), `model.py`, `train.py` |
+| `scripts/` | `build_rows.py` builds the table; `train_model.py` fits the model |
+| `tests/` | Pytest suite; `test_leakage.py` is the first test that must pass |
+| `verification/` | `VERIFY_SPEC.md`, the exact definitions, and the independent Antigravity check reports |
+| `runs/` | Build outputs. Git-ignored |
 | `README.md` | This file. Design note and full explanation |
 
 ---
@@ -94,7 +103,8 @@ their small sample.
 | What | Format | Contents | Size |
 |---|---|---|---|
 | **The raw archive** (read-only, never edited) | `data/tennis_atp/atp_matches_YYYY.csv` | One line per match. Date, tournament, surface, both players, score, counting statistics for each side. | 113 MB |
-| **The training table** (built by us, the real work) | `rows.parquet` | One row per *server per match*. Both form cards, surface, points served, points won. | ~192k rows |
+| **The training table** (built by us, the real work) | `runs/rows.parquet` | One row per *server per match*. Both form cards, surface, points served, points won. | 186,482 rows |
+| **The card table** (audit trail for the rows) | `runs/cards.parquet`, `runs/constants.csv` | Every card with its window counts, raw and shrunk rates, and the per-season constants used to standardise it. | 105,195 cards |
 | **The fitted model** (output of training) | `model.pt` | Every number the computer learned. | 243 numbers |
 
 ### Why every match becomes two rows
@@ -145,6 +155,26 @@ baseline, with every other term cancelling to nothing.
 Surface is deliberately *not* one of the eight. The model is fitted three
 separate times, once per surface, so surface changes every weight rather than
 adding a single offset.
+
+### How the cards are built (version 1)
+
+The rules are written out in full in `verification/VERIFY_SPEC.md`; these are the
+ones that matter when reading the table.
+
+- A card is written once per player per event date (`tourney_date`) and shared by
+  all of that player's matches in the event. Earlier rounds of the same event are
+  not visible to it: version 1 does not order matches within an event.
+- The 52-week window is `[D - 364 days, D)`; the last-10 window is the ten most
+  recent matches inside it.
+- Counts are summed first, then shrunk towards the previous season's tour rate:
+  `(points won + k x tour rate) / (points played + k)`, with k = 200 service
+  points for serve strength, 50 for aces, 250 for double faults, 300 return points
+  for return strength, 200 break points for saves and 350 for conversions. A player
+  with no history sits exactly on the tour rate.
+- Standardising constants for season Y come from season Y-1's rows, so no card
+  ever sees a number computed from its own future. That is why rows start in 1992.
+- Card inputs include every valid match on any surface, carpet included;
+  training rows are limited to hard, clay and grass.
 
 ---
 
@@ -525,6 +555,35 @@ finding than a model that merely works.
 
 Each belongs in the README as a stated limitation rather than being quietly
 omitted. A model that says what it cannot do is easier to trust about what it can.
+
+---
+
+## 13. Data provenance
+
+Every number in this project traces back to one archive, through one mirror.
+
+1. **Origin.** Jeff Sackmann (Tennis Abstract) compiled tour-level ATP results and
+   match statistics from the ATP's official records and published them at
+   `github.com/JeffSackmann/tennis_atp` under CC BY-NC-SA 4.0. His own notes
+   travel with the data as `data/tennis_atp/UPSTREAM_README.md`: statistics are
+   integer totals, exist for tour-level matches from 1991, are missing for some
+   matches (the ATP has none, or they failed his sanity checks), and Davis Cup
+   statistics only appear from 2016.
+2. **Withdrawal.** The original repository was taken down before August 2026 and
+   returns 404. The Wayback Machine's last capture of it is dated 14 March 2026.
+3. **Mirror.** `fetch_data.sh` downloads `github.com/Aneeshers/tennis-sackmann-archive`,
+   which states that all data was collected and compiled by Jeff Sackmann, links the
+   upstream repositories, keeps the upstream README, says its ATP snapshot comes from
+   a June 2026 commit, and redistributes under the same licence. Only the main-tour
+   singles files, the players file, the ranking files and the licence are copied;
+   qualifying, challenger, futures and doubles files are left out.
+4. **On disk.** 59 season files, 1968 to 2026, last event 25 May 2026.
+
+What the build does to it is recorded in `runs/build_report.md`: identity merges,
+every excluded match by rule, and the three players whose date of birth contradicts
+the archive's own age column by decades. Independent checks of the raw files and of
+the finished table, run by a second model from the specification alone, live under
+`verification/antigravity/`.
 
 ---
 
