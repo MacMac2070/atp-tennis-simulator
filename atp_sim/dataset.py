@@ -142,10 +142,12 @@ def build_all(start_year: int = 1991, end_year: int = 2026, data_dir: str | None
     )
 
 
-def final_constants(constants: pd.DataFrame) -> tuple[np.ndarray, np.ndarray]:
-    """mu and sigma vectors (x order) of the latest season that has constants."""
-    last = int(constants["season"].max())
+def final_constants(constants: pd.DataFrame, season: int | None = None) -> tuple[np.ndarray, np.ndarray]:
+    """mu and sigma vectors (x order) of `season`, or of the latest season that has constants."""
+    last = int(constants["season"].max()) if season is None else int(season)
     k = constants[constants["season"] == last].set_index("attr")
+    if k.empty:
+        raise ValueError(f"no standardising constants for season {last}")
     mean = np.array([k.loc[attr, "mu"] for attr, _ in STD_ATTRS], dtype=np.float64)
     std = np.array([k.loc[attr, "sigma"] for attr, _ in STD_ATTRS], dtype=np.float64)
     return mean, std
@@ -246,6 +248,33 @@ def load_rows(path: str) -> tuple[pd.DataFrame, torch.Tensor, torch.Tensor]:
     return df, meta["card_mean"], meta["card_std"]
 
 
+def load_constants(path: str, season: int) -> tuple[torch.Tensor, torch.Tensor]:
+    """Card mu and sigma for `season`. Season Y's constants come from the population of Y-1,
+    so a model fitted through T must carry season T+1's, never a later season's."""
+    meta = torch.load(path.replace(".parquet", "_meta.pt"), weights_only=False)
+    if "constants" not in meta:
+        raise ValueError("rows meta has no per-season constants; rebuild the table")
+    mean, std = final_constants(pd.DataFrame(meta["constants"]), season)
+    return torch.tensor(mean), torch.tensor(std)
+
+
+def rows_after(df: pd.DataFrame, last_season: int) -> pd.DataFrame:
+    """Held-out rows: seasons strictly after last_season. May be empty."""
+    if "season" not in df.columns:
+        raise ValueError("rows have no season column, cannot split chronologically")
+    return df[df["season"] > last_season]
+
+
+def rows_through(df: pd.DataFrame, last_season: int) -> pd.DataFrame:
+    """Rows of seasons up to and including last_season (design section 9: splits are chronological)."""
+    if "season" not in df.columns:
+        raise ValueError("rows have no season column, cannot split chronologically")
+    part = df[df["season"] <= last_season]
+    if part.empty:
+        raise ValueError(f"no rows at or before season {last_season}")
+    return part
+
+
 def rows_to_tensors(
     df: pd.DataFrame,
     surfaces: Iterable[str] = LIVE_SURFACES,
@@ -261,5 +290,6 @@ def rows_to_tensors(
             "x_j": torch.tensor(part[X_J].to_numpy(dtype=np.float32)),
             "won": torch.tensor(part["won"].to_numpy(dtype=np.float32)),
             "svpt": torch.tensor(part["svpt"].to_numpy(dtype=np.float32)),
+            "season": torch.tensor(part["season"].to_numpy(dtype=np.int64)),
         }
     return out

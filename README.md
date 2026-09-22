@@ -8,8 +8,11 @@ on his own serve against a given opponent on a given surface. Everything above
 that (games, sets, matches, tournament draws, ranking points) is built by
 repetition.
 
-**Status:** data audited, training table built (`runs/rows.parquet`) and independently
-verified against the specification (section 13). Model not yet trained.
+**Status:** data audited and verified against two external sources, training table built
+(`runs/rows.parquet`), model trained through 2024 and scored on 2025 to 2026 (Run 0, frozen
+under `artifacts/models/run0_baseline/`). Run 1 fixes the serve-level under-prediction; see
+[`docs/serve_level_fix.md`](docs/serve_level_fix.md). Progression index:
+`verification/reports/MODEL_PROGRESSION.md`.
 **Scope:** ATP singles, hard / clay / grass. Form cards from 1991, training rows from
 1992 (1991 is the warm-up year for the 52-week windows).
 
@@ -34,6 +37,8 @@ python3 -m pytest -q            # leakage tests first, then cards, validity, row
 | `tests/` | Pytest suite; `test_leakage.py` is the first test that must pass |
 | `verification/` | `VERIFY_SPEC.md`, the exact definitions, and the independent Antigravity check reports |
 | `runs/` | Build outputs. Git-ignored |
+| `artifacts/models/` | Frozen per-run weights (`run0_baseline/`, `run1_season_delta/`) for the progression log |
+| `docs/` | Explainers with diagrams; `serve_level_fix.md` covers the Run 0 to Run 1 change |
 | `README.md` | This file. Design note and full explanation |
 
 ---

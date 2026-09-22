@@ -225,6 +225,22 @@ do the sums in a convenient space, convert once.
 | `z` | Total | The four layers added together, in log-odds | 1 | Calculated fresh each time | Derived |
 | `p` | Prediction | Probability that this server wins this point. The output | 1 | Calculated fresh each time | Derived |
 
+### What `mu` means, and the training-only season term (Run 1)
+
+The form cards are standardised against each season's own population, so `x = 0`
+always means "average for that season" and the cards carry no information about
+how good serving is in that era. That level lives only in `mu`. Fitted on every
+row since 1992, `mu` settles on the 33-year average, which by 2024 sat 1.1 to 1.5
+percentage points below the tour. Run 0 under-predicted serve on every surface by
+about that much.
+
+Run 1 fixes this without touching the formula above. While training, each season
+gets its own additive correction to `mu`, with the last training season pinned at
+zero. Older seasons absorb "how much lower serving was back then", and `mu` becomes
+the level of the last season the fit saw. The corrections are discarded on save:
+the model is still 81 numbers per surface and the prediction formula is unchanged.
+The write-up with diagrams is in `docs/serve_level_fix.md`.
+
 ### W has the most numbers and the least influence
 
 A natural first reading is that `W`, with 64 entries against 8 and 8, must

@@ -2,6 +2,9 @@
 # Do not commit it. fetch_data.sh reproduces it.
 data/
 
+# External verification mirrors (TennisMyLife etc.) — download, do not commit
+verification/external/
+
 # Python
 __pycache__/
 *.pyc
@@ -9,7 +12,10 @@ __pycache__/
 venv/
 .ipynb_checkpoints/
 
-# Model artefacts
-*.pt
+# Working artefacts (large / local). Versioned run snapshots live under artifacts/models/.
 *.pkl
 runs/
+
+# Ignore loose weight dumps, but allow frozen per-run models for GitHub progression
+*.pt
+!artifacts/models/**/*.pt
