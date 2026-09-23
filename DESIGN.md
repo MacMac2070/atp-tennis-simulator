@@ -362,6 +362,18 @@ separate clay from grass, which is a large gap at point level and an enormous on
 by the time it compounds through a five-set match. It is the reason the model is
 fitted three times rather than once.
 
+### As built
+
+Steps 1 to 5 live in `atp_sim/` (`match.py`, `draws.py`, `points.py`, `season.py`,
+`report.py`) and `scripts/simulate_season.py`. Step 2 is the exact recursion, with a
+point-by-point Monte Carlo replay only as its test: 62% against 62% gives exactly 50%,
+65% against 58% gives 81.4% over three sets. Step 3 plays the real 2025 draws, rebuilt
+from the results. Step 4 skips the best-19 rule, so year-end results are compared first
+with the real season scored on the same points table. Form cards stay at their real
+values, so simulated results never feed back: a clean A/B test of the serve model rather
+than a free-running season. The week-by-week mode that substitutes real results as the
+season progresses is not built yet. Write-up and results: `docs/season_simulation.md`.
+
 ---
 
 ## 11. The experiment, and what would count as a result

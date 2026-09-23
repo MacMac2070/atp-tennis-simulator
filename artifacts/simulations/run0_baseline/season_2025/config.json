@@ -1,0 +1,692 @@
+{
+  "run": "run0_baseline",
+  "season": 2025,
+  "n_sims": 10000,
+  "seed": 42,
+  "rng": "numpy default_rng(SeedSequence(seed, spawn_key=(event_index,))), one uniform row per match slot",
+  "model": "artifacts/models/run0_baseline/model.pt",
+  "model_sha256": "25f1b647dae669a89f241d9c5f62e38b73bb38bc5bb239aa2693127004fcac78",
+  "train_through": 2024,
+  "code": {
+    "commit": "224f5036636af002d6b81f94cbdeb6c7e37ab76f",
+    "branch": "Claude-attempt",
+    "code_uncommitted": true
+  },
+  "created_utc": "2026-09-23T02:51:08+00:00",
+  "first_event": "2024-12-30",
+  "last_event": "2025-11-09",
+  "events": 60,
+  "events_by_category": {
+    "Grand Slams": 4,
+    "Masters 1000": 9,
+    "ATP 500": 16,
+    "ATP 250": 30,
+    "ATP Finals": 1
+  },
+  "excluded_events": [
+    {
+      "tourney_id": "2025-9900",
+      "name": "United Cup",
+      "level": "A",
+      "date": "2024-12-27",
+      "matches": "24",
+      "reason": "team or exhibition format"
+    },
+    {
+      "tourney_id": "2025-M-DC-2025-QLS-M-NOR-ARG-01",
+      "name": "Davis Cup QLS R1: NOR vs ARG",
+      "level": "D",
+      "date": "2025-01-30",
+      "matches": "4",
+      "reason": "team event"
+    },
+    {
+      "tourney_id": "2025-M-DC-2025-QLS-M-AUS-SWE-01",
+      "name": "Davis Cup QLS R1: AUS vs SWE",
+      "level": "D",
+      "date": "2025-01-31",
+      "matches": "3",
+      "reason": "team event"
+    },
+    {
+      "tourney_id": "2025-M-DC-2025-QLS-M-AUT-FIN-01",
+      "name": "Davis Cup QLS R1: AUT vs FIN",
+      "level": "D",
+      "date": "2025-01-31",
+      "matches": "3",
+      "reason": "team event"
+    },
+    {
+      "tourney_id": "2025-M-DC-2025-QLS-M-CRO-SVK-01",
+      "name": "Davis Cup QLS R1: CRO vs SVK",
+      "level": "D",
+      "date": "2025-01-31",
+      "matches": "3",
+      "reason": "team event"
+    },
+    {
+      "tourney_id": "2025-M-DC-2025-QLS-M-GER-ISR-01",
+      "name": "Davis Cup QLS R1: GER vs ISR",
+      "level": "D",
+      "date": "2025-01-31",
+      "matches": "3",
+      "reason": "team event"
+    },
+    {
+      "tourney_id": "2025-M-DC-2025-QLS-M-JPN-GBR-01",
+      "name": "Davis Cup QLS R1: JPN vs GBR",
+      "level": "D",
+      "date": "2025-01-31",
+      "matches": "4",
+      "reason": "team event"
+    },
+    {
+      "tourney_id": "2025-M-DC-2025-QLS-M-KOR-CZE-01",
+      "name": "Davis Cup QLS R1: KOR vs CZE",
+      "level": "D",
+      "date": "2025-01-31",
+      "matches": "3",
+      "reason": "team event"
+    },
+    {
+      "tourney_id": "2025-M-DC-2025-QLS-M-SRB-DEN-01",
+      "name": "Davis Cup QLS R1: SRB vs DEN",
+      "level": "D",
+      "date": "2025-01-31",
+      "matches": "4",
+      "reason": "team event"
+    },
+    {
+      "tourney_id": "2025-M-DC-2025-QLS-M-USA-TPE-01",
+      "name": "Davis Cup QLS R1: USA vs TPE",
+      "level": "D",
+      "date": "2025-01-31",
+      "matches": "3",
+      "reason": "team event"
+    },
+    {
+      "tourney_id": "2025-M-DC-2025-WG1-PO-COL-BAR-01",
+      "name": "Davis Cup WG1 PO: COL vs BAR",
+      "level": "D",
+      "date": "2025-01-31",
+      "matches": "4",
+      "reason": "team event"
+    },
+    {
+      "tourney_id": "2025-M-DC-2025-WG1-PO-GEO-POL-01",
+      "name": "Davis Cup WG1 PO: GEO vs POL",
+      "level": "D",
+      "date": "2025-01-31",
+      "matches": "3",
+      "reason": "team event"
+    },
+    {
+      "tourney_id": "2025-M-DC-2025-WG1-PO-LBN-PER-01",
+      "name": "Davis Cup WG1 PO: LBN vs PER",
+      "level": "D",
+      "date": "2025-01-31",
+      "matches": "3",
+      "reason": "team event"
+    },
+    {
+      "tourney_id": "2025-M-DC-2025-WG1-PO-ROU-BUL-01",
+      "name": "Davis Cup WG1 PO: ROU vs BUL",
+      "level": "D",
+      "date": "2025-01-31",
+      "matches": "3",
+      "reason": "team event"
+    },
+    {
+      "tourney_id": "2025-M-DC-2025-WG1-PO-TUN-UKR-01",
+      "name": "Davis Cup WG1 PO: TUN vs UKR",
+      "level": "D",
+      "date": "2025-01-31",
+      "matches": "4",
+      "reason": "team event"
+    },
+    {
+      "tourney_id": "2025-M-DC-2025-WG1-PO-UZB-BIH-01",
+      "name": "Davis Cup WG1 PO: UZB vs BIH",
+      "level": "D",
+      "date": "2025-01-31",
+      "matches": "3",
+      "reason": "team event"
+    },
+    {
+      "tourney_id": "2025-M-DC-2025-WG2-PO-CYP-THA-01",
+      "name": "Davis Cup WG2 PO: CYP vs THA",
+      "level": "D",
+      "date": "2025-01-31",
+      "matches": "3",
+      "reason": "team event"
+    },
+    {
+      "tourney_id": "2025-M-DC-2025-WG2-PO-EST-VEN-01",
+      "name": "Davis Cup WG2 PO: EST vs VEN",
+      "level": "D",
+      "date": "2025-01-31",
+      "matches": "3",
+      "reason": "team event"
+    },
+    {
+      "tourney_id": "2025-M-DC-2025-WG2-PO-KSA-IRL-01",
+      "name": "Davis Cup WG2 PO: KSA vs IRL",
+      "level": "D",
+      "date": "2025-01-31",
+      "matches": "4",
+      "reason": "team event"
+    },
+    {
+      "tourney_id": "2025-M-DC-2025-WG2-PO-MNE-CHN-01",
+      "name": "Davis Cup WG2 PO: MNE vs CHN",
+      "level": "D",
+      "date": "2025-01-31",
+      "matches": "3",
+      "reason": "team event"
+    },
+    {
+      "tourney_id": "2025-M-DC-2025-WG2-PO-ZIM-MAR-01",
+      "name": "Davis Cup WG2 PO: ZIM vs MAR",
+      "level": "D",
+      "date": "2025-01-31",
+      "matches": "3",
+      "reason": "team event"
+    },
+    {
+      "tourney_id": "2025-M-DC-2025-QLS-M-BRA-FRA-01",
+      "name": "Davis Cup QLS R1: BRA vs FRA",
+      "level": "D",
+      "date": "2025-02-01",
+      "matches": "3",
+      "reason": "team event"
+    },
+    {
+      "tourney_id": "2025-M-DC-2025-QLS-M-CAN-HUN-01",
+      "name": "Davis Cup QLS R1: CAN vs HUN",
+      "level": "D",
+      "date": "2025-02-01",
+      "matches": "4",
+      "reason": "team event"
+    },
+    {
+      "tourney_id": "2025-M-DC-2025-QLS-M-CHI-BEL-01",
+      "name": "Davis Cup QLS R1: CHI vs BEL",
+      "level": "D",
+      "date": "2025-02-01",
+      "matches": "3",
+      "reason": "team event"
+    },
+    {
+      "tourney_id": "2025-M-DC-2025-QLS-M-SUI-ESP-01",
+      "name": "Davis Cup QLS R1: SUI vs ESP",
+      "level": "D",
+      "date": "2025-02-01",
+      "matches": "3",
+      "reason": "team event"
+    },
+    {
+      "tourney_id": "2025-M-DC-2025-WG1-PO-ECU-URU-01",
+      "name": "Davis Cup WG1 PO: ECU vs URU",
+      "level": "D",
+      "date": "2025-02-01",
+      "matches": "3",
+      "reason": "team event"
+    },
+    {
+      "tourney_id": "2025-M-DC-2025-WG1-PO-GRE-EGY-01",
+      "name": "Davis Cup WG1 PO: GRE vs EGY",
+      "level": "D",
+      "date": "2025-02-01",
+      "matches": "4",
+      "reason": "team event"
+    },
+    {
+      "tourney_id": "2025-M-DC-2025-WG1-PO-IND-TOG-01",
+      "name": "Davis Cup WG1 PO: IND vs TOG",
+      "level": "D",
+      "date": "2025-02-01",
+      "matches": "3",
+      "reason": "team event"
+    },
+    {
+      "tourney_id": "2025-M-DC-2025-WG1-PO-KAZ-PAK-01",
+      "name": "Davis Cup WG1 PO: KAZ vs PAK",
+      "level": "D",
+      "date": "2025-02-01",
+      "matches": "3",
+      "reason": "team event"
+    },
+    {
+      "tourney_id": "2025-M-DC-2025-WG1-PO-LUX-LTU-01",
+      "name": "Davis Cup WG1 PO: LUX vs LTU",
+      "level": "D",
+      "date": "2025-02-01",
+      "matches": "3",
+      "reason": "team event"
+    },
+    {
+      "tourney_id": "2025-M-DC-2025-WG1-PO-MON-POR-01",
+      "name": "Davis Cup WG1 PO: MON vs POR",
+      "level": "D",
+      "date": "2025-02-01",
+      "matches": "4",
+      "reason": "team event"
+    },
+    {
+      "tourney_id": "2025-M-DC-2025-WG1-PO-TUR-MEX-01",
+      "name": "Davis Cup WG1 PO: TUR vs MEX",
+      "level": "D",
+      "date": "2025-02-01",
+      "matches": "4",
+      "reason": "team event"
+    },
+    {
+      "tourney_id": "2025-M-DC-2025-WG2-PO-BEN-LAT-01",
+      "name": "Davis Cup WG2 PO: BEN vs LAT",
+      "level": "D",
+      "date": "2025-02-01",
+      "matches": "4",
+      "reason": "team event"
+    },
+    {
+      "tourney_id": "2025-M-DC-2025-WG2-PO-DOM-BOL-01",
+      "name": "Davis Cup WG2 PO: DOM vs BOL",
+      "level": "D",
+      "date": "2025-02-01",
+      "matches": "3",
+      "reason": "team event"
+    },
+    {
+      "tourney_id": "2025-M-DC-2025-WG2-PO-ESA-MDA-01",
+      "name": "Davis Cup WG2 PO: ESA vs MDA",
+      "level": "D",
+      "date": "2025-02-01",
+      "matches": "4",
+      "reason": "team event"
+    },
+    {
+      "tourney_id": "2025-M-DC-2025-WG2-PO-JAM-NZL-01",
+      "name": "Davis Cup WG2 PO: JAM vs NZL",
+      "level": "D",
+      "date": "2025-02-01",
+      "matches": "4",
+      "reason": "team event"
+    },
+    {
+      "tourney_id": "2025-M-DC-2025-WG2-PO-NAM-HKG-01",
+      "name": "Davis Cup WG2 PO: NAM vs HKG",
+      "level": "D",
+      "date": "2025-02-01",
+      "matches": "4",
+      "reason": "team event"
+    },
+    {
+      "tourney_id": "2025-M-DC-2025-WG2-PO-RSA-NGR-01",
+      "name": "Davis Cup WG2 PO: RSA vs NGR",
+      "level": "D",
+      "date": "2025-02-01",
+      "matches": "3",
+      "reason": "team event"
+    },
+    {
+      "tourney_id": "2025-M-DC-2025-WG2-PO-SLO-INA-01",
+      "name": "Davis Cup WG2 PO: SLO vs INA",
+      "level": "D",
+      "date": "2025-02-01",
+      "matches": "3",
+      "reason": "team event"
+    },
+    {
+      "tourney_id": "2025-M-DC-2025-QLS-M-CRO-FRA-01",
+      "name": "Davis Cup QLS R2: CRO vs FRA",
+      "level": "D",
+      "date": "2025-09-12",
+      "matches": "3",
+      "reason": "team event"
+    },
+    {
+      "tourney_id": "2025-M-DC-2025-QLS-M-GER-JPN-01",
+      "name": "Davis Cup QLS R2: GER vs JPN",
+      "level": "D",
+      "date": "2025-09-12",
+      "matches": "3",
+      "reason": "team event"
+    },
+    {
+      "tourney_id": "2025-M-DC-2025-QLS-M-HUN-AUT-01",
+      "name": "Davis Cup QLS R2: HUN vs AUT",
+      "level": "D",
+      "date": "2025-09-12",
+      "matches": "4",
+      "reason": "team event"
+    },
+    {
+      "tourney_id": "2025-M-DC-2025-QLS-M-NED-ARG-01",
+      "name": "Davis Cup QLS R2: NED vs ARG",
+      "level": "D",
+      "date": "2025-09-12",
+      "matches": "3",
+      "reason": "team event"
+    },
+    {
+      "tourney_id": "2025-M-DC-2025-QLS-M-USA-CZE-01",
+      "name": "Davis Cup QLS R2: USA vs CZE",
+      "level": "D",
+      "date": "2025-09-12",
+      "matches": "4",
+      "reason": "team event"
+    },
+    {
+      "tourney_id": "2025-M-DC-2025-WG1-M-CAN-ISR-01",
+      "name": "Davis Cup WG1 R1: CAN vs ISR",
+      "level": "D",
+      "date": "2025-09-12",
+      "matches": "3",
+      "reason": "team event"
+    },
+    {
+      "tourney_id": "2025-M-DC-2025-WG1-M-KOR-KAZ-01",
+      "name": "Davis Cup WG1 R1: KOR vs KAZ",
+      "level": "D",
+      "date": "2025-09-12",
+      "matches": "3",
+      "reason": "team event"
+    },
+    {
+      "tourney_id": "2025-M-DC-2025-WG1-M-PER-POR-01",
+      "name": "Davis Cup WG1 R1: PER vs POR",
+      "level": "D",
+      "date": "2025-09-12",
+      "matches": "3",
+      "reason": "team event"
+    },
+    {
+      "tourney_id": "2025-M-DC-2025-WG1-M-POL-GBR-01",
+      "name": "Davis Cup WG1 R1: POL vs GBR",
+      "level": "D",
+      "date": "2025-09-12",
+      "matches": "3",
+      "reason": "team event"
+    },
+    {
+      "tourney_id": "2025-M-DC-2025-WG1-M-SRB-TUR-01",
+      "name": "Davis Cup WG1 R1: SRB vs TUR",
+      "level": "D",
+      "date": "2025-09-12",
+      "matches": "3",
+      "reason": "team event"
+    },
+    {
+      "tourney_id": "2025-M-DC-2025-WG1-M-SUI-IND-01",
+      "name": "Davis Cup WG1 R1: SUI vs IND",
+      "level": "D",
+      "date": "2025-09-12",
+      "matches": "3",
+      "reason": "team event"
+    },
+    {
+      "tourney_id": "2025-M-DC-2025-WG1-M-SVK-COL-01",
+      "name": "Davis Cup WG1 R1: SVK vs COL",
+      "level": "D",
+      "date": "2025-09-12",
+      "matches": "3",
+      "reason": "team event"
+    },
+    {
+      "tourney_id": "2025-M-DC-2025-WG1-M-SWE-TUN-01",
+      "name": "Davis Cup WG1 R1: SWE vs TUN",
+      "level": "D",
+      "date": "2025-09-12",
+      "matches": "4",
+      "reason": "team event"
+    },
+    {
+      "tourney_id": "2025-M-DC-2025-WG2-M-EST-MEX-01",
+      "name": "Davis Cup WG2 R1: EST vs MEX",
+      "level": "D",
+      "date": "2025-09-12",
+      "matches": "3",
+      "reason": "team event"
+    },
+    {
+      "tourney_id": "2025-M-DC-2025-WG2-M-LBN-BAR-01",
+      "name": "Davis Cup WG2 R1: LBN vs BAR",
+      "level": "D",
+      "date": "2025-09-12",
+      "matches": "3",
+      "reason": "team event"
+    },
+    {
+      "tourney_id": "2025-M-DC-2025-WG2-M-PAR-PAK-01",
+      "name": "Davis Cup WG2 R1: PAR vs PAK",
+      "level": "D",
+      "date": "2025-09-12",
+      "matches": "3",
+      "reason": "team event"
+    },
+    {
+      "tourney_id": "2025-M-DC-2025-WG2-M-SLO-URU-01",
+      "name": "Davis Cup WG2 R1: SLO vs URU",
+      "level": "D",
+      "date": "2025-09-12",
+      "matches": "3",
+      "reason": "team event"
+    },
+    {
+      "tourney_id": "2025-M-DC-2025-WG2-M-UKR-DOM-01",
+      "name": "Davis Cup WG2 R1: UKR vs DOM",
+      "level": "D",
+      "date": "2025-09-12",
+      "matches": "3",
+      "reason": "team event"
+    },
+    {
+      "tourney_id": "2025-M-DC-2025-QLS-M-AUS-BEL-01",
+      "name": "Davis Cup QLS R2: AUS vs BEL",
+      "level": "D",
+      "date": "2025-09-13",
+      "matches": "4",
+      "reason": "team event"
+    },
+    {
+      "tourney_id": "2025-M-DC-2025-QLS-M-DEN-ESP-01",
+      "name": "Davis Cup QLS R2: DEN vs ESP",
+      "level": "D",
+      "date": "2025-09-13",
+      "matches": "4",
+      "reason": "team event"
+    },
+    {
+      "tourney_id": "2025-M-DC-2025-WG1-M-BUL-FIN-01",
+      "name": "Davis Cup WG1 R1: BUL vs FIN",
+      "level": "D",
+      "date": "2025-09-13",
+      "matches": "4",
+      "reason": "team event"
+    },
+    {
+      "tourney_id": "2025-M-DC-2025-WG1-M-CHI-LUX-01",
+      "name": "Davis Cup WG1 R1: CHI vs LUX",
+      "level": "D",
+      "date": "2025-09-13",
+      "matches": "3",
+      "reason": "team event"
+    },
+    {
+      "tourney_id": "2025-M-DC-2025-WG1-M-ECU-BIH-01",
+      "name": "Davis Cup WG1 R1: ECU vs BIH",
+      "level": "D",
+      "date": "2025-09-13",
+      "matches": "4",
+      "reason": "team event"
+    },
+    {
+      "tourney_id": "2025-M-DC-2025-WG1-M-GRE-BRA-01",
+      "name": "Davis Cup WG1 R1: GRE vs BRA",
+      "level": "D",
+      "date": "2025-09-13",
+      "matches": "3",
+      "reason": "team event"
+    },
+    {
+      "tourney_id": "2025-M-DC-2025-WG1-M-TPE-NOR-01",
+      "name": "Davis Cup WG1 R1: TPE vs NOR",
+      "level": "D",
+      "date": "2025-09-13",
+      "matches": "4",
+      "reason": "team event"
+    },
+    {
+      "tourney_id": "2025-M-DC-2025-WG2-M-CYP-MON-01",
+      "name": "Davis Cup WG2 R1: CYP vs MON",
+      "level": "D",
+      "date": "2025-09-13",
+      "matches": "3",
+      "reason": "team event"
+    },
+    {
+      "tourney_id": "2025-M-DC-2025-WG2-M-ESA-ROU-01",
+      "name": "Davis Cup WG2 R1: ESA vs ROU",
+      "level": "D",
+      "date": "2025-09-13",
+      "matches": "5",
+      "reason": "team event"
+    },
+    {
+      "tourney_id": "2025-M-DC-2025-WG2-M-HKG-UZB-01",
+      "name": "Davis Cup WG2 R1: HKG vs UZB",
+      "level": "D",
+      "date": "2025-09-13",
+      "matches": "3",
+      "reason": "team event"
+    },
+    {
+      "tourney_id": "2025-M-DC-2025-WG2-M-IRL-CHN-01",
+      "name": "Davis Cup WG2 R1: IRL vs CHN",
+      "level": "D",
+      "date": "2025-09-13",
+      "matches": "3",
+      "reason": "team event"
+    },
+    {
+      "tourney_id": "2025-M-DC-2025-WG2-M-LTU-BEN-01",
+      "name": "Davis Cup WG2 R1: LTU vs BEN",
+      "level": "D",
+      "date": "2025-09-13",
+      "matches": "3",
+      "reason": "team event"
+    },
+    {
+      "tourney_id": "2025-M-DC-2025-WG2-M-NZL-GEO-01",
+      "name": "Davis Cup WG2 R1: NZL vs GEO",
+      "level": "D",
+      "date": "2025-09-13",
+      "matches": "3",
+      "reason": "team event"
+    },
+    {
+      "tourney_id": "2025-M-DC-2025-WG2-M-RSA-MAR-01",
+      "name": "Davis Cup WG2 R1: RSA vs MAR",
+      "level": "D",
+      "date": "2025-09-13",
+      "matches": "4",
+      "reason": "team event"
+    },
+    {
+      "tourney_id": "2025-M-DC-2025-WG2-M-TOG-EGY-01",
+      "name": "Davis Cup WG2 R1: TOG vs EGY",
+      "level": "D",
+      "date": "2025-09-13",
+      "matches": "3",
+      "reason": "team event"
+    },
+    {
+      "tourney_id": "2025-9210",
+      "name": "Laver Cup",
+      "level": "A",
+      "date": "2025-09-19",
+      "matches": "9",
+      "reason": "team or exhibition format"
+    },
+    {
+      "tourney_id": "2025-M-DC-2025-FLS-M-FRA-BEL-01",
+      "name": "Davis Cup Finals QF: FRA vs BEL",
+      "level": "D",
+      "date": "2025-11-18",
+      "matches": "2",
+      "reason": "team event"
+    },
+    {
+      "tourney_id": "2025-M-DC-2025-FLS-M-ITA-AUT-01",
+      "name": "Davis Cup Finals QF: ITA vs AUT",
+      "level": "D",
+      "date": "2025-11-19",
+      "matches": "2",
+      "reason": "team event"
+    },
+    {
+      "tourney_id": "2025-M-DC-2025-FLS-M-ARG-GER-01",
+      "name": "Davis Cup Finals QF: ARG vs GER",
+      "level": "D",
+      "date": "2025-11-20",
+      "matches": "2",
+      "reason": "team event"
+    },
+    {
+      "tourney_id": "2025-M-DC-2025-FLS-M-ESP-CZE-01",
+      "name": "Davis Cup Finals QF: ESP vs CZE",
+      "level": "D",
+      "date": "2025-11-20",
+      "matches": "2",
+      "reason": "team event"
+    },
+    {
+      "tourney_id": "2025-M-DC-2025-FLS-M-ITA-BEL-01",
+      "name": "Davis Cup Finals SF: ITA vs BEL",
+      "level": "D",
+      "date": "2025-11-21",
+      "matches": "2",
+      "reason": "team event"
+    },
+    {
+      "tourney_id": "2025-M-DC-2025-FLS-M-ESP-GER-01",
+      "name": "Davis Cup Finals SF: ESP vs GER",
+      "level": "D",
+      "date": "2025-11-22",
+      "matches": "2",
+      "reason": "team event"
+    },
+    {
+      "tourney_id": "2025-M-DC-2025-FLS-M-ITA-ESP-01",
+      "name": "Davis Cup Finals F: ITA vs ESP",
+      "level": "D",
+      "date": "2025-11-23",
+      "matches": "2",
+      "reason": "team event"
+    },
+    {
+      "tourney_id": "2025-7696",
+      "name": "Next Gen Finals",
+      "level": "F",
+      "date": "2025-12-17",
+      "matches": "15",
+      "reason": "team or exhibition format"
+    }
+  ],
+  "excluded_summary": "78 Davis Cup ties, United Cup, Laver Cup, Next Gen Finals",
+  "entrants": 2696,
+  "players_2025": 292,
+  "players_in_ledger": 358,
+  "matches_scored": 2622,
+  "year_end_ranking_date": "2025-12-29",
+  "official_ranking_duplicate_rows_dropped": 42,
+  "seconds": {
+    "prepare": 2.9,
+    "simulate": 0.4
+  },
+  "versions": {
+    "python": "3.14.2",
+    "numpy": "2.5.3",
+    "pandas": "3.0.5"
+  }
+}

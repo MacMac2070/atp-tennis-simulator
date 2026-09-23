@@ -1,7 +1,7 @@
 # Model progression index
 
 **Story:** Run 0 = first idea. Run 1 = improvement, scored on the same holdout to see if it is actually better.
-Both frozen. Future season simulations use the same run names under `artifacts/simulations/`.
+Both frozen. Season simulations use the same run names under `artifacts/simulations/`.
 
 | Run | Weights | Eval | Formula | Train through | Holdout bias (Hard, all) | Status |
 |---|---|---|---|---|---|---|
@@ -17,8 +17,8 @@ artifacts/
     run1_season_delta/model.pt + README.md
     archive/                       # side experiments
   simulations/
-    run0_baseline/                 # reserved — no sim yet
-    run1_season_delta/             # reserved — no sim yet
+    run0_baseline/season_2025/     # 10,000 seasons, seed 42
+    run1_season_delta/season_2025/ # same seasons and seed, Run 1 weights
 
 verification/reports/
   MODEL_PROGRESSION.md             # this index
@@ -37,6 +37,13 @@ Explainer for Run 1: `docs/serve_level_fix.md`.
 4. Add a row to the table above
 5. Optional: copy favourite weights to `runs/model.pt` for default scripts
 
-## Simulations (not started)
+## Simulations
 
-When building the simulator, always run **both** Run 0 and Run 1 with the same seeds, writing to the matching `artifacts/simulations/run*/` folders so GitHub shows a clear A/B layout.
+Both runs replay the 2025 season (60 events, real draws) 10,000 times with seed 42 and the same random numbers, so only the model differs. Full comparison: [`simulations_2025.md`](simulations_2025.md). How it works: [`docs/season_simulation.md`](../../docs/season_simulation.md).
+
+| Run | Match accuracy | Match log loss | Real champion favourite | Most likely year-end #1 | Rank error, top 20 | Outputs |
+|---|---:|---:|---:|---|---:|---|
+| **0** | 61.0% | 0.6895 | 15 of 60 | Alcaraz (47.7%) | 7.5 | [`season_2025/`](../../artifacts/simulations/run0_baseline/season_2025/) |
+| **1** | 61.6% | 0.6545 | 17 of 60 | Sinner (70.9%) | 6.6 | [`season_2025/`](../../artifacts/simulations/run1_season_delta/season_2025/) |
+
+Reference: the higher-ranked player won 64.3% of the same 2,622 matches; the real year-end #1 was Alcaraz. Always run every model with the same season, seed and simulation count.

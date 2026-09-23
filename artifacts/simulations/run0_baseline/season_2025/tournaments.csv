@@ -1,0 +1,61 @@
+tourney_id,name,date,category,surface,draw_size,actual_champion_id,actual_champion,p_actual_champion,actual_champion_position,modal_champion,p_modal_champion
+2025-0336,Hong Kong,2024-12-30,250,Hard,28,124186,Alexandre Muller,0.0276,10,Andrey Rublev,0.268
+2025-0339,Brisbane,2024-12-30,250,Hard,32,208103,Jiri Lehecka,0.0034,14,Novak Djokovic,0.7361
+2025-0301,Auckland,2025-01-06,250,Hard,28,104792,Gael Monfils,0.0266,16,Francisco Cerundolo,0.1463
+2025-8998,Adelaide,2025-01-06,250,Hard,28,200000,Felix Auger Aliassime,0.1775,2,Tommy Paul,0.5102
+2025-580,Australian Open,2025-01-13,G,Hard,128,206173,Jannik Sinner,0.3092,1,Jannik Sinner,0.3092
+2025-0375,Montpellier,2025-01-27,250,Hard,28,200000,Felix Auger Aliassime,0.3216,1,Felix Auger Aliassime,0.3216
+2025-0407,Rotterdam,2025-02-03,500,Hard,32,207989,Carlos Alcaraz,0.4027,1,Carlos Alcaraz,0.4027
+2025-0424,Dallas,2025-02-03,500,Hard,32,133430,Denis Shapovalov,0.0162,10,Tommy Paul,0.4487
+2025-0496,Marseille,2025-02-10,250,Hard,28,200005,Ugo Humbert,0.1102,3,Daniil Medvedev,0.4726
+2025-0499,Delray Beach,2025-02-10,250,Hard,28,200175,Miomir Kecmanovic,0.0457,4,Taylor Fritz,0.3628
+2025-0506,Buenos Aires,2025-02-10,250,Clay,28,211663,Joao Fonseca,0.024,8,Alexander Zverev,0.5275
+2025-0451,Doha,2025-02-17,500,Hard,32,126094,Andrey Rublev,0.0073,8,Carlos Alcaraz,0.3975
+2025-6932,Rio de Janeiro,2025-02-17,500,Clay,32,202104,Sebastian Baez,0.0371,3,Alexander Zverev,0.5798
+2025-0495,Dubai,2025-02-24,500,Hard,32,126774,Stefanos Tsitsipas,0.0124,10,Alex De Minaur,0.5334
+2025-0807,Acapulco,2025-02-24,500,Hard,32,207830,Tomas Machac,0.0255,5,Tommy Paul,0.3785
+2025-8996,Santiago,2025-02-24,250,Clay,28,111513,Laslo Djere,0.011,17,Francisco Cerundolo,0.3164
+2025-0404,Indian Wells Masters,2025-03-05,M,Hard,96,207733,Jack Draper,0.0139,9,Alex De Minaur,0.2719
+2025-0403,Miami Masters,2025-03-19,M,Hard,96,210150,Jakub Mensik,0.0003,32,Carlos Alcaraz,0.3431
+2025-0360,Marrakech,2025-03-31,250,Clay,28,209260,Luciano Darderi,0.0151,18,Nuno Borges,0.1725
+2025-0717,Houston,2025-03-31,250,Clay,28,202385,Jenson Brooksby,0.0006,23,Tommy Paul,0.5027
+2025-4462,Bucharest,2025-03-31,250,Clay,28,207925,Flavio Cobolli,0.1437,1,Flavio Cobolli,0.1437
+2025-0410,Monte Carlo Masters,2025-04-07,M,Clay,56,207989,Carlos Alcaraz,0.3058,2,Novak Djokovic,0.3059
+2025-0308,Munich,2025-04-14,500,Clay,32,100644,Alexander Zverev,0.5263,1,Alexander Zverev,0.5263
+2025-0425,Barcelona,2025-04-14,500,Clay,32,208029,Holger Rune,0.0177,9,Carlos Alcaraz,0.5147
+2025-1536,Madrid Masters,2025-04-23,M,Clay,96,134770,Casper Ruud,0.008,17,Novak Djokovic,0.3089
+2025-0416,Rome Masters,2025-05-07,M,Clay,96,207989,Carlos Alcaraz,0.1988,2,Jannik Sinner,0.4016
+2025-0322,Geneva,2025-05-18,250,Clay,28,104925,Novak Djokovic,0.5742,1,Novak Djokovic,0.5742
+2025-0414,Hamburg,2025-05-18,500,Clay,32,207925,Flavio Cobolli,0.0036,19,Alexander Zverev,0.493
+2025-520,Roland Garros,2025-05-26,G,Clay,128,207989,Carlos Alcaraz,0.1729,3,Jannik Sinner,0.3822
+2025-0321,Stuttgart,2025-06-09,250,Grass,28,126203,Taylor Fritz,0.1436,2,Alexander Zverev,0.494
+2025-0440,s Hertogenbosch,2025-06-09,250,Grass,28,209113,Gabriel Diallo,0.0154,12,Daniil Medvedev,0.2249
+2025-0311,Queen's Club,2025-06-16,500,Grass,32,207989,Carlos Alcaraz,0.283,1,Carlos Alcaraz,0.283
+2025-0500,Halle,2025-06-16,500,Grass,32,122330,Alexander Bublik,0.0174,7,Jannik Sinner,0.3704
+2025-8994,Mallorca,2025-06-22,250,Grass,28,134868,Tallon Griekspoor,0.0835,3,Felix Auger Aliassime,0.2711
+2025-0741,Eastbourne,2025-06-23,250,Grass,28,126203,Taylor Fritz,0.3116,1,Taylor Fritz,0.3116
+2025-540,Wimbledon,2025-06-30,G,Grass,128,206173,Jannik Sinner,0.1886,1,Jannik Sinner,0.1886
+2025-0314,Gstaad,2025-07-14,250,Clay,28,122330,Alexander Bublik,0.0453,7,Casper Ruud,0.2674
+2025-0316,Bastad,2025-07-14,250,Clay,28,209260,Luciano Darderi,0.0079,16,Francisco Cerundolo,0.4066
+2025-7480,Los Cabos,2025-07-14,250,Hard,28,133430,Denis Shapovalov,0.159,2,Andrey Rublev,0.2361
+2025-0439,Umag,2025-07-20,250,Clay,28,209260,Luciano Darderi,0.0181,11,Francisco Cerundolo,0.3536
+2025-0319,Kitzbuhel,2025-07-21,250,Clay,28,122330,Alexander Bublik,0.0327,14,Sebastian Baez,0.088
+2025-0418,Washington,2025-07-21,500,Hard,48,200282,Alex De Minaur,0.4359,1,Alex De Minaur,0.4359
+2025-0421,Canada Masters,2025-07-27,M,Hard,96,210097,Ben Shelton,0.0047,18,Alex De Minaur,0.354
+2025-0422,Cincinnati Masters,2025-08-07,M,Hard,96,207989,Carlos Alcaraz,0.2022,2,Jannik Sinner,0.4242
+2025-6242,Winston-Salem,2025-08-17,250,Hard,48,105916,Marton Fucsovics,0.1082,2,Jaume Munar,0.1135
+2025-560,Us Open,2025-08-25,G,Hard,128,207989,Carlos Alcaraz,0.4355,1,Carlos Alcaraz,0.4355
+2025-4713,Hangzhou,2025-09-17,250,Hard,28,122330,Alexander Bublik,0.0195,10,Andrey Rublev,0.235
+2025-7581,Chengdu,2025-09-17,250,Hard,28,126214,Alejandro Tabilo,0.0014,26,Lorenzo Musetti,0.3059
+2025-0329,Tokyo,2025-09-24,500,Hard,32,207989,Carlos Alcaraz,0.5503,1,Carlos Alcaraz,0.5503
+2025-0747,Beijing,2025-09-25,500,Hard,32,206173,Jannik Sinner,0.5053,1,Jannik Sinner,0.5053
+2025-5014,Shanghai Masters,2025-10-01,M,Hard,96,200473,Valentin Vacherot,0.0,49,Jannik Sinner,0.6668
+2025-0429,Stockholm,2025-10-13,250,Hard,28,134770,Casper Ruud,0.1439,2,Holger Rune,0.1557
+2025-7485,Brussels,2025-10-13,250,Hard,28,200000,Felix Auger Aliassime,0.1262,3,Lorenzo Musetti,0.3938
+2025-9410,Almaty,2025-10-13,250,Hard,28,106421,Daniil Medvedev,0.3165,2,Karen Khachanov,0.3309
+2025-0328,Basel,2025-10-20,500,Hard,32,211663,Joao Fonseca,0.0224,12,Alejandro Davidovich Fokina,0.1383
+2025-0337,Vienna,2025-10-20,500,Hard,32,206173,Jannik Sinner,0.6257,1,Jannik Sinner,0.6257
+2025-0352,Paris Masters,2025-10-27,M,Hard,56,206173,Jannik Sinner,0.4119,2,Carlos Alcaraz,0.416
+2025-0341,Metz,2025-11-02,250,Hard,28,210530,Learner Tien,0.0101,16,Matteo Berrettini,0.1829
+2025-5100,Athens,2025-11-02,250,Hard,28,104925,Novak Djokovic,0.5933,1,Novak Djokovic,0.5933
+2025-0605,Tour Finals,2025-11-09,F,Hard,8,206173,Jannik Sinner,0.3902,2,Carlos Alcaraz,0.4392

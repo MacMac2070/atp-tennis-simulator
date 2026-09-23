@@ -1,0 +1,90 @@
+{
+  "match": {
+    "n": 2622,
+    "accuracy": 0.6155606407322655,
+    "log_loss": 0.6544701840063752,
+    "brier": 0.23012002500046497,
+    "higher_rank_accuracy": 0.6430205949656751
+  },
+  "match_by_surface": {
+    "Clay": {
+      "n": 760,
+      "accuracy": 0.6039473684210527,
+      "log_loss": 0.6527447049306863,
+      "brier": 0.2304922581632642,
+      "higher_rank_accuracy": 0.65
+    },
+    "Grass": {
+      "n": 295,
+      "accuracy": 0.6067796610169491,
+      "log_loss": 0.6574575082888098,
+      "brier": 0.2328949511239056,
+      "higher_rank_accuracy": 0.6305084745762712
+    },
+    "Hard": {
+      "n": 1567,
+      "accuracy": 0.6228462029355456,
+      "log_loss": 0.6547446597142281,
+      "brier": 0.22941708919309908,
+      "higher_rank_accuracy": 0.6419910657306956
+    }
+  },
+  "match_by_category": {
+    "250": {
+      "n": 826,
+      "accuracy": 0.562953995157385,
+      "log_loss": 0.6983239803290031,
+      "brier": 0.25068480377926283,
+      "higher_rank_accuracy": 0.589588377723971
+    },
+    "500": {
+      "n": 507,
+      "accuracy": 0.631163708086785,
+      "log_loss": 0.6266529627013628,
+      "brier": 0.21864258532989914,
+      "higher_rank_accuracy": 0.6765285996055227
+    },
+    "F": {
+      "n": 15,
+      "accuracy": 0.8666666666666667,
+      "log_loss": 0.35455519670008423,
+      "brier": 0.1026030878290277,
+      "higher_rank_accuracy": 0.6666666666666666
+    },
+    "G": {
+      "n": 505,
+      "accuracy": 0.6811881188118812,
+      "log_loss": 0.5867175702676816,
+      "brier": 0.20363077680668276,
+      "higher_rank_accuracy": 0.6831683168316832
+    },
+    "M": {
+      "n": 769,
+      "accuracy": 0.6137841352405722,
+      "log_loss": 0.6760487148084369,
+      "brier": 0.23548072595901046,
+      "higher_rank_accuracy": 0.6514954486345904
+    }
+  },
+  "tournament": {
+    "events": 60,
+    "actual_champion_is_modal": 17,
+    "actual_champion_in_top3": 27,
+    "mean_p_actual_champion": 0.18356333333333336,
+    "title_log_loss": 2.854858154566295
+  },
+  "season": {
+    "modal_no1": "Jannik Sinner",
+    "modal_no1_p": 0.7094,
+    "mean_points_no1": "Jannik Sinner",
+    "actual_no1_same_table": "Carlos Alcaraz",
+    "p_actual_no1": 0.185,
+    "top10_overlap_same_table": 7,
+    "top10_overlap_official": 7,
+    "spearman_official_top50": 0.7847487336891877,
+    "rank_mae_official_top20": 6.406915,
+    "rank_mae_same_table_top20": 6.556914999999999,
+    "points_mae_same_table_top20": 1118.44265
+  },
+  "weekly_rank_mae_top20_mean": 4.46525619047619
+}
