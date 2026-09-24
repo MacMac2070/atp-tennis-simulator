@@ -289,7 +289,7 @@ The surface sets the starting point: servers win 65.9% of points on grass, 64.2%
 The simulator plays the real 2025 draws, rebuilt from the results, awards the 2025 ATP
 points and rolls the 52-week ledger. Both models face exactly the same random numbers, like
 two cars in a wind tunnel with identical gusts, so any difference in the results is the
-model's. How it works: `[docs/season_simulation.md](docs/season_simulation.md)`.
+model's. How it works: [`docs/season_simulation.md`](docs/season_simulation.md).
 
 ---
 
@@ -388,10 +388,11 @@ A model that says what it cannot do is easier to trust about what it can.
 Match data compiled by Jeff Sackmann (Tennis Abstract) and used under CC BY-NC-SA 4.0:
 non-commercial, attribution required, share-alike. The original repository was withdrawn in
 2026; `fetch_data.sh` downloads an archival mirror of the same files, which are not
-redistributed here. Full provenance: `DESIGN.md` [§13](DESIGN.md#13-data-provenance).
+redistributed here in full. Full provenance: `DESIGN.md` [§13](DESIGN.md#13-data-provenance).
 
-The code in this repository is released under the [MIT licence](LICENSE); the match data keeps
-its own CC BY-NC-SA 4.0 licence above.
+The code in this repository is released under the [MIT licence](LICENSE). The few files derived
+from the match data (a 12-row sample in `verification/reports/`, and the model weights and
+simulation outputs under `artifacts/`) are shared under the data's CC BY-NC-SA 4.0 licence.
 
 ---
 

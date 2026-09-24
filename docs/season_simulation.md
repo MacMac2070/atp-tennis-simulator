@@ -106,6 +106,10 @@ Three findings:
 Full tables: `verification/reports/simulations_2025.md`, and each run's
 `artifacts/simulations/run*/season_2025/summary.md`.
 
+**An independent check.** A second simulator was built separately from the same brief, without
+sharing any code. It gave the same win probability for every one of the 2,622 real matches to
+four decimal places, and the same title and year-end figures within Monte Carlo noise.
+
 ---
 
 ## What is simplified

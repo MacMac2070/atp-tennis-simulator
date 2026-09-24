@@ -12,7 +12,6 @@ This was the first full train + eval of the bilinear serve model. Results origin
 | Item | Value |
 |---|---|
 | Model file | `artifacts/models/run0_baseline/model.pt` |
-| Archive | `artifacts/models/archive/model_through2023.pt` |
 | Training rows | `runs/rows.parquet` |
 | Train through | **2024** (seasons ≤ 2024) |
 | Holdout | **2025** and partial **2026** (7,664 rows) |
@@ -72,7 +71,7 @@ python scripts/evaluate_model.py --rows runs/rows.parquet --model artifacts/mode
 | Run | What changed | Holdout bias (Hard all) | Notes |
 |---|---|---|---|
 | **0 (this file)** | First fit through 2024 | **−0.0186** | Frozen under `artifacts/models/run0_baseline/` |
-| 1 | *(not yet)* | | season intercept `δ_season` → `run1_season_delta/` |
+| 1 | Season intercept `δ_season`, `μ` anchored on 2024 | **−0.0078** | See [`run1_season_delta/eval.md`](../run1_season_delta/eval.md) |
 | 2 | *(not yet)* | | |
 
 After each future train/eval, write `verification/reports/runN_…/eval.md` and update `MODEL_PROGRESSION.md`.

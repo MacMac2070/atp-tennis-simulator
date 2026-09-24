@@ -26,4 +26,4 @@ python scripts/evaluate_model.py --rows runs/rows.parquet \
 
 Do not overwrite these files.
 
-Future simulation outputs: `artifacts/simulations/run1_season_delta/` (empty until sim exists).
+Simulation outputs: `artifacts/simulations/run1_season_delta/` (the 2025 season, 10,000 runs).

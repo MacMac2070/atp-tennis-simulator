@@ -149,8 +149,8 @@ to the 1992 to 2024 average serve rate while the real rate has drifted upwards.
 |---|---|
 | `verification/cross_check_sources.py` | The comparison script. Run with `python verification/cross_check_sources.py`. |
 | `verification/reports/cross_check_summary.md` | Season-by-season tables behind the numbers above. |
-| `verification/out/cross_check_mismatches.csv` | Every mismatching match, both sources side by side. |
+| `runs/cross_check_mismatches.csv` | Every mismatching match, both sources side by side. Written locally by the script; not in the repository. |
 | `verification/reports/atp_spot_check.md` | The 12 ATP website checks with page addresses. |
 | `verification/reports/atp_spot_check_sample.csv` | The 12 sampled rows and the random seed used. |
 | `verification/antigravity/source_check/` | Antigravity's independent 2026 check. |
-| `verification/external/SOURCES.md` | Download addresses, dates and file hashes for the TML files. |
+| `verification/external/SOURCES.md` | Download addresses, dates and file hashes for the TML files. Local only: the TML downloads are not redistributed. |

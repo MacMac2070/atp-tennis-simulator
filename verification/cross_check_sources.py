@@ -5,8 +5,8 @@ player names plus round, within the same tournament (start dates within
 MAX_DATE_GAP_DAYS), then reports coverage and field-by-field agreement.
 
 Usage:  python verification/cross_check_sources.py [--start 1992] [--end 2026]
-Writes: verification/out/cross_check_summary.md
-        verification/out/cross_check_mismatches.csv
+Writes: runs/cross_check_summary.md
+        runs/cross_check_mismatches.csv
 """
 
 from __future__ import annotations
@@ -25,7 +25,7 @@ sys.path.insert(0, ROOT)
 from atp_sim.data import STAT_COLS, load_matches  # noqa: E402
 
 TML_DIR = os.path.join(ROOT, "verification", "external", "tml")
-OUT_DIR = os.path.join(ROOT, "verification", "out")
+OUT_DIR = os.path.join(ROOT, "runs")
 
 MAX_DATE_GAP_DAYS = 15  # TML dates Grand Slam rows by match day, Sackmann by tournament start
 SERVE_WON = ("1stWon", "2ndWon")

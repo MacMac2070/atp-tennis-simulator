@@ -19,3 +19,14 @@ runs/
 # Ignore loose weight dumps, but allow frozen per-run models for GitHub progression
 *.pt
 !artifacts/models/**/*.pt
+
+# macOS
+.DS_Store
+
+# Local tooling: graphify code graph (regenerate with `graphify update .`), agent worktrees
+graphify-out/
+.claude/
+
+# Test and lint caches
+.pytest_cache/
+.ruff_cache/

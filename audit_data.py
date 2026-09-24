@@ -19,7 +19,7 @@ trains no model.
 
 Usage
 -----
-    git clone https://github.com/JeffSackmann/tennis_atp.git data/tennis_atp
+    ./fetch_data.sh
     python3 audit_data.py
 
 Data licence: Jeff Sackmann's tennis_atp repo is CC BY-NC-SA 4.0. Non-commercial
@@ -59,8 +59,8 @@ def load_matches(start_year=1968, end_year=2026):
     if not paths:
         sys.exit(
             f"No match files found in {DATA_DIR}\n"
-            "Clone the data first:\n"
-            "  git clone https://github.com/JeffSackmann/tennis_atp.git data/tennis_atp"
+            "Download the data first:\n"
+            "  ./fetch_data.sh"
         )
 
     frames = []

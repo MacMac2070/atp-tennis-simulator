@@ -110,4 +110,4 @@ Run 1 beats the last-season constant on NLL and point-MAE on every surface and s
 | Recency-weighted rows | Down-weight old matches with a half-life | Also fixes μ, but the player weights learn from fewer effective rows and the half-life needs tuning |
 | Post-hoc μ refit | Train as before, then refit μ alone on 2022 to 2024 | Simplest patch, but the drift leaks into a, b, W during the main fit |
 
-Only Run 0 and Run 1 exist, so the comparison is one change against the baseline. Artefacts follow `verification/CLAUDE_ARTEFACT_LAYOUT.md`: weights under `artifacts/models/run1_season_delta/`, eval under `verification/reports/run1_season_delta/eval.md`, index in `verification/reports/MODEL_PROGRESSION.md`.
+Only Run 0 and Run 1 exist, so the comparison is one change against the baseline. Artefacts follow the layout in [`artifacts/README.md`](../artifacts/README.md): weights under `artifacts/models/run1_season_delta/`, eval under `verification/reports/run1_season_delta/eval.md`, index in `verification/reports/MODEL_PROGRESSION.md`.

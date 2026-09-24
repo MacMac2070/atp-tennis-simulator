@@ -12,4 +12,4 @@ Frozen snapshot of the first full train + holdout eval.
 
 Do not overwrite these files. Later runs go in `run1_…`, `run2_…`.
 
-Future simulation outputs: `artifacts/simulations/run0_baseline/` (empty until sim exists).
+Simulation outputs: `artifacts/simulations/run0_baseline/` (the 2025 season, 10,000 runs).
