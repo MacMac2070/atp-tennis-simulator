@@ -42,14 +42,14 @@ The form cards are standardised season by season against the season before, so `
 | Clay | −0.103 | −0.066 | −0.008 | −0.047 | −0.030 | 0 |
 | Grass | −0.189 | −0.103 | −0.003 | −0.057 | −0.043 | 0 |
 
-They track the per-season rate table (1992 about 3 pp below 2024, flat since ~2010, Covid-era dip on clay and grass).
+They track the raw per-season serve rates (1992 about 3 pp below 2024, and a Covid-era dip on clay and grass).
 
 ---
 
 ## Holdout results (Run 1)
 
 `bias = predicted − actual` (negative ⇒ under-predicts serve).  
-`pooled` = always guess that surface's 1992 to 2024 rate (Run 0's baseline). `last` = always guess its 2024 rate (the bar an anchored μ must beat). `drift` = actual − 2024 rate, i.e. how far the tour moved after the cutoff.
+`pooled` = always guess that surface's 1992 to 2024 rate (Run 0's baseline). `last` = always guess its 2024 rate (the bar an anchored μ must beat). `drift` = actual − 2024 rate, i.e. how far the tour moved after the cutoff. `model μ` = sigmoid(μ): the prediction when both cards are 0, which is not the same as the average prediction over the season's rows.
 
 ### Hard (pooled 0.6327, 2024 rate 0.6443, model μ → 0.6370)
 
@@ -96,11 +96,11 @@ Run 0 numbers from `verification/reports/run0_baseline/eval.md`. Positive Δbias
 
 ## What Run 1 showed (interpretation)
 
-1. **The level shift is gone on 2025.** Hard −0.4 pp, Clay −0.1 pp: within the noise of a single season's rate. The 1.2 to 1.6 pp gap was the pooled μ, as diagnosed.
+1. **The level shift is gone on 2025.** Hard −0.4 pp, Clay −0.1 pp: close to the ±0.3 pp noise of a single season's rate. The 1.2 to 1.6 pp gap was the pooled μ, as diagnosed.
 2. **Beats the harder baseline.** Run 1 has lower NLL and point-MAE than the last-season constant on every surface and season. Run 0 only beat the pooled constant, which is a straw man once μ is anchored.
 3. **2026 still reads low on Hard (−1.6 pp), and that is drift.** The 2026 tour is +1.4 pp above 2024 (`drift` column). The archive stops in May 2026 and the model has never seen a 2026 match, so this is data freshness, not model error. Training through a later season (topped up from TML if needed) would move the anchor, not the method.
-4. **Grass now over-predicts by 0.7 pp.** 2024 was an unusually strong grass season (66.6%, the highest in the table) and 2025 came back down (66.0%). Anchoring on one season inherits that season's noise; grass has the fewest rows (~600 per season) so it is the most exposed. Still better than Run 0 on NLL and MAE.
-5. **Interaction term shrank** from ~0.05 to ~0.02 mean |contribution|. That is the learning-rate cool-down letting `W` settle under its L2 rather than jittering, not the anchor. It strengthens the `DESIGN.md` suspicion that `W` earns little.
+4. **Grass now over-predicts by 0.7 pp.** 2024 was an unusually strong grass season (66.6%, the highest since 2015) and 2025 came back down (66.0%). Anchoring on one season inherits that season's noise; grass has the fewest rows (about 600 per season) so it is the most exposed. Still better than Run 0 on NLL and MAE.
+5. **Interaction term shrank** from about 0.05 to about 0.02 mean |contribution|. That is the learning-rate cool-down letting `W` settle under its L2 rather than jittering, not the anchor. It strengthens the `DESIGN.md` suspicion that `W` earns little.
 
 ---
 

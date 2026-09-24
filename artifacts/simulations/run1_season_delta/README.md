@@ -12,7 +12,7 @@ Weights: `artifacts/models/run1_season_delta/model.pt` (trained through 2024, sh
 - Titles: real champion was the favourite in 17 of 60 events, in the top three in 27.
 - Year end: most likely #1 Jannik Sinner (70.9%); the real #1 Carlos Alcaraz finished #1 in 18.5% of simulated seasons.
 
-Full write-up: `season_2025/summary.md`. Comparison with the other runs: `verification/reports/simulations_2025.md`.
+Full write-up: `season_2025/summary.md`. Comparison of all runs: `verification/reports/simulations_2025.md`.
 
 ## Reproduce
 

@@ -7,7 +7,7 @@ serve. Everything else is built by repetition.
 **Scope:** ATP singles, hard, clay and grass, 1991 onward (carpet ignored).  
 **Status:** training table built and verified · two frozen models (Run 0 and Run 1) · the
 2025 season simulated 10,000 times with each · 83 tests.  
-**Technical design:** [`DESIGN_2.0.md`](DESIGN_2.0.md): form cards, formula, training. Story stays here. Older draft: [`DESIGN.md`](DESIGN.md). Bit-level checks: [`verification/VERIFY_SPEC.md`](verification/VERIFY_SPEC.md).
+**Technical design:** [`DESIGN_2.0.md`](DESIGN_2.0.md) covers form cards, formula and training; the story stays here. Older draft: [`DESIGN.md`](DESIGN.md). Bit-level checks: [`verification/VERIFY_SPEC.md`](verification/VERIFY_SPEC.md).
 
 ---
 
@@ -63,7 +63,7 @@ built on.
 > compared with a second dataset (TennisMyLife): 99.8% appear in both, the winner differs in
 > only 3 of 108,801, and 98.1% match on all 16 serve statistics. Because that dataset was
 > partly built from Sackmann's, 12 random matches, three per decade, were also checked against
-> the official ATP website, and all 12 were identical. Full write-up:
+> the official ATP website, and all 12 matched on every serve statistic. Full write-up:
 > [data source verification](verification/reports/DATA_SOURCE_VERIFICATION.md).
 
 ```mermaid
@@ -246,7 +246,7 @@ flowchart TD
 
 Why each number moves as much as it does, explained with a shopping bill and every nudge worked
 out by hand: [`DESIGN_2.0.md` §3.1](DESIGN_2.0.md#31-one-row-one-nudge). Run 0 against Run 1
-follows in the rest of §3.
+is in §3.3.
 
 ---
 
@@ -319,7 +319,7 @@ flowchart LR
 | 2025 hard-court serve bias              | −1.5 pp          | **−0.4 pp**           | 0 is perfect                    |
 | Match log loss, 2,622 real 2025 matches | 0.6895           | **0.6545**            | coin flip 0.6931                |
 | Match accuracy                          | 61.0%            | 61.6%                 | higher-ranked player wins 64.3% |
-| Most likely year-end #1                 | Alcaraz, 47.7%   | Sinner, 70.9%         | Alcaraz                         |
+| Most likely year-end #1                 | Alcaraz, 47.7%   | Sinner, 70.9%         | real #1: Alcaraz                |
 
 
 > [!NOTE]
@@ -353,6 +353,8 @@ python3 scripts/simulate_season.py --model artifacts/models/run1_season_delta/mo
 The simulation writes to `runs/`, so the frozen results under `artifacts/simulations/` are never
 overwritten; its CSV files and `metrics.json` should match them byte for byte.
 
+---
+
 
 
 ## 🗂️ Repository layout
@@ -383,10 +385,15 @@ overwritten; its CSV files and `metrics.json` should match them byte for byte.
 knows nothing about footwork, forehands or court position.
 - **Not an injury forecaster.** A retirement in week three wrecks a season forecast, and
 nothing in the data would have warned of it.
-- **Not the full ranking rules.** In the simulator every event counts in full (no best-19 rule),
-form cards stay at their real values, and the ATP Finals field is the real one.
+- **Not the full ranking rules.** In the simulator every event counts in full (no best-19 rule).
+- **Not a free-running season.** Form cards stay at their real values and the ATP Finals field is
+the real one, so simulated results never feed back.
 
 A model that says what it cannot do is easier to trust about what it can.
+
+---
+
+
 
 ## 📜 Data and licence
 

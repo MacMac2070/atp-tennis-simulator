@@ -151,7 +151,7 @@ def compare_note(runs: list[dict], season: int) -> str:
 
     L += ["", "## Rankings through the season", "",
           "Mean absolute gap between simulated mean rank and official rank, official top 20, last ranking "
-          "of each month. The same-table column is the floor set by the simplified ranking rules alone.", ""]
+          "of each month. The same-table column is the part the simplified ranking rules alone explain.", ""]
     monthly = []
     for r in runs:
         w = r["weekly"][r["weekly"]["official_rank"] <= 20].copy()
@@ -190,7 +190,7 @@ def run_readme(r: dict, season: int, note_path: str) -> str:
         f"in the top three in {tm['actual_champion_in_top3']}.",
         f"- Year end: most likely #1 {sm['modal_no1']} ({_pct(sm['modal_no1_p'])}); the real #1 "
         f"{sm['actual_no1_same_table']} finished #1 in {_pct(sm['p_actual_no1'])} of simulated seasons.", "",
-        f"Full write-up: `season_{season}/summary.md`. Comparison with the other runs: `{note_path}`.", "",
+        f"Full write-up: `season_{season}/summary.md`. Comparison of all runs: `{note_path}`.", "",
         "## Reproduce", "", "```bash",
         f"python scripts/simulate_season.py --model {c['model']} --season {season} --n-sims {c['n_sims']} "
         f"--seed {c['seed']} --out runs/simulations/{r['name']}/season_{season}/",

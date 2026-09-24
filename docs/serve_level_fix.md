@@ -56,7 +56,7 @@ The form cards (`atp_sim/form_cards.py`, `standardise_cards`) are standardised a
 
 Serve rates have crept up by about 0.06 points per hundred per year on hard and clay since 2005. Over three decades that puts the 2024 tour 1.2 to 1.6 percentage points (pp) above the pooled average:
 
-| Surface | Pooled 1992 to 2024 (what Run 0 μ learns) | 2024 | 2025 actual | 2026 actual (to 17 May) |
+| Surface | Pooled 1992 to 2024 (what Run 0 μ learns) | 2024 | 2025 actual | 2026 actual (to 17 May; Roland Garros has no serve statistics) |
 |---|---|---|---|---|
 | Hard | 0.6327 | 0.6443 | 0.6467 | 0.6586 |
 | Clay | 0.6069 | 0.6203 | 0.6211 | 0.6271 |
@@ -98,7 +98,7 @@ One season is about 6,000 rows across the three surfaces (2024: 3,408 hard, 1,92
 | Hard 2026 | −0.0268 | about −0.014 | **−0.0164** | 0.64114 → 0.63975 | 0.0613 → 0.0571 |
 | Clay 2026 | −0.0188 | about −0.012 | **−0.0045** | 0.66013 → 0.65854 | 0.0636 → 0.0587 |
 
-Run 1 beats the last-season constant on NLL and point-MAE on every surface and season. Grass flipped to a small over-prediction because 2024 was the strongest grass season in the table and 2025 came back down; anchoring on one season inherits that season's noise, and grass has the fewest rows. Full tables and the delta against Run 0: `verification/reports/run1_season_delta/eval.md`.
+Run 1 beats the last-season constant on NLL and point-MAE on every surface and season. Grass flipped to a small over-prediction because 2024 was grass's strongest season since 2015 and 2025 came back down; anchoring on one season inherits that season's noise, and grass has the fewest rows. Full tables and the delta against Run 0: `verification/reports/run1_season_delta/eval.md`.
 
 2026 will still read low. Serving on hard rose another 1.2 pp in early 2026 and the archive stops in May 2026, so the model has never seen a 2026 match. That leftover is data freshness, not model error, and the evaluator reports it against the last-season baseline so the two are not confused.
 
@@ -110,4 +110,4 @@ Run 1 beats the last-season constant on NLL and point-MAE on every surface and s
 | Recency-weighted rows | Down-weight old matches with a half-life | Also fixes μ, but the player weights learn from fewer effective rows and the half-life needs tuning |
 | Post-hoc μ refit | Train as before, then refit μ alone on 2022 to 2024 | Simplest patch, but the drift leaks into a, b, W during the main fit |
 
-Only Run 0 and Run 1 exist, so the comparison is one change against the baseline. Artefacts follow the layout in [`artifacts/README.md`](../artifacts/README.md): weights under `artifacts/models/run1_season_delta/`, eval under `verification/reports/run1_season_delta/eval.md`, index in `verification/reports/MODEL_PROGRESSION.md`.
+Only Run 0 and Run 1 exist, so the comparison is one modelling change (plus a learning-rate cool-down) against the baseline. Artefacts follow the layout in [`artifacts/README.md`](../artifacts/README.md): weights under `artifacts/models/run1_season_delta/`, eval under `verification/reports/run1_season_delta/eval.md`, index in `verification/reports/MODEL_PROGRESSION.md`.

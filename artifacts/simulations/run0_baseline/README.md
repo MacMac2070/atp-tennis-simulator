@@ -12,7 +12,7 @@ Weights: `artifacts/models/run0_baseline/model.pt` (trained through 2024, sha256
 - Titles: real champion was the favourite in 15 of 60 events, in the top three in 31.
 - Year end: most likely #1 Carlos Alcaraz (47.7%); the real #1 Carlos Alcaraz finished #1 in 47.7% of simulated seasons.
 
-Full write-up: `season_2025/summary.md`. Comparison with the other runs: `verification/reports/simulations_2025.md`.
+Full write-up: `season_2025/summary.md`. Comparison of all runs: `verification/reports/simulations_2025.md`.
 
 ## Reproduce
 

@@ -45,7 +45,8 @@ equivalent. We use an archival mirror carrying the same files under the same
 licence (CC BY-NC-SA 4.0, non-commercial, attribution required, share-alike).
 
 One consequence matters: **there is no live feed of this archive any more.** The
-mirror stops with Roland Garros 2026, which began on 25 May. So this project cannot forecast the season currently in progress. It
+mirror stops with Roland Garros 2026 (archive date 25 May 2026), so this project
+cannot forecast the season currently in progress. It
 replays a completed season instead, week by week, scored against what actually
 happened. That is a cleaner scientific setup anyway, because the answer is
 already known and cannot be fudged.
@@ -53,15 +54,15 @@ already known and cannot be fudged.
 ### What the audit found
 
 
-| Question                             | Answer                                         | Figure  |
-| ------------------------------------ | ---------------------------------------------- | ------- |
-| Matches in the archive               | 1968 to 2026, tour level                       | 199,389 |
-| When serve statistics start          | Nothing usable before this year                | 1991    |
-| Coverage 1991 to 2015                | Stable plateau, gap is mostly Davis Cup ties   | ~88%    |
-| Coverage 2016 to 2024                | Near complete                                  | 94-99%  |
-| Usable matches, three live surfaces  | Hard 52,302 / Clay 33,343 / Grass 10,403       | 96,048  |
-| Rows (two servers per match)         | Before exclusions; the built table has 186,482 | 192,096 |
-| Median matches per player per season | The tour is mostly one-off qualifiers          | 4       |
+| Question                              | Answer                                                      | Figure    |
+| ------------------------------------- | ----------------------------------------------------------- | --------- |
+| Matches in the archive                | 1968 to 2026, tour level                                    | 199,389   |
+| When serve statistics start           | Nothing usable before this year                             | 1991      |
+| Coverage 1991 to 2015                 | Stable plateau, gap is mostly Davis Cup ties                | ~88%      |
+| Coverage 2016 to 2024                 | Near complete                                               | 94 to 99% |
+| With serve statistics, three surfaces | Hard 52,302 / Clay 33,343 / Grass 10,403, before exclusions | 96,048    |
+| Rows (two servers per match)          | Before exclusions; the built table has 186,482              | 192,096   |
+| Median matches per player per season  | The tour is mostly one-off qualifiers                       | 4         |
 
 
 Carpet appears in the archive but the surface was retired around 2009, so it is
@@ -76,7 +77,7 @@ their small sample.
 
 
 
-## 3. Four kinds of file, and only four
+## 3. Four core kinds of file
 
 
 | What                                                | Format                                     | Contents                                                                                                      | Size          |
@@ -92,7 +93,8 @@ their small sample.
 ### Why every match becomes two rows
 
 The model is about serving, and each match contains two servers. A single
-Alcaraz against Sinner match on clay is stored as two observations:
+Alcaraz against Sinner match on clay (the figures are made up) is stored as two
+observations:
 
 
 | Server  | Returner | Surface | Points served | Points won |
@@ -112,7 +114,7 @@ back and used later as an independent check on whether the model is any good.
 ## 4. The form card
 
 Before each match we write a short report on each player, describing him as he
-was *that morning*. Eight numbers. Call it his form card, written `x`.
+was *when the tournament began*. Eight numbers. Call it his form card, written `x`.
 
 Each is computed from his previous matches, then standardised so **zero means
 exactly tour average** and one means a standard deviation above it. That
@@ -134,8 +136,8 @@ baseline, with every other term cancelling to nothing.
 In the code the eight are stored as `x_0` to `x_7`, in this order.
 
 
-> **The one rule that cannot be broken.** A card for a match played on 5 June
-> 2019 may only use matches from before 5 June 2019.
+> **The one rule that cannot be broken.** A card for a tournament starting on 5 June
+> 2019 may only use matches from events that started before 5 June 2019.
 >
 > Let one later match slip in and the model is reading tomorrow's newspaper. It
 > will look brilliant and predict nothing. This failure is silent, which is why
@@ -214,7 +216,7 @@ p = 1 / (1 + e^(-z))
 Four layers, each answering a different question. The first line adds up reasons;
 the second turns that total into a probability.
 
-`mu`**, where everyone starts.** The tour-average chance of winning a service
+`mu`**, where everyone starts.** The tour-average log-odds of winning a service
 point on this surface. Two exactly average players meet, every other term is
 zero, and the answer comes back as this number.
 
@@ -264,7 +266,7 @@ tells you which style troubles which.
 
 | Symbol | Name                 | What it means                                                                                               | Values | Comes from                               | Status  |
 | ------ | -------------------- | ----------------------------------------------------------------------------------------------------------- | ------ | ---------------------------------------- | ------- |
-| `x_i`  | Server's form card   | Eight standardised attributes describing the man serving, as he was before this match                       | 8      | Computed from past matches               | Frozen  |
+| `x_i`  | Server's form card   | Eight standardised attributes describing the man serving, as he was when the tournament began               | 8      | Computed from past matches               | Frozen  |
 | `x_j`  | Returner's form card | The same eight attributes for the man receiving                                                             | 8      | Computed from past matches               | Frozen  |
 | `mu`   | Baseline             | Tour-average log-odds of winning a service point on this surface                                            | 1      | Learned, started at the observed average | Learned |
 | `a`    | Serve weights        | How much each attribute helps you when you are serving                                                      | 8      | Learned, started at zero                 | Learned |
@@ -278,8 +280,8 @@ tells you which style troubles which.
 
 ### What `mu` means, and the training-only season term (Run 1)
 
-The form cards are standardised against each season's own population, so `x = 0`
-always means "average for that season" and the cards carry no information about
+The form cards are standardised against the previous season's population, so
+`x = 0` always means "an average player of the time" and the cards carry no information about
 how good serving is in that era. That level lives only in `mu`. Fitted on every
 row since 1992, `mu` settles on the 33-year average, which by 2024 sat 1.2 to 1.6
 percentage points below the tour. Run 0 under-predicted serve on every surface by
@@ -359,8 +361,8 @@ error, actual - predicted          = +0.94    we were 0.94 points too low
 ```
 
 That single error figure drives every adjustment. **Every one of the 81 numbers
-in the clay model is nudged, on every single row.** The model does not choose which ones to change.
-It changes all of them at once, and each one's nudge follows the same rule:
+in the clay model is nudged, on every clay row.** The model does not choose which ones
+to change. It changes all of them at once, and each one's nudge follows the same rule:
 
 > **nudge = learning rate x how wrong we were x how involved that number was**
 
@@ -538,9 +540,9 @@ percentages, one for each man. Everything above that is repetition.
 
 The output is not a single prediction but a spread: *"Alcaraz finishes world
 number one in 48% of simulated seasons, and in the top four in 97% of them"* (Run 0, 2025).
-Substitute each real result as the season progresses and the spread narrows week
-by week, which is what "predicting the rankings throughout the season" actually
-means in practice.
+Substituting each real result as the season progresses would narrow the spread week
+by week, which is what "predicting the rankings throughout the season" would mean in
+practice; that mode is not built yet (see As built below).
 
 ### The surface baselines, which is where step 1 starts
 
@@ -552,9 +554,9 @@ means in practice.
 | Clay    | 61.9%                           | Slowest. Returners get more back    |
 
 
-Computed from the archive (every match with serve statistics, 2016 onward) rather than quoted
-from memory. Four percentage points
-separate clay from grass, which is a large gap at point level and an enormous one
+Computed from the archive (every match with serve statistics, 2016 onward) rather than
+quoted from memory. Four percentage points separate clay from grass, which is a large
+gap at point level and an enormous one
 by the time it compounds through a best-of-five match. It is the reason the model is
 fitted three times rather than once.
 
@@ -606,11 +608,11 @@ Nothing in it measures footwork, forehands or court position, so the model
 cannot learn them and does not claim to.
 - **Not able to predict injuries.** A retirement in week three wrecks an
 individual season forecast and there is no signal that would have warned of it.
-- **Not live.** The source archive stopped in May 2026, so the simulator replays
+- **Not live.** The source archive stops with Roland Garros 2026, so the simulator replays
 completed seasons rather than forecasting the current one.
 
-Each is stated here as a limitation rather than being quietly
-omitted. A model that says what it cannot do is easier to trust about what it can.
+Each is stated here as a limitation rather than being quietly omitted. A model that
+says what it cannot do is easier to trust about what it can.
 
 ---
 

@@ -6,7 +6,7 @@ This folder is the **versioned history** of the project's modelling work.
 
 | Run | Idea | Role |
 |---|---|---|
-| **Run 0** (`run0_baseline`) | First model trained: one surface baseline `μ` for all years | Baseline to beat |
+| **Run 0** (`run0_baseline`) | First model trained: one baseline `μ` per surface, fitted on all years | Baseline to beat |
 | **Run 1** (`run1_season_delta`) | Same prediction formula; train so `μ` = 2024 serve level | Improvement to compare against Run 0 |
 
 Both are **frozen**. Do not overwrite. New ideas become `run2_…`, `run3_…`.

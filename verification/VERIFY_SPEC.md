@@ -28,7 +28,8 @@ The 16 stat columns are, for side in (w, l): `{side}_svpt, {side}_1stIn, {side}_
 8. `duplicate`: among matches passing rules 1 to 7, a later row with the same
    `(tourney_id, winner_id, loser_id, round, score, w_svpt, l_svpt)` as an earlier row
    (file order: season file, then row order). The first row is kept.
-Flags on valid matches: `retired` := score contains `RET`; `defaulted` := score contains `DEF`.
+
+Flags on valid matches: `retired` := score contains `RET`; `defaulted` := score contains `DEF`.  
 `match_id` := `tourney_id + "#" + match_num`.
 
 ## 4. Appearances (the log)
@@ -101,8 +102,9 @@ result: there are no winner, loser, score, rank, name, seed or minutes columns, 
 rows of a match are ordered by `server_id`, never winner-first.
 
 ## 11. Other outputs
-`runs/cards.parquet`: one row per card (seasons 1991 onward): `player_id, tourney_date, season,
+
+- `runs/cards.parquet`: one row per card (seasons 1991 onward): `player_id, tourney_date, season,
 n_52w, n_10`, the 12 sums, `raw_*`, `shr_*`, `form, age, dob_missing, x_0..x_7`.
-`runs/constants.csv`: `season, attr, k, m_prior, mu, sigma, n_pop` (attr in serve, ace, df, ret,
+- `runs/constants.csv`: `season, attr, k, m_prior, mu, sigma, n_pop` (attr in serve, ace, df, ret,
 bps, bpc, form, age; k and m_prior are blank for form and age).
-`runs/build_report.md`: exclusion counts by rule, id merges, invalid DOBs, per-season counts.
+- `runs/build_report.md`: exclusion counts by rule, id merges, invalid DOBs, per-season counts.

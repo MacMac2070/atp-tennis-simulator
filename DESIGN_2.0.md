@@ -29,8 +29,8 @@ flowchart LR
 Before each match the model gets a short report on each player, describing him **as he was
 when the event began**. Eight numbers, built from his previous matches and scaled against
 last season's players, so that **0 means tour average** and 1 means one standard deviation
-above it. A player
-with only a handful of matches is pulled towards average rather than believed. Surface is not
+above it. A player with only a handful of matches is pulled towards average rather than
+believed. Surface is not
 on the card: Hard, Clay and Grass each get their own copy of the formula instead.
 
 | # | Attribute | Built from | Window |
@@ -86,7 +86,7 @@ $$
 | K | 200 | 50 | 250 | 300 | 200 | 350 |
 
 K is counted in the rate's own points: service points, return points or break points. The
-noisier the statistic, the bigger K, so the more a thin sample is pulled in. A player with no
+noisier the statistic, the bigger K, and the harder a thin sample is pulled towards average. A player with no
 history lands exactly on the tour average. **Form** is the shrunk last-10 serve rate minus the
 shrunk 52-week serve rate, so it stays at 0 until he has more than 10 matches in the window.
 
@@ -265,8 +265,8 @@ flowchart LR
 > [!NOTE]
 > **nudge = learning rate × how wrong we were × how involved that number was**
 
-With a learning rate of 0.001 and the prediction 0.94 points too low, every number is pushed up
-in proportion to its involvement:
+With a learning rate of 0.001 and the prediction 0.94 points too low, every number moves
+in proportion to its involvement (up where the involvement is positive, down where it is negative):
 
 | Number | Before | Involvement | Nudge | After |
 | --- | ---: | ---: | ---: | ---: |
@@ -322,8 +322,8 @@ season `train_through` + 1 (the first unseen season), and `train_through`.
 
 **Why Run 0 sits low.** The cards are standardised season by season, so they carry no
 "serving got easier" signal. The absolute level lives only in μ. Fit μ on every row from 1992
-onward and it settles near the 33-year average, about 1 to 1.5 percentage points below the
-mid-2020s tour, so the 2025 holdout reads systematically low.
+onward and it settles near the 33-year average, about 1.2 to 1.6 percentage points below the
+2024 tour, so the 2025 holdout reads systematically low.
 
 **What Run 1 does while training.** Each row's season supplies the whole intercept
 (`SeasonOffsets`): the model's μ is held at 0, and
@@ -359,7 +359,7 @@ flowchart TD
 
 **Why a full level per season rather than μ plus a small δ.** μ and a per-season δ are nearly
 interchangeable, so Adam crawls. One free intercept per season lets each year's rows set their
-own level. The season levels carry no penalty: even a light one, summed over about 30 seasons,
+own level. The season levels carry no penalty: even a light one, summed over 32 seasons,
 pulled the anchor measurably off its own data.
 
 **Why the anchor is the last training season.** The model will be asked about season T+1, and

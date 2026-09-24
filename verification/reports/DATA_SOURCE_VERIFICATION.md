@@ -89,12 +89,12 @@ conflict: a 2025 Davis Cup match tiebreak recorded as [8-10] in one source and [
 
 **Serve statistics: 2,084 matches.**
 - 997: Sackmann leaves the statistics blank and TML has numbers. The largest blocks are Roland
-  Garros 2026 (124, every round), the 1992 Olympics (63), Madrid Masters 2003 (47) and Moscow 1995
+  Garros 2026 (124 of its 127 matches, every round), the 1992 Olympics (63), Madrid Masters 2003 (47) and Moscow 1995
   (31); 185 are Davis Cup ties.
 - 236: the reverse, TML blank and Sackmann filled (including the 2012 Olympics, 63).
 - 851 (0.8% of matches): both have numbers and they disagree. The largest clusters are Australian
-  Open 2026 (114), US Open 2025 (100), Canada Masters 1995 (51) and the Düsseldorf team event in
-  most years from 1995 to 2012 (up to 26 each). In the recent Grand Slams the disagreement is in how
+  Open 2026 (114), US Open 2025 (100), Canada Masters 1995 (51) and, in aggregate, the Düsseldorf team
+  event (most years from 1995 to 2012, up to 26 each). In the recent Grand Slams the disagreement is in how
   points won are split between first and second serve. The combined service points won are
   identical in 104 of the 114 Australian Open 2026 matches but in only 55 of the 100 US Open 2025
   matches (at most 9 points apart).

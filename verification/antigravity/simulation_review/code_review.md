@@ -14,7 +14,7 @@ only and not kept.
 | 2 | Antigravity | `draws.py` `build_knockout` | A player could appear in two matches of one round, letting one feeder node feed two matches | Fixed: one match per player per round. Test added |
 | 3 | Antigravity | `draws.py` `build_knockout` | A two-round draw accepted a "bye" straight into the final | Fixed: byes only into a second round that is not the final. Test added |
 | 4 | Antigravity | `draws.py` `build_knockout` | Two bye players could meet in their first match | Fixed: raises, as it means a first-round result is missing. Test added |
-| 5 | Antigravity | `draws.py` `build_knockout` | One missing first-round row became a fifth bye and a 27 draw (caught later by the points table, not by the rebuild) | Fixed: odd draw sizes raise. Test added |
+| 5 | Antigravity | `draws.py` `build_knockout` | One missing first-round row became a fifth bye and a 27-player draw (caught later by the points table, not by the rebuild) | Fixed: odd draw sizes raise. Test added |
 | 6 | ecc | `report.py` `weekly_table` | The ledger walk relied on `groupby`'s default sort order | Fixed: dates sorted explicitly |
 | 7 | ecc | `report.py` `write_run` | `groupby.apply(include_groups=False)` needs pandas 2.2; `requirements.txt` allows 2.0 | Fixed: replaced by a plain column aggregation |
 | 8 | Antigravity | `report.py` summary | "Where it misses" could list a player twice with fewer than 8 in the top 20 | Fixed: de-duplicated |

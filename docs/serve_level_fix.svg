@@ -96,7 +96,7 @@
   <!-- ===== Panel: where mu lands (hard courts) ===== -->
   <rect x="40" y="404" width="560" height="200" rx="18" fill="#fff" stroke="#e1e5e3" filter="url(#sh)"/>
   <text x="64" y="438" font-size="17" font-weight="700" fill="#1f2a26">Where mu lands · hard courts</text>
-  <text x="64" y="460" font-size="13" fill="#5b6661">tour service points won, per hundred</text>
+  <text x="64" y="460" font-size="13" fill="#5b6661">tour service points won, per hundred (the level each mu stands for)</text>
 
   <!-- axis 61 .. 67 mapped to x 90 .. 570 (80 px per point) -->
   <line x1="90" y1="540" x2="570" y2="540" stroke="#c9cfcc" stroke-width="2"/>
@@ -121,5 +121,5 @@
   <rect x="40" y="628" width="1160" height="96" rx="18" fill="#eef1ef" stroke="#e1e5e3"/>
   <text x="64" y="660" font-size="14" font-weight="700" fill="#1f2a26">Why the cards cannot fix this on their own</text>
   <text x="64" y="684" font-size="13" fill="#3d4743">Form cards are standardised season by season, so x = 0 always means "average for its era". They carry no information about how good serving is in that era.</text>
-  <text x="64" y="706" font-size="13" fill="#3d4743">That level lives only in mu. Anchoring mu on the last training season (2024) closes the gap; the further rise in 2026 happened after the cutoff and stays as honest drift.</text>
+  <text x="64" y="706" font-size="13" fill="#3d4743">That level lives only in mu. Anchoring mu on 2024, the last training season, closes the gap; the 2026 rise came after the cutoff and stays as drift.</text>
 </svg>

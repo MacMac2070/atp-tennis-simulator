@@ -29,7 +29,7 @@ python scripts/evaluate_model.py --rows runs/rows.parquet --model artifacts/mode
 ## Holdout results (Run 0)
 
 `bias = predicted − actual` (negative ⇒ under-predicts serve).  
-`constant` = always guess that surface’s training-era serve rate.
+`constant` = always guess that surface's training-era serve rate.
 
 ### Hard (training-era rate 0.6327)
 

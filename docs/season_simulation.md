@@ -1,7 +1,7 @@
 # Season simulation: how it works and what it found
 
-**In one line:** the 2025 season is replayed 10,000 times with its real draws, once per
-frozen serve model, and the two replays are scored against what actually happened.
+**In one line:** the 2025 season is replayed 10,000 times with its real draws for each
+of the two frozen serve models, and both sets of replays are scored against what actually happened.
 
 The prediction formula does not change. The simulator only consumes it:
 `z = mu + a·x_i - b·x_j + x_iᵀ W x_j`, per surface, exactly as in `DESIGN_2.0.md` §2.
@@ -96,10 +96,11 @@ Three findings:
 2. **Run 1 is the better model on most scores:** match log loss overall, on hard and clay and in every
    tournament category, tournament log loss, Spearman and rank error. Anchoring `mu` on 2024
    fixed the serve level, and the match odds improved with it. It is slightly worse on
-   grass match log loss (0.6575 against 0.6550) and puts the real champion in its top three
-   less often (27 events against 31).
+   grass match log loss (0.6575 against 0.6550), less accurate on grass (60.7% against 62.0%),
+   ATP 250 and ATP 500 matches, and puts the real champion in its top three less often (27
+   events against 31).
 3. **Run 1 is wrong about the year-end #1.** It rates Sinner so highly that he finishes
-   first in 71% of simulated seasons, when Alcaraz did. Run 0's Alcaraz call came with an
+   first in 71% of simulated seasons, but Alcaraz was the real year-end #1. Run 0's Alcaraz call came with an
    odd rating of De Minaur, who averages 8,075 simulated points against 4,090 real ones.
    Being right about one player is weak evidence; the aggregate scores are the fairer test.
 
@@ -119,21 +120,24 @@ figures within Monte Carlo noise.
   into later cards. This is an A/B test of the serve model, not a closed fantasy season.
 - Every real entrant plays and nobody else; injuries, withdrawals and retirements are not
   simulated, and every match is played to a finish.
-- Every simulated event counts in full: no best-19 rule, mandatory events or protected
-  rankings, and no Challenger, United Cup or Davis Cup points. That is why year-end results
+- Every simulated event counts in full: no best-19 rule, mandatory-event zero-pointers or
+  protected rankings, and no Challenger, qualifying or United Cup points. That is why year-end results
   are compared with the same-table actual race first and the official ranking second.
 - ATP Finals groups are the real ones; games won % is not simulated, so an unbroken
   three-way group tie falls to the entry ranking.
 
 ## Reproduce
 
+These write to `runs/` (gitignored), so the frozen results under `artifacts/simulations/` are
+never overwritten; every CSV file and `metrics.json` should match them byte for byte.
+
 ```bash
 python scripts/simulate_season.py --model artifacts/models/run0_baseline/model.pt \
-    --season 2025 --n-sims 10000 --seed 42 --out artifacts/simulations/run0_baseline/season_2025/
+    --season 2025 --n-sims 10000 --seed 42 --out runs/simulations/run0_baseline/season_2025/
 python scripts/simulate_season.py --model artifacts/models/run1_season_delta/model.pt \
-    --season 2025 --n-sims 10000 --seed 42 --out artifacts/simulations/run1_season_delta/season_2025/
-python scripts/compare_simulations.py --season 2025 \
-    artifacts/simulations/run0_baseline artifacts/simulations/run1_season_delta
+    --season 2025 --n-sims 10000 --seed 42 --out runs/simulations/run1_season_delta/season_2025/
+python scripts/compare_simulations.py --season 2025 --out runs/simulations/simulations_2025.md \
+    runs/simulations/run0_baseline runs/simulations/run1_season_delta
 ```
 
 Each run takes about ten seconds.

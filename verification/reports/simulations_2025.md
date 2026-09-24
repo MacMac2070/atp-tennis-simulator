@@ -80,7 +80,7 @@ Same-table actual = the real 2025 results of the same events scored with the sim
 
 ## Rankings through the season
 
-Mean absolute gap between simulated mean rank and official rank, official top 20, last ranking of each month. The same-table column is the floor set by the simplified ranking rules alone.
+Mean absolute gap between simulated mean rank and official rank, official top 20, last ranking of each month. The same-table column is the part the simplified ranking rules alone explain.
 
 | Month | run0_baseline | run1_season_delta | Same-table |
 |---|---:|---:|---:|

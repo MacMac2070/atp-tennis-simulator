@@ -2,11 +2,12 @@
 """Simulate one season with one frozen serve model (DESIGN.md §10).
 
     python scripts/simulate_season.py --model artifacts/models/run0_baseline/model.pt \\
-        --season 2025 --n-sims 10000 --seed 42 --out artifacts/simulations/run0_baseline/season_2025/
+        --season 2025 --n-sims 10000 --seed 42 --out runs/simulations/run0_baseline/season_2025/
 
 Run it once per model with the same --season, --n-sims and --seed. The events, draws, form
 cards and random numbers are then identical, so any difference between the two output
-folders comes from the model alone.
+folders comes from the model alone. Write to runs/ (gitignored) so the frozen results under
+artifacts/simulations/ stay untouched.
 """
 
 from __future__ import annotations
