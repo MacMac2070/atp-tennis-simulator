@@ -390,6 +390,9 @@ non-commercial, attribution required, share-alike. The original repository was w
 2026; `fetch_data.sh` downloads an archival mirror of the same files, which are not
 redistributed here. Full provenance: `DESIGN.md` [§13](DESIGN.md#13-data-provenance).
 
+The code in this repository is released under the [MIT licence](LICENSE); the match data keeps
+its own CC BY-NC-SA 4.0 licence above.
+
 ---
 
 *Data originally compiled by Jeff Sackmann (Tennis Abstract), used under CC BY-NC-SA 4.0 via an
