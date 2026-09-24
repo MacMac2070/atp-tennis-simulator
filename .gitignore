@@ -1,8 +1,8 @@
-# Match data is 113MB and is redistributed under CC BY-NC-SA 4.0.
-# Do not commit it. fetch_data.sh reproduces it.
+# Match data (over 100 MB, licensed CC BY-NC-SA 4.0). Do not commit it;
+# fetch_data.sh downloads it.
 data/
 
-# External verification mirrors (TennisMyLife etc.) — download, do not commit
+# External verification mirrors (TennisMyLife etc.): download, do not commit
 verification/external/
 
 # Python

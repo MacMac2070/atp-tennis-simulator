@@ -1,6 +1,6 @@
-# Artefacts — model runs and simulations
+# Artefacts: model runs and simulations
 
-This folder is the **versioned history** of the project’s modelling work.
+This folder is the **versioned history** of the project's modelling work.
 
 ## The story
 
@@ -18,7 +18,6 @@ artifacts/
   models/
     run0_baseline/     model.pt + README.md
     run1_season_delta/ model.pt + README.md
-    archive/           side cuts (e.g. train-through 2023)
   simulations/
     run0_baseline/     README.md + season_2025/ (10,000 seasons with Run 0 weights)
     run1_season_delta/ README.md + season_2025/ (same seasons, Run 1 weights)
@@ -38,25 +37,28 @@ verification/reports/
   run1_season_delta/eval.md
 ```
 
-Shared training table (large, gitignored): `runs/rows.parquet`.
+Shared training table (large, gitignored; built by `scripts/build_rows.py`): `runs/rows.parquet`.
 
 ## Comparing runs
 
-Same simulator, different `--model`:
+Same simulator, different `--model`. To reproduce the frozen runs without touching them,
+write into `runs/` (gitignored):
 
 ```bash
 python scripts/simulate_season.py --model artifacts/models/run0_baseline/model.pt \
-    --season 2025 --n-sims 10000 --seed 42 --out artifacts/simulations/run0_baseline/season_2025/
+    --season 2025 --n-sims 10000 --seed 42 --out runs/simulations/run0_baseline/season_2025/
 python scripts/simulate_season.py --model artifacts/models/run1_season_delta/model.pt \
-    --season 2025 --n-sims 10000 --seed 42 --out artifacts/simulations/run1_season_delta/season_2025/
-python scripts/compare_simulations.py --season 2025 \
-    artifacts/simulations/run0_baseline artifacts/simulations/run1_season_delta
+    --season 2025 --n-sims 10000 --seed 42 --out runs/simulations/run1_season_delta/season_2025/
+python scripts/compare_simulations.py --season 2025 --out runs/simulations/simulations_2025.md \
+    runs/simulations/run0_baseline runs/simulations/run1_season_delta
 ```
 
-Use the **same seeds / draws** so only the serve model changes. `compare_simulations.py`
-refuses runs that differ in season, seed, simulation count or code commit.
+Every CSV file and `metrics.json` should match the frozen copies byte for byte. Keep the
+season, seed and simulation count the same so only the serve model changes:
+`compare_simulations.py` refuses runs that differ in season, seed, simulation count or code
+commit. A new run that is kept gets its own `run2_…` folder here.
 
 ## Default working copy
 
-`runs/model.pt` may point at the current favourite for quick scripts.
+`runs/model.pt` (local, gitignored) may hold a copy of the current favourite for quick scripts.
 Canonical history is always under `artifacts/models/run*/`.

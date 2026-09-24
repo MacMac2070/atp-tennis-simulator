@@ -33,7 +33,7 @@ def test_small_draw_with_byes():
     assert sorted(ko.entrants.tolist()) == [1, 2, 3, 4, 5, 6]
     assert {int(p) for p in ko.entrants[ko.had_bye]} == {1, 2}
     assert ko.node_round.tolist() == [0, 0, 1, 1, 2]
-    # SF 1 v 3: player 1 enters by bye, player 3 is the winner of node 0
+    # SF 1 vs 3: player 1 enters by bye, player 3 is the winner of node 0
     assert set(zip(ko.side[2].tolist(), ko.side_is_entry[2].tolist())) == {(pid[1], True), (0, False)}
     # the final is fed by the two semi-final nodes
     assert sorted(ko.side[4].tolist()) == [2, 3] and not ko.side_is_entry[4].any()

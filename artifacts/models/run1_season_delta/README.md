@@ -1,6 +1,6 @@
-# Run 1 — serve level anchored on the last training season
+# Run 1: serve level anchored on the last training season
 
-Frozen snapshot of the second train + holdout eval. One change against Run 0.
+Frozen snapshot of the second train + holdout eval. One modelling change against Run 0, plus a learning-rate cool-down (see Recipe).
 
 | Item | Value |
 |---|---|
@@ -26,4 +26,4 @@ python scripts/evaluate_model.py --rows runs/rows.parquet \
 
 Do not overwrite these files.
 
-Simulation outputs: `artifacts/simulations/run1_season_delta/` (the 2025 season, 10,000 runs).
+Simulation outputs: `artifacts/simulations/run1_season_delta/` (the 2025 season simulated 10,000 times).

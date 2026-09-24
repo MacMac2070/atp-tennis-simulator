@@ -1,4 +1,4 @@
-# Run 0 — baseline bilinear serve model
+# Run 0: baseline bilinear serve model
 
 Frozen snapshot of the first full train + holdout eval.
 
@@ -12,4 +12,4 @@ Frozen snapshot of the first full train + holdout eval.
 
 Do not overwrite these files. Later runs go in `run1_…`, `run2_…`.
 
-Simulation outputs: `artifacts/simulations/run0_baseline/` (the 2025 season, 10,000 runs).
+Simulation outputs: `artifacts/simulations/run0_baseline/` (the 2025 season simulated 10,000 times).

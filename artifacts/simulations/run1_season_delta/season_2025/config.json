@@ -10,7 +10,13 @@
   "code": {
     "commit": "224f5036636af002d6b81f94cbdeb6c7e37ab76f",
     "branch": "Claude-attempt",
-    "code_uncommitted": true
+    "code_uncommitted": true,
+    "committed_as": "f7bc0eca5f03af90d9528b37c42b384bb8428336",
+    "reproduced": {
+      "date": "2026-09-24",
+      "commit": "ec2841784b8f08f8e7446b3d4b666828ec488b60",
+      "result": "every CSV file and metrics.json byte-identical to this run"
+    }
   },
   "created_utc": "2026-09-23T02:51:16+00:00",
   "first_event": "2024-12-30",

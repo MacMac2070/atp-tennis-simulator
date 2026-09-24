@@ -36,6 +36,6 @@ Three durations differ by one minute; the model does not use duration.
 
 TML matches the ATP website exactly here, so TML is scraping atptour.com. But the ATP numbers are not
 believable for these Grand Slam matches (95% of first serves in, "0 service games played"), while
-Sackmann's are plausible. Grand Slams are run by the ITF, not the ATP, and the ATP site's Slam feed
-looks faulty. Total serve points won is the same in both (60 for Hijikata), so the effect on the
+Sackmann's are plausible. Grand Slams are not run by the ATP (they are sanctioned by the ITF), and the ATP site's Slam feed
+looks faulty. Total service points won is the same in both (60 for Hijikata), so the effect on the
 model's target is a few service points per match. The true figures would need the Slam's own site.

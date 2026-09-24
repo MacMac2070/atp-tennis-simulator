@@ -38,7 +38,7 @@
   <rect x="220" y="304" width="200" height="48" rx="12" fill="#3f7a3c"/>
   <text x="320" y="333" font-size="14" font-weight="700" fill="#fff" text-anchor="middle">z → p = 1/(1+e^−z)</text>
   <line x1="64" y1="270" x2="580" y2="270" stroke="#e1e5e3" stroke-width="1"/>
-  <text x="64" y="370" font-size="12" fill="#8a3a2a" font-weight="600">Result on 2025: about 1.5 pp too low on every surface</text>
+  <text x="64" y="370" font-size="12" fill="#8a3a2a" font-weight="600">Result on 2025: 1 to 1.5 pp too low on every surface</text>
 
   <!-- ===== Panel: Run 1 training ===== -->
   <rect x="640" y="110" width="560" height="270" rx="18" fill="#fff" stroke="#e1e5e3" filter="url(#sh)"/>
@@ -96,7 +96,7 @@
   <!-- ===== Panel: where mu lands (hard courts) ===== -->
   <rect x="40" y="404" width="560" height="200" rx="18" fill="#fff" stroke="#e1e5e3" filter="url(#sh)"/>
   <text x="64" y="438" font-size="17" font-weight="700" fill="#1f2a26">Where mu lands · hard courts</text>
-  <text x="64" y="460" font-size="13" fill="#5b6661">tour serve points won, per hundred</text>
+  <text x="64" y="460" font-size="13" fill="#5b6661">tour service points won, per hundred</text>
 
   <!-- axis 61 .. 67 mapped to x 90 .. 570 (80 px per point) -->
   <line x1="90" y1="540" x2="570" y2="540" stroke="#c9cfcc" stroke-width="2"/>
@@ -120,6 +120,6 @@
   <!-- footer -->
   <rect x="40" y="628" width="1160" height="96" rx="18" fill="#eef1ef" stroke="#e1e5e3"/>
   <text x="64" y="660" font-size="14" font-weight="700" fill="#1f2a26">Why the cards cannot fix this on their own</text>
-  <text x="64" y="684" font-size="13" fill="#3d4743">Form cards are standardised per season, so x = 0 always means "average for that year". They carry no information about how good serving is in that year.</text>
+  <text x="64" y="684" font-size="13" fill="#3d4743">Form cards are standardised season by season, so x = 0 always means "average for its era". They carry no information about how good serving is in that era.</text>
   <text x="64" y="706" font-size="13" fill="#3d4743">That level lives only in mu. Anchoring mu on the last training season (2024) closes the gap; the further rise in 2026 happened after the cutoff and stays as honest drift.</text>
 </svg>

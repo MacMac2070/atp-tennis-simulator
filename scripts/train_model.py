@@ -79,7 +79,7 @@ def main() -> None:
         print(f"  {surface}: " + "  ".join(f"{s}={d[s]:+.3f}" for s in dict.fromkeys(picks)))
 
     print("\nTerm magnitudes on the TRAINING rows (mean |contribution|); "
-          "run scripts/evaluate_model.py for the held-out seasons:")
+          "run scripts/evaluate_model.py for the holdout seasons:")
     for surface, b in batches.items():
         stats = evaluate_terms(bundle.surfaces[surface], b["x_i"], b["x_j"])
         print(f"  {surface}: {stats}")

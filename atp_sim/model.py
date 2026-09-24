@@ -1,4 +1,4 @@
-"""Bilinear serve model (design §§6–9).
+"""Bilinear serve model (DESIGN.md §§6 to 9).
 
     z = mu + a·x_i - b·x_j + x_iᵀ W x_j
     p = sigmoid(z)
@@ -8,7 +8,7 @@ Form cards are frozen inputs. Only mu, a, b, W are learned.
 
 Training only (Run 1): z = mu + delta[season] + ... with delta fixed at 0 for the last
 training season, so mu is that season's level rather than the all-era average. The cards
-are standardised per season and carry no level of their own. `SeasonOffsets` holds delta;
+are standardised per season and carry no level of their own. `SeasonOffsets` holds the per-season levels behind delta;
 it is never saved, so the model above is unchanged at prediction time.
 """
 
@@ -174,7 +174,7 @@ def regularised_loss(
     l2_ab: float = 1e-4,
     l2_W: float = 1e-2,
 ) -> torch.Tensor:
-    """Per-point NLL plus heavy L2 on W (design §7) and light L2 on a, b.
+    """Per-point NLL plus heavy L2 on W (DESIGN.md §7) and light L2 on a, b.
 
     Season levels (`SeasonOffsets`) are deliberately not regularised: each rests on
     thousands of rows, and even a light penalty summed over thirty seasons pulls the
@@ -189,6 +189,6 @@ def regularised_loss(
 
 
 def init_mu_from_rate(serve_win_rate: float) -> float:
-    """mu starts at the observed tour-average log-odds (design §7)."""
+    """mu starts at the observed tour-average log-odds (DESIGN.md §7)."""
     rate = min(max(serve_win_rate, 1e-4), 1 - 1e-4)
     return float(torch.logit(torch.tensor(rate)))

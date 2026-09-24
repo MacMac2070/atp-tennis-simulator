@@ -3,7 +3,8 @@
 Two independent read-only reviews of `atp_sim/{match,points,draws,season,report}.py`,
 `scripts/simulate_season.py` and the tests, before the final runs: Antigravity (Gemini 3.5,
 conversation `f5bc1710-5083-4d3a-80c6-62862ec4ac58`) and the ecc `python-reviewer` agent.
-Neither reviewer was shown the separate Cursor implementation on `Cursor-attempt`.
+Neither reviewer was shown the second simulator, which was built separately for comparison
+only and not kept.
 
 ## Findings and what was done
 
@@ -23,9 +24,9 @@ Neither reviewer was shown the separate Cursor implementation on `Cursor-attempt
 
 ## Checked by the reviewers and found sound
 
-Tennis recursions (probability conservation to 1e-15, serve order, 10-point Slam decider),
+Tennis recursions (probability conservation to 1e-15, serve order, 10-point Grand Slam decider),
 points and the bye rule, common random numbers (a match slot's random number is identical
-in every run), ATP Finals set counting and tie-breaks, the 52-week window, rank ties, int16
+in every run), ATP Finals set counting and group tie-breaks, the 52-week window, rank ties, int16
 points, fancy-index assignments, and the card merge.
 
 ## Effect on the results

@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-"""Simulate one season with one frozen serve model (design §10).
+"""Simulate one season with one frozen serve model (DESIGN.md §10).
 
     python scripts/simulate_season.py --model artifacts/models/run0_baseline/model.pt \\
         --season 2025 --n-sims 10000 --seed 42 --out artifacts/simulations/run0_baseline/season_2025/

@@ -25,9 +25,18 @@ from .draws import NO_RANK, WALKOVER_RE
 from .season import PreparedEvent, SeasonSims, competition_ranks, ledger_at
 
 __all__ = [
-    "LIMITATIONS", "match_metrics", "match_table", "official_rankings", "season_metrics",
+    "CATEGORY_NAMES", "DISPLAY_NAMES", "LIMITATIONS", "display_name", "match_metrics", "match_table", "official_rankings", "season_metrics",
     "tournament_table", "weekly_table", "write_run", "year_end_table",
 ]
+
+# Raw archive names that read wrongly in a report. The CSV files keep the raw names.
+DISPLAY_NAMES = {"Us Open": "US Open", "Tour Finals": "ATP Finals"}
+CATEGORY_NAMES = {"G": "Grand Slam", "M": "Masters 1000", "500": "ATP 500", "250": "ATP 250", "F": "ATP Finals"}
+
+
+def display_name(name: str) -> str:
+    return DISPLAY_NAMES.get(name, name)
+
 
 LIMITATIONS = [
     "Form cards are frozen at each event's real start date and built from real results only; "
@@ -37,10 +46,10 @@ LIMITATIONS = [
     "simulated, and every match is played to a finish. Real walkovers are simulated as matches.",
     "Ranking rules are simplified: every simulated event counts in full. No best-19 rule, "
     "mandatory-event zero-pointers or protected rankings, and no points from Challengers, "
-    "qualifying, the United Cup or Davis Cup. Year-end figures are therefore compared with the "
+    "qualifying or the United Cup. Year-end figures are therefore compared with the "
     "same-table actual race first and the official ranking second.",
     "ATP Finals: the real 2025 groups are fixed (qualification is not simulated). Groups are "
-    "ordered by wins, head-to-head and sets won %; games won % is not simulated, so an unbroken "
+    "ordered by wins, head-to-head and percentage of sets won; percentage of games won is not simulated, so an unbroken "
     "three-way tie falls to the ranking at entry.",
     "Points enter the ledger on the Monday after the event's estimated last day and drop 52 weeks "
     "later. The 2024 part of the ledger is the real 2024 results scored with the same table.",
@@ -56,8 +65,8 @@ def _pct(x: float) -> str:
 def official_rankings(data_dir: str, start: pd.Timestamp, end: pd.Timestamp) -> pd.DataFrame:
     """Official ATP rankings between two dates: ranking_date, rank, player_id, points.
 
-    The file lists a few players twice on one date (e.g. 208147 at 860 and 1658 from
-    December 2025). The better rank is kept; the number dropped is in attrs["duplicates_dropped"].
+    The file lists a few players twice on one date (e.g. 208147 at 860 and 1658 on
+    29 December 2025). The better rank is kept; the number dropped is in attrs["duplicates_dropped"].
     """
     path = os.path.join(data_dir, "atp_rankings_20s.csv")
     r = pd.read_csv(path)
@@ -323,7 +332,7 @@ def write_run(
 
 def _summary(config, metrics, mt, tt, ye, weekly_mae) -> str:
     mm, tm, sm = metrics["match"], metrics["tournament"], metrics["season"]
-    L = [f"# Season {config['season']} simulation: {config['run']}", "",
+    L = [f"# Season {config['season']} simulation: `{config['run']}`", "",
          f"Model `{config['model']}` (trained through {config['train_through']}). "
          f"{config['n_sims']:,} simulated seasons, seed {config['seed']}. "
          f"Season = the {config['season']} file year, events dated {config['first_event']} to {config['last_event']}.", "",
@@ -343,21 +352,21 @@ def _summary(config, metrics, mt, tt, ye, weekly_mae) -> str:
     L += _md_table(["", "Matches", "Accuracy", "Log loss", "Brier", "Higher-ranked player wins"],
                    [mrow("All", mm)]
                    + [mrow(k, v) for k, v in metrics["match_by_surface"].items()]
-                   + [mrow(k, v) for k, v in metrics["match_by_category"].items()])
-    L += ["", "A coin flip scores a log loss of 0.6931. Calibration, favourite's predicted chance against "
+                   + [mrow(CATEGORY_NAMES.get(k, k), v) for k, v in metrics["match_by_category"].items()])
+    L += ["", "A coin flip scores a log loss of 0.6931. Calibration, the favourite's predicted chance against "
           "how often the favourite won:", ""]
     L += _md_table(["Favourite's chance", "Matches", "Predicted", "Won"],
-                   [[str(r.bin), f"{r.n:,}", _pct(r.predicted) if r.n else "", _pct(r.actual) if r.n else ""]
+                   [[f"{max(r.bin.left, 0.5):.0%} to {r.bin.right:.0%}", f"{r.n:,}", _pct(r.predicted) if r.n else "", _pct(r.actual) if r.n else ""]
                     for r in _calibration(mt).itertuples(index=False)])
     L += ["", "## Tournament level", "",
-          f"Real champion was the simulation's favourite in {tm['actual_champion_is_modal']} of {tm['events']} events "
-          f"and in its top three in {tm['actual_champion_in_top3']}. Mean simulated chance of the real champion "
+          f"The real champion was the simulation's favourite in {tm['actual_champion_is_modal']} of {tm['events']} events "
+          f"and in its top three in {tm['actual_champion_in_top3']}. The mean simulated chance of the real champion was "
           f"{_pct(tm['mean_p_actual_champion'])}.", ""]
     big = tt[tt["category"].isin(["G", "M", "F"])]
     L += _md_table(["Event", "Real champion", "Sim. chance", "Position", "Sim. favourite", "Chance"],
-                   [[r.name, r.actual_champion, _pct(r.p_actual_champion), r.actual_champion_position,
+                   [[display_name(r.name), r.actual_champion, _pct(r.p_actual_champion), r.actual_champion_position,
                      r.modal_champion, _pct(r.p_modal_champion)] for r in big.itertuples(index=False)])
-    L += ["", "Slams, Masters and the ATP Finals shown; every event is in `tournaments.csv`.", "",
+    L += ["", "Grand Slams, Masters 1000 and the ATP Finals are shown; every event is in `tournaments.csv`.", "",
           "## Year-end top 10", "",
           "Sorted by mean simulated points. Same-table actual = the real 2025 results of the same events, "
           "scored with the simulator's points table. Official = ATP ranking of 2025-12-29.", ""]
@@ -385,7 +394,7 @@ def _summary(config, metrics, mt, tt, ye, weekly_mae) -> str:
     months = weekly_mae.copy()
     months.index = pd.to_datetime(months.index)
     monthly = months.resample("MS").last()
-    L += _md_table(["Month", "Simulated v official", "Same-table v official"],
+    L += _md_table(["Month", "Simulated vs official", "Same-table vs official"],
                    [[d.strftime("%b %Y"), f"{r.sim_vs_official:.1f}", f"{r.same_table_vs_official:.1f}"]
                     for d, r in monthly.iterrows()])
     top20 = ye[ye["official_rank"] <= 20].copy()
@@ -402,7 +411,7 @@ def _summary(config, metrics, mt, tt, ye, weekly_mae) -> str:
           "| File | Contents |", "|---|---|",
           "| `config.json` | Season, seed, simulation count, model path and hash, code commit, event counts |",
           "| `metrics.json` | Every headline number on this page, machine-readable |",
-          "| `matches.csv` | One row per real match: both serve probabilities, P(real winner), scores |",
+          "| `matches.csv` | One row per real match: both serve probabilities, P(real winner), log loss and Brier score |",
           "| `tournaments.csv` | One row per event: real champion, simulated chance, simulated favourite |",
           "| `rankings_year_end.csv` | One row per player: simulated points and rank distribution, same-table and official |",
           "| `rankings_weekly.csv` | Official top 30 on each ranking Monday: simulated, same-table and official rank |",

@@ -4,7 +4,7 @@
 frozen serve model, and the two replays are scored against what actually happened.
 
 The prediction formula does not change. The simulator only consumes it:
-`z = mu + a·x_i - b·x_j + x_iᵀ W x_j`, per surface, exactly as in `DESIGN.md` §6.
+`z = mu + a·x_i - b·x_j + x_iᵀ W x_j`, per surface, exactly as in `DESIGN_2.0.md` §2.
 
 ---
 
@@ -12,7 +12,7 @@ The prediction formula does not change. The simulator only consumes it:
 
 ```mermaid
 flowchart TD
-    C["Form cards<br/>each entrant on the morning of the event<br/><code>season.entrant_cards</code>"] --> M
+    C["Form cards<br/>each entrant as of the event's start date<br/><code>season.entrant_cards</code>"] --> M
     M["Serve model, frozen<br/>P(i wins a point serving to j)<br/><code>SurfaceBundle.predict</code>"] -->|"every pairing in the draw"| X
     X["Point to match, exact maths<br/>games, tiebreaks, sets, best of 3 or 5<br/><code>match.p_match</code>"] -->|"win-probability matrix"| T
     D["Real draw rebuilt from results<br/>byes, walkovers, Finals groups<br/><code>draws.build_knockout</code>"] --> T
@@ -43,33 +43,33 @@ difference in match odds, because it is applied to every point of every game of 
 |---:|---:|---:|---:|
 | 62% | 62% | 50.0% | 50.0% |
 | 65% | 58% | 81.4% | 86.8% |
-| 64% | 62% | 59.9% | |
+| 64% | 62% | 59.9% | 62.4% |
 
 These are exact: games, tiebreaks (serve order A, BB, AA, ...), sets and matches are
 recursions, not simulations, and a point-by-point Monte Carlo replay of 20,000 matches is
 the independent check in `tests/test_match.py`. The 10-point deciding-set tiebreak at the
-Slams is included. Who serves first turns out not to matter, which the tests confirm.
+Grand Slams is included. Who serves first turns out not to matter, which the tests confirm.
 
 ### 3. The draws are rebuilt from the results
 
 The archive has results, not draw sheets. But in a knockout draw every player in a round
 either won a match in the round before or had a bye, so linking each match to the two it
 was fed by recovers the exact tree. All 60 events of 2025 rebuild, and the check raises on
-anything that does not fit. The csv's own `draw_size` is not trusted: it is wrong for 39
+anything that does not fit. The CSV's own `draw_size` is not trusted: it is wrong for 39
 events in 2024.
 
 ### 4. Points and the ledger
 
 The 2025 ATP table by category, draw size and round, with the bye rule (a bye then a loss
-scores first-round points) and the ATP Finals (200 per group win, 400 for the semi-final,
-500 for the final). Checked independently in
+scores first-round points) and the ATP Finals (200 per group win, 400 for winning the semi-final,
+500 for winning the final). Checked independently in
 `verification/antigravity/simulation_review/points_table_check.md`, and against reality:
 scoring the real 2025 results with this table reproduces Alcaraz's 12,050 and Sinner's
 11,500 official year-end points exactly.
 
 ### 5. Repeat, with the same dice
 
-Every match slot of every event has its own random number, fixed by the seed. Both models
+Every match slot of every event has its own random numbers, fixed by the seed. Both models
 face exactly the same dice, like a wind tunnel run twice with identical gusts, so any
 difference between the two result folders is the model's.
 
@@ -84,17 +84,17 @@ difference between the two result folders is the model's.
 | Real champion was the favourite | 15 of 60 | 17 of 60 | |
 | Real champion in the top three | **31 of 60** | 27 of 60 | |
 | Most likely year-end #1 | Alcaraz, 47.7% | Sinner, 70.9% | Alcaraz |
-| Rank error, official top 20 | 7.5 | **6.6** | |
+| Rank error vs same-table, official top 20 | 7.5 | **6.6** | |
 
 Three findings:
 
 1. **Both models are overconfident.** When Run 0 makes a player a 95% favourite he wins 81%
-   of the time; Run 1 manages 87%. That is why both lose to "the higher-ranked player wins"
-   on accuracy. The gearbox is the reason: it magnifies any error in the serve percentages,
-   and the model treats its estimates as exact. Allowing for that uncertainty would pull
-   every match probability towards 50%.
-2. **Run 1 is the better model on most scores:** match log loss overall and on hard, clay,
-   Slams and Masters, tournament log loss, Spearman and rank error. Anchoring `mu` on 2024
+   of the time; Run 1 manages 87%. The gearbox is the reason: it magnifies any error in the serve
+   percentages, and the model treats its estimates as exact. Allowing for that uncertainty
+   would pull every match probability towards 50%. That would improve log loss but not
+   accuracy, where both trail "the higher-ranked player wins" (61.0% and 61.6% against 64.3%).
+2. **Run 1 is the better model on most scores:** match log loss overall, on hard and clay and in every
+   tournament category, tournament log loss, Spearman and rank error. Anchoring `mu` on 2024
    fixed the serve level, and the match odds improved with it. It is slightly worse on
    grass match log loss (0.6575 against 0.6550) and puts the real champion in its top three
    less often (27 events against 31).
@@ -107,8 +107,9 @@ Full tables: `verification/reports/simulations_2025.md`, and each run's
 `artifacts/simulations/run*/season_2025/summary.md`.
 
 **An independent check.** A second simulator was built separately from the same brief, without
-sharing any code. It gave the same win probability for every one of the 2,622 real matches to
-four decimal places, and the same title and year-end figures within Monte Carlo noise.
+sharing any code, for comparison only; it was not kept. It gave the same win probability for
+every one of the 2,622 real matches to four decimal places, and the same title and year-end
+figures within Monte Carlo noise.
 
 ---
 

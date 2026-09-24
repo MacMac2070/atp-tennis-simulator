@@ -21,7 +21,7 @@ ROOT = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 if ROOT not in sys.path:
     sys.path.insert(0, ROOT)
 
-from atp_sim.report import LIMITATIONS
+from atp_sim.report import CATEGORY_NAMES, LIMITATIONS, display_name
 
 
 def _pct(x: float) -> str:
@@ -62,14 +62,28 @@ def check_comparable(runs: list[dict]) -> None:
         sys.exit("Two runs used the same model file.")
 
 
+def _code_note(code: dict) -> str:
+    """One sentence on the code the runs came from, as recorded in config.json."""
+    if code.get("committed_as"):
+        s = (f"Code: commit `{code['committed_as'][:7]}`. The runs were made on this code just "
+             "before it was committed")
+        rep = code.get("reproduced")
+        if rep:
+            d = pd.Timestamp(rep["date"])
+            s += (f"; every CSV file and `metrics.json` was reproduced byte for byte from the committed "
+                  f"code on {d.day} {d:%B %Y}")
+        return s + "."
+    return (f"Code commit `{code['commit'][:10]}`"
+            + (" plus uncommitted changes" if code["code_uncommitted"] else "") + ".")
+
+
 def compare_note(runs: list[dict], season: int) -> str:
     c0 = runs[0]["config"]
     names = [r["name"] for r in runs]
-    L = [f"# {season} season simulations: " + " vs ".join(names) + " vs actual", "",
+    L = [f"# {season} season simulations: " + " vs ".join(f"`{n}`" for n in names) + " vs actual", "",
          f"Same {c0['events']} events, real draws, form cards, seed {c0['seed']} and {c0['n_sims']:,} simulated "
          f"seasons for every run; only the serve model differs (common random numbers: each match slot "
-         f"draws the same random number in every run). Code commit `{c0['code']['commit'][:10]}`"
-         + (" plus uncommitted changes" if c0["code"]["code_uncommitted"] else "") + ".", ""]
+         f"draws the same random number in every run). " + _code_note(c0["code"]), ""]
     L += _table(["Run", "Model", "Trained through", "sha256"],
                 [[r["name"], f"`{r['config']['model']}`", r["config"]["train_through"],
                   f"`{r['config']['model_sha256'][:12]}`"] for r in runs])
@@ -89,7 +103,7 @@ def compare_note(runs: list[dict], season: int) -> str:
     groups = [("match_by_surface", s) for s in runs[0]["metrics"]["match_by_surface"]] + \
              [("match_by_category", c) for c in runs[0]["metrics"]["match_by_category"]]
     L += _table(["Group", "Matches"] + names,
-                [[g, f"{runs[0]['metrics'][kind][g]['n']:,}"] +
+                [[CATEGORY_NAMES.get(g, g), f"{runs[0]['metrics'][kind][g]['n']:,}"] +
                  [f"{r['metrics'][kind][g]['log_loss']:.4f}" for r in runs] for kind, g in groups])
 
     L += ["", "## Tournament level", ""]
@@ -103,12 +117,12 @@ def compare_note(runs: list[dict], season: int) -> str:
     big = big[big["category"].isin(["G", "M", "F"])]
     rows = []
     for t in big.itertuples(index=False):
-        row = [t.name, t.actual_champion]
+        row = [display_name(t.name), t.actual_champion]
         for r in runs:
             x = r["tournaments"].set_index("tourney_id").loc[t.tourney_id]
             row += [_pct(x["p_actual_champion"]), f"{x['modal_champion']} ({_pct(x['p_modal_champion'])})"]
         rows.append(row)
-    L += ["", "Slams, Masters and the ATP Finals: simulated chance of the real champion, and each run's favourite.", ""]
+    L += ["", "Grand Slams, Masters 1000 and the ATP Finals: simulated chance of the real champion, and each run's favourite.", ""]
     L += _table(["Event", "Real champion"] + [h for n in names for h in (f"{n} chance", f"{n} favourite")], rows)
 
     L += ["", "## Year end", "",
@@ -127,7 +141,7 @@ def compare_note(runs: list[dict], season: int) -> str:
                 [h for n in names for h in (f"{n} mean pts", f"{n} mean rank", f"{n} P(#1)")], rows)
     L += [""]
     L += _table(["", "Most likely #1", "P(real #1)", "Top-10 overlap (same-table)", "Top-10 overlap (official)",
-                 "Spearman, official top 50", "Rank error, official top 20"],
+                 "Spearman, official top 50", "Rank error vs same-table, official top 20"],
                 [[r["name"], f"{r['metrics']['season']['modal_no1']} ({_pct(r['metrics']['season']['modal_no1_p'])})",
                   _pct(r["metrics"]["season"]["p_actual_no1"]),
                   f"{r['metrics']['season']['top10_overlap_same_table']} of 10",
@@ -150,12 +164,14 @@ def compare_note(runs: list[dict], season: int) -> str:
             for d in monthly[0].index]
     L += _table(["Month"] + names + ["Same-table"], rows)
     L += ["", "## Limitations (all runs)", ""] + [f"- {x}" for x in LIMITATIONS]
-    L += ["", "## Reproduce", "", "```bash"]
+    L += ["", "## Reproduce", "",
+          "Writes to `runs/` (gitignored), so the frozen files are never overwritten; every CSV file and "
+          "`metrics.json` should match them byte for byte.", "", "```bash"]
     for r in runs:
         L.append(f"python scripts/simulate_season.py --model {r['config']['model']} --season {season} "
-                 f"--n-sims {c0['n_sims']} --seed {c0['seed']} --out {os.path.relpath(r['dir'], ROOT)}/season_{season}/")
-    L += [f"python scripts/compare_simulations.py --season {season} "
-          + " ".join(os.path.relpath(r["dir"], ROOT) for r in runs), "```", ""]
+                 f"--n-sims {c0['n_sims']} --seed {c0['seed']} --out runs/simulations/{r['name']}/season_{season}/")
+    L += [f"python scripts/compare_simulations.py --season {season} --out runs/simulations/simulations_{season}.md "
+          + " ".join(f"runs/simulations/{r['name']}" for r in runs), "```", ""]
     return "\n".join(L)
 
 
@@ -163,7 +179,7 @@ def run_readme(r: dict, season: int, note_path: str) -> str:
     c, m = r["config"], r["metrics"]
     mm, tm, sm = m["match"], m["tournament"], m["season"]
     return "\n".join([
-        f"# Simulations: {r['name']}", "",
+        f"# Simulations: `{r['name']}`", "",
         f"Weights: `{c['model']}` (trained through {c['train_through']}, sha256 `{c['model_sha256'][:12]}`).", "",
         "| Folder | Season | Seasons simulated | Seed | Status |", "|---|---|---:|---:|---|",
         f"| `season_{season}/` | {season} file year | {c['n_sims']:,} | {c['seed']} | Done |", "",
@@ -177,8 +193,10 @@ def run_readme(r: dict, season: int, note_path: str) -> str:
         f"Full write-up: `season_{season}/summary.md`. Comparison with the other runs: `{note_path}`.", "",
         "## Reproduce", "", "```bash",
         f"python scripts/simulate_season.py --model {c['model']} --season {season} --n-sims {c['n_sims']} "
-        f"--seed {c['seed']} --out {os.path.relpath(r['dir'], ROOT)}/season_{season}/",
+        f"--seed {c['seed']} --out runs/simulations/{r['name']}/season_{season}/",
         "```", "",
+        f"Writes to `runs/` (gitignored); every CSV file and `metrics.json` should match `season_{season}/` "
+        "here byte for byte.",
         "Other runs use the same season, seed and simulation count, so only the model differs.", ""])
 
 

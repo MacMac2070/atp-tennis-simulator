@@ -1,6 +1,6 @@
 # Serve level fix: Run 0 to Run 1
 
-Run 0 under-predicts service points won by 1 to 3 points per hundred on the held-out 2025 and 2026 seasons. This note explains why, what Run 1 changes, and what it leaves alone.
+Run 0 under-predicts service points won by 1 to 3 points per hundred on the 2025 and 2026 (January to May) holdout seasons. This note explains why, what Run 1 changes, and what it leaves alone.
 
 ## Is the formula changing?
 
@@ -15,7 +15,7 @@ The saved model, its shape (81 numbers per surface) and the prediction formula d
 
 ## What Run 0 found
 
-Model trained through 2024, scored on 2025 and January to May 2026. `bias = predicted − actual`.
+Model trained through 2024, scored on 2025 and January to May 2026 pooled (grass: 2025 only, as the archive has no 2026 grass). `bias = predicted − actual`.
 
 | Surface | Holdout rows | Actual | Predicted | Bias |
 |---|---|---|---|---|
@@ -30,8 +30,8 @@ Full tables: `verification/reports/run0_baseline/eval.md`. The data was verified
 ```mermaid
 flowchart TD
     subgraph cards["Form cards"]
-        C1["Standardised per season<br/>x = (value − season mean) / season sd"]
-        C2["x = 0 means average for that season"]
+        C1["Standardised against the season before<br/>x = (value − last season's mean) / last season's sd"]
+        C2["x = 0 means an average player of the time"]
         C3["A card carries no information about<br/>how good serving is that year"]
         C1 --> C2 --> C3
     end
@@ -42,7 +42,7 @@ flowchart TD
     end
     C3 --> Z["z = μ + 0 − 0 + 0 for two average players"]
     M2 --> Z
-    Z --> P["Prediction starts ~1.5 pp below the 2025 tour"]
+    Z --> P["Prediction starts 1 to 1.5 pp below the 2025 tour"]
 
     classDef frozen fill:#2a6490,stroke:#1d4a6b,color:#fff
     classDef base fill:#68786f,stroke:#4a564f,color:#fff
@@ -52,9 +52,9 @@ flowchart TD
     class Z,P bad
 ```
 
-The form cards (`atp_sim/form_cards.py`, `standardise_cards`) are standardised against each season's own population, so `x = 0` means "average for that season" and the cards say nothing about the absolute level of the era. The only place the level lives is the scalar μ in `BilinearServeModel`, which is fitted on every row from 1992 and lands on the pooled 33-year rate.
+The form cards (`atp_sim/form_cards.py`, `standardise_cards`) are standardised against the previous season's population, so `x = 0` means "an average player of the time" and the cards say nothing about the absolute level of the era. The only place the level lives is the scalar μ in `BilinearServeModel`, which is fitted on every row from 1992 and lands on the pooled 33-year rate.
 
-Serve rates have crept up by about 0.06 points per hundred per year on hard and clay since 2005. Over three decades that puts the 2024 tour 1.1 to 1.5 pp above the pooled average:
+Serve rates have crept up by about 0.06 points per hundred per year on hard and clay since 2005. Over three decades that puts the 2024 tour 1.2 to 1.6 percentage points (pp) above the pooled average:
 
 | Surface | Pooled 1992 to 2024 (what Run 0 μ learns) | 2024 | 2025 actual | 2026 actual (to 17 May) |
 |---|---|---|---|---|
@@ -62,14 +62,14 @@ Serve rates have crept up by about 0.06 points per hundred per year on hard and 
 | Clay | 0.6069 | 0.6203 | 0.6211 | 0.6271 |
 | Grass | 0.6500 | 0.6655 | 0.6602 | none in archive |
 
-The gap between the pooled level and 2024 is the whole of the 2025 bias. The further rise in 2026 is real (January to May rates in 2023 to 2025 match their full seasons) and happened after the training cutoff, so no model trained through 2024 can know it.
+Run 0 predicts close to the pooled level, so the gap between the pooled level and the 2025 actual rate (1.4, 1.4 and 1.0 pp) is almost the whole of the 2025 bias, and most of it had already opened by 2024. The further rise in 2026 is real (January to May rates in 2023 to 2025 match their full seasons) and happened after the training cutoff, so no model trained through 2024 can know it.
 
 ## What Run 1 does
 
 During training, each season gets its own additive correction δ to μ. The last training season is pinned at δ = 0, so μ itself becomes the level of that season and the older seasons absorb "how much lower serving was back then". After training the δ vector is discarded.
 
 - Each training row now carries its season (`rows_to_tensors` in `atp_sim/dataset.py`).
-- `train_surface` in `atp_sim/train.py` adds `δ[season]` to the logit inside the loop. `BilinearServeModel.forward` is untouched.
+- `train_surface` in `atp_sim/train.py` adds the season's level (`SeasonOffsets`) to the logit inside the loop. `BilinearServeModel.forward` is untouched.
 - `SurfaceBundle.save` writes the same 243 numbers as before.
 - Implementation detail: rather than μ plus a per-season δ (nearly collinear, so Adam crawls), training fits one full intercept per season and sets μ to the anchor's intercept at the end. Reported as δ = level − level(2024). The season levels are not regularised (a light L2 summed over 32 seasons pulled the anchor 0.5 pp off its data) and the learning rate is cooled linearly to 5% so the intercepts settle instead of jittering by about 1 pp (`--lr-decay`, default on).
 - The evaluator gains a second baseline, "always guess the last training season's rate", which is the bar Run 1 has to beat. The old "pooled average" baseline becomes a straw man once μ is anchored.
@@ -86,7 +86,7 @@ During training, each season gets its own additive correction δ to μ. The last
 
 It is not a fixed year. The anchor is `--train-through`, the last season the fit may see. The model is asked about season T+1, and the freshest evidence about the tour's level is season T. The form cards already follow this rule: the standardising constants for season T+1 come from the population of season T (`load_constants(rows, train_through + 1)`). Retraining through 2025 moves the anchor to 2025 with no code change.
 
-One season is about 6,000 rows per surface, which pins the level to roughly ±0.3 pp, well inside the 1.1 to 1.5 pp gap being fixed.
+One season is about 6,000 rows across the three surfaces (2024: 3,408 hard, 1,926 clay, 648 grass), which pins the level to roughly ±0.3 pp on hard and clay, well inside the 1.2 to 1.6 pp gap being fixed; grass, with the fewest rows, is noisier.
 
 ## Expected result and the honest limit
 
@@ -100,7 +100,7 @@ One season is about 6,000 rows per surface, which pins the level to roughly ±0.
 
 Run 1 beats the last-season constant on NLL and point-MAE on every surface and season. Grass flipped to a small over-prediction because 2024 was the strongest grass season in the table and 2025 came back down; anchoring on one season inherits that season's noise, and grass has the fewest rows. Full tables and the delta against Run 0: `verification/reports/run1_season_delta/eval.md`.
 
-2026 will still read low. Serving rose another 1.2 pp in early 2026 and the archive stops in May 2026, so the model has never seen a 2026 match. That leftover is data freshness, not model error, and the evaluator reports it against the last-season baseline so the two are not confused.
+2026 will still read low. Serving on hard rose another 1.2 pp in early 2026 and the archive stops in May 2026, so the model has never seen a 2026 match. That leftover is data freshness, not model error, and the evaluator reports it against the last-season baseline so the two are not confused.
 
 ## Options considered
 

@@ -1,4 +1,4 @@
-"""ATP singles ranking points by category, draw size and round reached (design §10, step 4).
+"""ATP singles ranking points by category, draw size and round reached (DESIGN.md §10, step 4).
 
 One table, used for everything the simulator scores: the simulated 2025 season, the real
 2025 season on the same events (the "same-table actual" race) and the real 2024 results

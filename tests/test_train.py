@@ -1,4 +1,4 @@
-"""Chronological split and a smoke test of the training loop (design §9)."""
+"""Chronological split and a smoke test of the training loop (DESIGN.md §9)."""
 
 from __future__ import annotations
 

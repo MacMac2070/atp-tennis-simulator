@@ -4,7 +4,7 @@ The story and the season results live in [`README.md`](README.md). This file cov
 three things the model is made of: **how a form card is built**, **the serve formula**, and
 **how μ, a, b and W are learned**.
 
-Every exact definition, down to the column, is in
+Every exact card and row definition, down to the column, is in
 [`verification/VERIFY_SPEC.md`](verification/VERIFY_SPEC.md). The Run 1 write-up with its
 holdout numbers is [`docs/serve_level_fix.md`](docs/serve_level_fix.md).
 
@@ -27,20 +27,21 @@ flowchart LR
 ## 🪪 1. Form cards
 
 Before each match the model gets a short report on each player, describing him **as he was
-that morning**. Eight numbers, built from his previous matches and scaled so that **0 means
-exactly tour average** for that season and 1 means one standard deviation better. A player
+when the event began**. Eight numbers, built from his previous matches and scaled against
+last season's players, so that **0 means tour average** and 1 means one standard deviation
+above it. A player
 with only a handful of matches is pulled towards average rather than believed. Surface is not
 on the card: Hard, Clay and Grass each get their own copy of the formula instead.
 
 | # | Attribute | Built from | Window |
 | --- | --- | --- | --- |
-| 1 | Serve strength | service points won | 52 weeks |
+| 1 | Serve strength | share of service points won | 52 weeks |
 | 2 | Ace rate | aces per service point | 52 weeks |
 | 3 | Double fault rate | double faults per service point | 52 weeks |
-| 4 | Return strength | return points won | 52 weeks |
+| 4 | Return strength | share of return points won | 52 weeks |
 | 5 | Break points saved | saved / faced | 52 weeks |
 | 6 | Break points converted | converted / chances | 52 weeks |
-| 7 | Form | last 10 matches against the 52-week level | 10 matches |
+| 7 | Form | service points won, last 10 matches against the 52-week level | 10 matches |
 | 8 | Age | date of birth | on the day |
 
 In the code the eight are stored as `x_0` to `x_7`, in this order.
@@ -49,7 +50,7 @@ In the code the eight are stored as `x_0` to `x_7`, in this order.
 > **The one rule that cannot be broken.** A card for an event that starts on day D may only use
 > matches from events that started before D: nothing from day D itself or later. Let one later
 > match slip in and the model is reading tomorrow's newspaper: it looks brilliant and predicts
-> nothing. That is why `tests/test_leakage.py` runs first.
+> nothing. That is why `tests/test_leakage.py` is the test that must pass first.
 
 ```mermaid
 flowchart LR
@@ -84,8 +85,8 @@ $$
 | --- | ---: | ---: | ---: | ---: | ---: | ---: |
 | K | 200 | 50 | 250 | 300 | 200 | 350 |
 
-K is counted in the rate's own points: service points, return points or break points. The rarer
-or noisier the statistic, the bigger K, so the more a thin sample is pulled in. A player with no
+K is counted in the rate's own points: service points, return points or break points. The
+noisier the statistic, the bigger K, so the more a thin sample is pulled in. A player with no
 history lands exactly on the tour average. **Form** is the shrunk last-10 serve rate minus the
 shrunk 52-week serve rate, so it stays at 0 until he has more than 10 matches in the window.
 
@@ -96,7 +97,7 @@ x = \frac{\text{value} - \text{mean}_{Y-1}}{\text{standard deviation}_{Y-1}}
 $$
 
 Using last season's figures means a card never sees a number computed from its own future. It
-also means **x = 0 is average within that season**: the cards carry no sense of how good
+also means **x = 0 is simply last season's average**: the cards carry no sense of how good
 serving was in that era. That level lives only in μ, which is exactly what Run 1 fixes (§3.3).
 
 Age comes from the date of birth; a missing or suspect one counts as average (0). 1991 is the
@@ -290,14 +291,15 @@ Three things to notice:
   all backpropagation is.
 
 For the maths-minded: the quantity is the partial derivative of z with respect to that number,
-and "how wrong" is predicted minus actual points won, so each learned number θ moves by
+and the error np − w is predicted minus actual points won (the opposite sign to "how wrong"
+above, hence the minus), so each learned number θ moves by
 
 $$
 \theta \leftarrow \theta - \eta\,(n p - w)\,\frac{\partial z}{\partial \theta}
 $$
 
 with η the learning rate, n the points served and w the points won. In practice rows go through
-in batches of 2048 and Adam scales each step, but the direction of every nudge comes from exactly
+in batches of 2,048 and Adam scales each step, but the direction of every nudge comes from exactly
 this sum.
 
 Repeat that over every row, many times, and the random nudges cancel while the systematic ones
@@ -306,8 +308,8 @@ add up, until nothing is moving.
 ### 3.2 Three surfaces, same recipe
 
 `train_all_surfaces` fits Hard, Clay and Grass **independently**, each on its own rows. The saved
-object is a `SurfaceBundle`: the 243 numbers, the card mean and standard deviation used at
-training time, and `train_through`.
+object is a `SurfaceBundle`: the 243 numbers, the card mean and standard deviation for
+season `train_through` + 1 (the first unseen season), and `train_through`.
 
 ### 3.3 Run 0 and Run 1: only training differs
 
@@ -318,7 +320,7 @@ training time, and `train_through`.
 | What μ means once saved | about the pooled 1992 to `--train-through` rate | about the rate of `--train-through` (usually 2024) |
 | Saved shape | 243 numbers | 243 numbers |
 
-**Why Run 0 sits low.** The cards are standardised within each season, so they carry no
+**Why Run 0 sits low.** The cards are standardised season by season, so they carry no
 "serving got easier" signal. The absolute level lives only in μ. Fit μ on every row from 1992
 onward and it settles near the 33-year average, about 1 to 1.5 percentage points below the
 mid-2020s tour, so the 2025 holdout reads systematically low.

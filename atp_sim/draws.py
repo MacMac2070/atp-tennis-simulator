@@ -1,4 +1,4 @@
-"""The real draws of a season, rebuilt from its results (design §10, step 3).
+"""The real draws of a season, rebuilt from its results (DESIGN.md §10, step 3).
 
 Sackmann publishes results, not draw sheets, but a single-elimination draw can be read
 back from its results: every player in a round either won a match in the round before or

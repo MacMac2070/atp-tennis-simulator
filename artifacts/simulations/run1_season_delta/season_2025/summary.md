@@ -1,4 +1,4 @@
-# Season 2025 simulation: run1_season_delta
+# Season 2025 simulation: `run1_season_delta`
 
 Model `artifacts/models/run1_season_delta/model.pt` (trained through 2024). 10,000 simulated seasons, seed 42. Season = the 2025 file year, events dated 2024-12-30 to 2025-11-09.
 
@@ -16,25 +16,25 @@ Every real match of the simulated events, walkovers dropped, scored with the mod
 | Clay | 760 | 60.4% | 0.6527 | 0.2305 | 65.0% |
 | Grass | 295 | 60.7% | 0.6575 | 0.2329 | 63.1% |
 | Hard | 1,567 | 62.3% | 0.6547 | 0.2294 | 64.2% |
-| 250 | 826 | 56.3% | 0.6983 | 0.2507 | 59.0% |
-| 500 | 507 | 63.1% | 0.6267 | 0.2186 | 67.7% |
-| F | 15 | 86.7% | 0.3546 | 0.1026 | 66.7% |
-| G | 505 | 68.1% | 0.5867 | 0.2036 | 68.3% |
-| M | 769 | 61.4% | 0.6760 | 0.2355 | 65.1% |
+| ATP 250 | 826 | 56.3% | 0.6983 | 0.2507 | 59.0% |
+| ATP 500 | 507 | 63.1% | 0.6267 | 0.2186 | 67.7% |
+| ATP Finals | 15 | 86.7% | 0.3546 | 0.1026 | 66.7% |
+| Grand Slam | 505 | 68.1% | 0.5867 | 0.2036 | 68.3% |
+| Masters 1000 | 769 | 61.4% | 0.6760 | 0.2355 | 65.1% |
 
-A coin flip scores a log loss of 0.6931. Calibration, favourite's predicted chance against how often the favourite won:
+A coin flip scores a log loss of 0.6931. Calibration, the favourite's predicted chance against how often the favourite won:
 
 | Favourite's chance | Matches | Predicted | Won |
 |---|---:|---:|---:|
-| (0.499, 0.6] | 818 | 55.0% | 51.5% |
-| (0.6, 0.7] | 689 | 64.9% | 55.7% |
-| (0.7, 0.8] | 521 | 74.6% | 64.7% |
-| (0.8, 0.9] | 356 | 84.4% | 74.4% |
-| (0.9, 1.0] | 238 | 94.7% | 87.0% |
+| 50% to 60% | 818 | 55.0% | 51.5% |
+| 60% to 70% | 689 | 64.9% | 55.7% |
+| 70% to 80% | 521 | 74.6% | 64.7% |
+| 80% to 90% | 356 | 84.4% | 74.4% |
+| 90% to 100% | 238 | 94.7% | 87.0% |
 
 ## Tournament level
 
-Real champion was the simulation's favourite in 17 of 60 events and in its top three in 27. Mean simulated chance of the real champion 18.4%.
+The real champion was the simulation's favourite in 17 of 60 events and in its top three in 27. The mean simulated chance of the real champion was 18.4%.
 
 | Event | Real champion | Sim. chance | Position | Sim. favourite | Chance |
 |---|---:|---:|---:|---:|---:|
@@ -48,12 +48,12 @@ Real champion was the simulation's favourite in 17 of 60 events and in its top t
 | Wimbledon | Jannik Sinner | 44.6% | 1 | Jannik Sinner | 44.6% |
 | Canada Masters | Ben Shelton | 1.2% | 10 | Alexander Zverev | 32.5% |
 | Cincinnati Masters | Carlos Alcaraz | 19.0% | 2 | Jannik Sinner | 55.6% |
-| Us Open | Carlos Alcaraz | 20.5% | 2 | Jannik Sinner | 60.7% |
+| US Open | Carlos Alcaraz | 20.5% | 2 | Jannik Sinner | 60.7% |
 | Shanghai Masters | Valentin Vacherot | 0.0% | 52 | Jannik Sinner | 63.8% |
 | Paris Masters | Jannik Sinner | 63.4% | 1 | Jannik Sinner | 63.4% |
-| Tour Finals | Jannik Sinner | 67.8% | 1 | Jannik Sinner | 67.8% |
+| ATP Finals | Jannik Sinner | 67.8% | 1 | Jannik Sinner | 67.8% |
 
-Slams, Masters and the ATP Finals shown; every event is in `tournaments.csv`.
+Grand Slams, Masters 1000 and the ATP Finals are shown; every event is in `tournaments.csv`.
 
 ## Year-end top 10
 
@@ -81,7 +81,7 @@ Sorted by mean simulated points. Same-table actual = the real 2025 results of th
 
 52-week ledger on each official ranking Monday (2024 real results, then simulated 2025 results). Mean absolute rank error for the official top 20, taken at the last ranking of each month: simulated mean rank against the official rank, and, for scale, the same-table actual rank against the official rank (the part the simplified rules alone explain).
 
-| Month | Simulated v official | Same-table v official |
+| Month | Simulated vs official | Same-table vs official |
 |---|---:|---:|
 | Jan 2025 | 1.1 | 0.2 |
 | Feb 2025 | 1.0 | 0.1 |
@@ -115,8 +115,8 @@ Official top 20, largest gaps between mean simulated points and same-table actua
 
 - Form cards are frozen at each event's real start date and built from real results only; simulated results never change later cards. Tournaments are linked through ranking points alone, so this is an A/B test of the serve model, not a closed fantasy season.
 - Every real entrant plays and nobody else does: injuries, withdrawals and retirements are not simulated, and every match is played to a finish. Real walkovers are simulated as matches.
-- Ranking rules are simplified: every simulated event counts in full. No best-19 rule, mandatory-event zero-pointers or protected rankings, and no points from Challengers, qualifying, the United Cup or Davis Cup. Year-end figures are therefore compared with the same-table actual race first and the official ranking second.
-- ATP Finals: the real 2025 groups are fixed (qualification is not simulated). Groups are ordered by wins, head-to-head and sets won %; games won % is not simulated, so an unbroken three-way tie falls to the ranking at entry.
+- Ranking rules are simplified: every simulated event counts in full. No best-19 rule, mandatory-event zero-pointers or protected rankings, and no points from Challengers, qualifying or the United Cup. Year-end figures are therefore compared with the same-table actual race first and the official ranking second.
+- ATP Finals: the real 2025 groups are fixed (qualification is not simulated). Groups are ordered by wins, head-to-head and percentage of sets won; percentage of games won is not simulated, so an unbroken three-way tie falls to the ranking at entry.
 - Points enter the ledger on the Monday after the event's estimated last day and drop 52 weeks later. The 2024 part of the ledger is the real 2024 results scored with the same table.
 - Team events (Davis Cup, United Cup, Laver Cup) and the Next Gen Finals are not simulated and are left out of the actual side too.
 
@@ -126,7 +126,7 @@ Official top 20, largest gaps between mean simulated points and same-table actua
 |---|---|
 | `config.json` | Season, seed, simulation count, model path and hash, code commit, event counts |
 | `metrics.json` | Every headline number on this page, machine-readable |
-| `matches.csv` | One row per real match: both serve probabilities, P(real winner), scores |
+| `matches.csv` | One row per real match: both serve probabilities, P(real winner), log loss and Brier score |
 | `tournaments.csv` | One row per event: real champion, simulated chance, simulated favourite |
 | `rankings_year_end.csv` | One row per player: simulated points and rank distribution, same-table and official |
 | `rankings_weekly.csv` | Official top 30 on each ranking Monday: simulated, same-table and official rank |

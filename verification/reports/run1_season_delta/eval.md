@@ -1,7 +1,7 @@
-# Model progression log — Run 1 (serve level anchored on 2024)
+# Model progression log: Run 1 (serve level anchored on 2024)
 
-**Date logged:** 22 September 2026
-**Purpose:** Fix the systematic serve under-prediction found in Run 0 with one change, and score it on the same holdout.
+**Date logged:** 22 September 2026  
+**Purpose:** Fix the systematic serve under-prediction found in Run 0 with one modelling change (plus a learning-rate cool-down), and score it on the same holdout.
 
 ---
 
@@ -10,7 +10,7 @@
 | Item | Value |
 |---|---|
 | Model file | `artifacts/models/run1_season_delta/model.pt` |
-| Training rows | `runs/rows.parquet` (same table as Run 0) |
+| Training rows | `runs/rows.parquet` (same table as Run 0; built locally, gitignored) |
 | Train through | **2024** (seasons ≤ 2024) |
 | Holdout | **2025** and partial **2026** (7,664 rows, same as Run 0) |
 | Parameters | 243 (81 × Hard / Clay / Grass), same as Run 0 |
@@ -26,11 +26,11 @@ python scripts/evaluate_model.py --rows runs/rows.parquet --model artifacts/mode
 
 ### The change, in one paragraph
 
-The form cards are standardised per season, so `x = 0` means "average for that season" and the cards carry no information about the era's serve level. Only `μ` does, and in Run 0 it was fitted on every row since 1992 and settled on the 33-year average, 1.1 to 1.5 pp below the 2024 tour. Run 1 gives every season its own intercept during training, with the last training season as the anchor; on save `μ` is set to the anchor's level and the rest is dropped. Older seasons still shape `a`, `b`, `W`; they just no longer drag `μ` back in time. Full explainer with diagrams: `docs/serve_level_fix.md`.
+The form cards are standardised season by season against the season before, so `x = 0` means "an average player of the time" and the cards carry no information about the era's serve level. Only `μ` does, and in Run 0 it was fitted on every row since 1992 and settled on the 33-year average, 1.2 to 1.6 percentage points (pp) below the 2024 tour. Run 1 gives every season its own intercept during training, with the last training season as the anchor; on save `μ` is set to the anchor's level and the rest is dropped. Older seasons still shape `a`, `b`, `W`; they just no longer drag `μ` back in time. Full explainer with diagrams: `docs/serve_level_fix.md`.
 
 ### Recipe notes (what had to change to make the anchor hold)
 
-- **Per-season levels, not μ plus a delta.** μ and a per-season delta are nearly collinear (only the anchor's 6% of rows separate them) and Adam crawled along that direction. Fitting one full intercept per season, each set by its own rows, converges cleanly. Reported as δ = level − level(2024).
+- **Per-season levels, not μ plus a delta.** μ and a per-season delta are nearly collinear (only the anchor's 3% of rows separate them) and Adam crawled along that direction. Fitting one full intercept per season, each set by its own rows, converges cleanly. Reported as δ = level − level(2024).
 - **No L2 on the season levels.** Even a 1e-4 penalty summed over 32 seasons pulled the 2024 level 0.5 pp off its data. Removed.
 - **Learning-rate cool-down** (linear to 5% over the run, `--lr-decay`, default on). At a fixed lr of 0.05 the intercepts jitter by about 1 pp; with the cool-down the in-sample 2024 level lands within 0.06 pp of the data on two seeds. Run 0's frozen weights are unaffected. Side effect: the fit is tighter overall (training point-MAE on Hard 0.0584 → 0.0563) and the interaction term is smaller (0.05 → 0.02 mean |contribution|), so part of the NLL/MAE gain below is better convergence, not only the anchor. The bias change is the anchor.
 
@@ -48,7 +48,7 @@ They track the per-season rate table (1992 about 3 pp below 2024, flat since ~20
 
 ## Holdout results (Run 1)
 
-`bias = predicted − actual` (negative ⇒ under-predicts serve).
+`bias = predicted − actual` (negative ⇒ under-predicts serve).  
 `pooled` = always guess that surface's 1992 to 2024 rate (Run 0's baseline). `last` = always guess its 2024 rate (the bar an anchored μ must beat). `drift` = actual − 2024 rate, i.e. how far the tour moved after the cutoff.
 
 ### Hard (pooled 0.6327, 2024 rate 0.6443, model μ → 0.6370)
@@ -80,7 +80,7 @@ Term magnitudes on the holdout (mean |contribution|, log-odds): Hard serve 0.112
 
 ## Delta vs Run 0
 
-Run 0 numbers from `verification/reports/run0_baseline/eval.md`. Positive Δbias means less under-prediction; negative ΔNLL and ΔMAE mean better.
+Run 0 numbers from `verification/reports/run0_baseline/eval.md`. Positive Δbias means the prediction moved up (less under-prediction, or over-prediction for grass); negative ΔNLL and ΔMAE mean better.
 
 | Surface | Season | Bias Run 0 | Bias Run 1 | Δ bias | NLL Run 0 | NLL Run 1 | Δ NLL | MAE Run 0 | MAE Run 1 | Δ MAE |
 |---|---|---|---|---|---|---|---|---|---|---|
@@ -96,11 +96,11 @@ Run 0 numbers from `verification/reports/run0_baseline/eval.md`. Positive Δbias
 
 ## What Run 1 showed (interpretation)
 
-1. **The level shift is gone on 2025.** Hard −0.4 pp, Clay −0.1 pp: within the noise of a single season's rate. The 1.1 to 1.5 pp gap was the pooled μ, as diagnosed.
+1. **The level shift is gone on 2025.** Hard −0.4 pp, Clay −0.1 pp: within the noise of a single season's rate. The 1.2 to 1.6 pp gap was the pooled μ, as diagnosed.
 2. **Beats the harder baseline.** Run 1 has lower NLL and point-MAE than the last-season constant on every surface and season. Run 0 only beat the pooled constant, which is a straw man once μ is anchored.
-3. **2026 still reads low on Hard (−1.6 pp), and that is drift.** The 2026 tour is +1.4 pp above 2024 (`drift` column). The archive stops in May 2026 and the model has never seen a 2026 match, so this is data freshness, not model error. Refreshing 2026 from TML would move the anchor, not the method.
+3. **2026 still reads low on Hard (−1.6 pp), and that is drift.** The 2026 tour is +1.4 pp above 2024 (`drift` column). The archive stops in May 2026 and the model has never seen a 2026 match, so this is data freshness, not model error. Training through a later season (topped up from TML if needed) would move the anchor, not the method.
 4. **Grass now over-predicts by 0.7 pp.** 2024 was an unusually strong grass season (66.6%, the highest in the table) and 2025 came back down (66.0%). Anchoring on one season inherits that season's noise; grass has the fewest rows (~600 per season) so it is the most exposed. Still better than Run 0 on NLL and MAE.
-5. **Interaction term shrank** from ~0.05 to ~0.02 mean |contribution|. That is the learning-rate cool-down letting `W` settle under its L2 rather than jittering, not the anchor. It strengthens the design-note suspicion that `W` earns little.
+5. **Interaction term shrank** from ~0.05 to ~0.02 mean |contribution|. That is the learning-rate cool-down letting `W` settle under its L2 rather than jittering, not the anchor. It strengthens the `DESIGN.md` suspicion that `W` earns little.
 
 ---
 
@@ -108,7 +108,7 @@ Run 0 numbers from `verification/reports/run0_baseline/eval.md`. Positive Δbias
 
 | Path | Role |
 |---|---|
-| `artifacts/models/run1_season_delta/model.pt` | Frozen Run 1 weights (also copied to `runs/model.pt` for script defaults) |
+| `artifacts/models/run1_season_delta/model.pt` | Frozen Run 1 weights (also copied locally to the gitignored `runs/model.pt` for script defaults) |
 | `artifacts/models/run0_baseline/model.pt` | Frozen Run 0 weights, untouched |
 | `verification/reports/run0_baseline/eval.md` | Run 0 holdout tables |
 | `verification/reports/MODEL_PROGRESSION.md` | Progression index |

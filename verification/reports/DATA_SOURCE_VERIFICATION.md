@@ -19,12 +19,12 @@ suspect: that the underlying data was wrong.
 
 | Source | What it is | How we used it |
 |---|---|---|
-| **Sackmann archive** (the original) | `data/tennis_atp/atp_matches_YYYY.csv`, from an archival mirror of Jeff Sackmann's `tennis_atp`. Stops at tournaments starting 25 May 2026. | The data under test. |
+| **Sackmann archive** (the original) | `data/tennis_atp/atp_matches_YYYY.csv`, downloaded by `fetch_data.sh` from an archival mirror of Jeff Sackmann's `tennis_atp`. Stops at tournaments starting 25 May 2026. | The data under test. |
 | **TennisMyLife (TML)** | Yearly CSVs from stats.tennismylife.org, 1968 to 2026, same column layout. Runs to 13 September 2026. | Bulk comparison of every match, 1992 to 2026. |
 | **ATP Tour website** (atptour.com) | The official match statistics pages. | Spot check of 12 randomly chosen matches, 3 per decade. |
 | **tennisdata.app** | Season CSVs 2021 to 2026. | **Not used.** The download page sits behind a "prove you are not a bot" check, so the files could not be fetched automatically. |
 
-A second, independent implementation of the 2026 comparison was run by Antigravity (Gemini). Its
+A second, independent implementation of the 2026 comparison was run by Antigravity (Gemini 3.5). Its
 counts matched ours (0 winner disagreements, the same 9 score differences, near-identical serve
 totals), so the comparison itself is not the product of a bug in one script.
 
@@ -80,7 +80,7 @@ model does not use duration.
 
 ## What was different
 
-About 2,700 of the 108,801 paired matches (2.5%) differ on at least one field. The differences are
+About 2,700 of the 108,801 paired matches (2.5%) differ on at least one field other than match duration. The differences are
 concentrated, not scattered.
 
 **Winner: 3 matches.** One is a join artefact (two different round-robin matches at Buenos Aires
@@ -88,14 +88,19 @@ concentrated, not scattered.
 conflict: a 2025 Davis Cup match tiebreak recorded as [8-10] in one source and [10-8] in the other.
 
 **Serve statistics: 2,084 matches.**
-- 997: Sackmann leaves the statistics blank and TML has numbers (mostly Davis Cup ties, plus a few
-  late-round Grand Slam matches such as the 2026 Roland Garros semi-final and final).
-- 236: the reverse, TML blank and Sackmann filled.
-- 851 (0.8% of matches): both have numbers and they disagree. These cluster in events not run by
-  the ATP: Roland Garros 2026 (124), Australian Open 2026 (114), US Open 2025 (100), the 2012 and
-  1992 Olympics (63 each), Canada Masters 1995 (51), Madrid Masters 2003 (47) and the Düsseldorf
-  team event in several years (about 26 each). In the recent Grand Slams the disagreement is in how
-  points won are split between first and second serve; the total is the same or nearly so.
+- 997: Sackmann leaves the statistics blank and TML has numbers. The largest blocks are Roland
+  Garros 2026 (124, every round), the 1992 Olympics (63), Madrid Masters 2003 (47) and Moscow 1995
+  (31); 185 are Davis Cup ties.
+- 236: the reverse, TML blank and Sackmann filled (including the 2012 Olympics, 63).
+- 851 (0.8% of matches): both have numbers and they disagree. The largest clusters are Australian
+  Open 2026 (114), US Open 2025 (100), Canada Masters 1995 (51) and the Düsseldorf team event in
+  most years from 1995 to 2012 (up to 26 each). In the recent Grand Slams the disagreement is in how
+  points won are split between first and second serve. The combined service points won are
+  identical in 104 of the 114 Australian Open 2026 matches but in only 55 of the 100 US Open 2025
+  matches (at most 9 points apart).
+
+*Corrected 24 September 2026: these clusters were first listed under the wrong bullets. The counts
+come from `runs/cross_check_mismatches.csv`.*
 
 **Surface: 273 matches.** Mostly carpet versus hard for four 1990s indoor events (Philadelphia 1993;
 Singapore, Basel and Shanghai 1998) and some Davis Cup ties. Also Santiago 2025: Sackmann says clay,
@@ -121,7 +126,7 @@ showed "no rows" for grass in 2026.
      serves (95%) and "0 service games played". Sackmann has 55 of 89, which is believable. The ATP
      site's Grand Slam feed looks faulty, so "correcting" Sackmann towards it would make the data worse.
 3. **The differences are far too small to explain the model's error.** The largest gap between
-   sources in serve rate is 0.002. The model's bias is 0.015 to 0.027, roughly ten times larger.
+   sources in serve rate is 0.002. The model's hard-court bias is 0.015 to 0.027, roughly ten times larger.
    Like worrying about a 2 mm measuring error on a part that is 20 mm out of tolerance.
 4. **Switching would add risk for no gain.** TML uses different player IDs (ATP's alphanumeric codes
    rather than Sackmann's numbers), so swapping sources would mean re-mapping every player by name,
@@ -130,25 +135,29 @@ showed "no rows" for grass in 2026.
 **Conclusion: the data is sound, so the under-prediction of serve comes from the model.** It anchors
 to the 1992 to 2024 average serve rate while the real rate has drifted upwards.
 
+**Update (24 September 2026):** Run 1 anchors the serve level on 2024, which cuts the hard-court
+holdout bias to −0.0042 in 2025 (−0.0078 over 2025 and 2026); see
+`verification/reports/run1_season_delta/eval.md`.
+
 ## Known limitations of the original data
 
 - It ends on 25 May 2026. If a fuller 2026 test set is wanted, TML can top it up (855 matches,
   including 297 on grass), mapping new rows by player name and treating its Grand Slam serve splits
   with caution.
-- About 200 of the 2026 matches have blank serve statistics. The pipeline already drops such rows,
+- About 260 of the 2026 matches have blank serve statistics, including all 127 at Roland Garros. The pipeline already drops such rows,
   so this costs a little sample size and nothing else.
 - Not checked: which source is right for the four 1990s carpet-or-hard events, and for the 2025
   Davis Cup tiebreak. The model only uses hard, clay and grass, so the carpet label decides whether
   those roughly 120 matches are included at all.
 - tennisdata.app was never compared. If its 2021 to 2026 CSVs are downloaded by hand into
-  `verification/external/tennisdata_app/`, that third comparison can be added.
+  `verification/external/tennisdata_app/` (a local, gitignored folder), that third comparison can be added.
 
 ## Where everything is
 
 | File | Contents |
 |---|---|
-| `verification/cross_check_sources.py` | The comparison script. Run with `python verification/cross_check_sources.py`. |
-| `verification/reports/cross_check_summary.md` | Season-by-season tables behind the numbers above. |
+| `verification/cross_check_sources.py` | The comparison script. Run with `python verification/cross_check_sources.py` after downloading the TML season files into the gitignored `verification/external/tml/`. |
+| `verification/reports/cross_check_summary.md` | Season-by-season tables behind the numbers above (a copy of the script's `runs/cross_check_summary.md`). |
 | `runs/cross_check_mismatches.csv` | Every mismatching match, both sources side by side. Written locally by the script; not in the repository. |
 | `verification/reports/atp_spot_check.md` | The 12 ATP website checks with page addresses. |
 | `verification/reports/atp_spot_check_sample.csv` | The 12 sampled rows and the random seed used. |

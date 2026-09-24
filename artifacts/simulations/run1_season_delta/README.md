@@ -1,4 +1,4 @@
-# Simulations: run1_season_delta
+# Simulations: `run1_season_delta`
 
 Weights: `artifacts/models/run1_season_delta/model.pt` (trained through 2024, sha256 `10d2f7c68eb4`).
 
@@ -17,7 +17,8 @@ Full write-up: `season_2025/summary.md`. Comparison with the other runs: `verifi
 ## Reproduce
 
 ```bash
-python scripts/simulate_season.py --model artifacts/models/run1_season_delta/model.pt --season 2025 --n-sims 10000 --seed 42 --out artifacts/simulations/run1_season_delta/season_2025/
+python scripts/simulate_season.py --model artifacts/models/run1_season_delta/model.pt --season 2025 --n-sims 10000 --seed 42 --out runs/simulations/run1_season_delta/season_2025/
 ```
 
+Writes to `runs/` (gitignored); every CSV file and `metrics.json` should match `season_2025/` here byte for byte.
 Other runs use the same season, seed and simulation count, so only the model differs.

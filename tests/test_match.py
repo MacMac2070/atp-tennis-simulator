@@ -94,7 +94,7 @@ def test_level_formats():
     (0.64, 0.66, 5, SLAM_FINAL_TB, True),
 ])
 def test_point_by_point_replay_agrees(pa, pb, best_of, final_tb, a_first):
-    """20,000 matches played point by point land within 1.1 pp (3 sigma) of the recursion."""
+    """20,000 matches played point by point land within 1.1 percentage points (3 sigma) of the recursion."""
     rng = np.random.default_rng(7)
     n = 20_000
     wins = sum(simulate_match(pa, pb, rng, best_of, final_tb, a_first) for _ in range(n))

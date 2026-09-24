@@ -9,7 +9,7 @@ as `python3` and as `.venv/bin/python` (the project's virtual environment).
 Match files: `data/tennis_atp/atp_matches_YYYY.csv` for YYYY = 1991 .. 2026 (tour-level
 singles only). Players: `data/tennis_atp/atp_players.csv`.
 **season** := the year in the file name the match came from, never the calendar year of
-`tourney_date` (a handful of events dated 30 or 31 December sit in the next season's file).
+`tourney_date` (a handful of events dated in the last days of December sit in the next season's file).
 
 ## 2. Identity merges (applied to winner_id and loser_id before anything else)
 211776 -> 212021 (Martin Landaluce), 209870 -> 211326 (Gunawan Trismuwantara).

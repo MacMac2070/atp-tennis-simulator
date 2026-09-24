@@ -6,7 +6,8 @@ allowed to change.
 
 Scope: ATP singles, 1991 onward, three surfaces. Status: training table built and
 verified, two frozen models (Run 0 and Run 1), and the 2025 season simulated for both.
-The short overview and the results are in `README.md`.
+The short overview and the results are in `README.md`; the as-built rules for form cards, the
+formula and training are in `DESIGN_2.0.md`.
 
 ---
 
@@ -19,8 +20,8 @@ it is built from one repeated event.
 > **How often does this player win a point when he is serving?**
 > Everything else in this project is that number, repeated and stacked.
 
-Four points in a row is a game. Six games is a set. Two or three sets is a match.
-Seven matches is a title. A year of titles is a ranking. So if you can work out
+At least four points, two clear, is a game. Six games is a set. Two or three sets is a
+match. Up to seven matches is a title. A year of titles is a ranking. So if you can work out
 one player's chance of winning one service point against one particular opponent
 on one particular surface, you can build the rest by repetition.
 
@@ -43,8 +44,8 @@ down at some point before August 2026 and now returns 404, along with his WTA
 equivalent. We use an archival mirror carrying the same files under the same
 licence (CC BY-NC-SA 4.0, non-commercial, attribution required, share-alike).
 
-One consequence matters: **there is no live feed any more.** The mirror stops on
-25 May 2026. So this project cannot forecast the season currently in progress. It
+One consequence matters: **there is no live feed of this archive any more.** The
+mirror stops with Roland Garros 2026, which began on 25 May. So this project cannot forecast the season currently in progress. It
 replays a completed season instead, week by week, scored against what actually
 happened. That is a cleaner scientific setup anyway, because the answer is
 already known and cannot be fudged.
@@ -52,15 +53,15 @@ already known and cannot be fudged.
 ### What the audit found
 
 
-| Question                              | Answer                                           | Figure  |
-| ------------------------------------- | ------------------------------------------------ | ------- |
-| Matches in the archive                | 1968 to 2026, tour level                         | 199,389 |
-| When serve statistics start           | Nothing usable before this year                  | 1991    |
-| Coverage 1991 to 2015                 | Stable plateau, gap is mostly lower-tier matches | ~88%    |
-| Coverage 2016 onward                  | Near complete                                    | 94-99%  |
-| Usable matches, three live surfaces   | Hard 52,302 / Clay 33,343 / Grass 10,403         | 96,048  |
-| Training rows (two servers per match) | The dataset we actually fit on                   | 192,096 |
-| Median matches per player per season  | The tour is mostly one-off qualifiers            | 4       |
+| Question                             | Answer                                         | Figure  |
+| ------------------------------------ | ---------------------------------------------- | ------- |
+| Matches in the archive               | 1968 to 2026, tour level                       | 199,389 |
+| When serve statistics start          | Nothing usable before this year                | 1991    |
+| Coverage 1991 to 2015                | Stable plateau, gap is mostly Davis Cup ties   | ~88%    |
+| Coverage 2016 to 2024                | Near complete                                  | 94-99%  |
+| Usable matches, three live surfaces  | Hard 52,302 / Clay 33,343 / Grass 10,403       | 96,048  |
+| Rows (two servers per match)         | Before exclusions; the built table has 186,482 | 192,096 |
+| Median matches per player per season | The tour is mostly one-off qualifiers          | 4       |
 
 
 Carpet appears in the archive but the surface was retired around 2009, so it is
@@ -68,22 +69,22 @@ dropped. That leaves hard, clay and grass.
 
 That median of four is the uncomfortable number. A player with four matches
 behind him has a very unreliable profile, which is why the model deliberately
-drags thinly-observed players back towards the tour average rather than believing
+drags thinly observed players back towards the tour average rather than believing
 their small sample.
 
 ---
 
 
 
-## 3. Three files, and only three
+## 3. Four kinds of file, and only four
 
 
 | What                                                | Format                                     | Contents                                                                                                      | Size          |
 | --------------------------------------------------- | ------------------------------------------ | ------------------------------------------------------------------------------------------------------------- | ------------- |
-| **The raw archive** (read-only, never edited)       | `data/tennis_atp/atp_matches_YYYY.csv`     | One line per match. Date, tournament, surface, both players, score, counting statistics for each side.        | 113 MB        |
+| **The raw archive** (read-only, never edited)       | `data/tennis_atp/atp_matches_YYYY.csv`     | One line per match. Date, tournament, surface, both players, score, counting statistics for each side.        | 37 MB         |
 | **The training table** (built by us, the real work) | `runs/rows.parquet`                        | One row per *server per match*. Both form cards, surface, points served, points won.                          | 186,482 rows  |
 | **The card table** (audit trail for the rows)       | `runs/cards.parquet`, `runs/constants.csv` | Every card with its window counts, raw and shrunk rates, and the per-season constants used to standardise it. | 105,195 cards |
-| **The fitted model** (output of training)           | `model.pt`                                 | Every number the computer learned.                                                                            | 243 numbers   |
+| **The fitted model** (output of training)           | `artifacts/models/run*/model.pt`           | Every number the computer learned.                                                                            | 243 numbers   |
 
 
 
@@ -119,16 +120,18 @@ convention matters: two average players produce a prediction of exactly the tour
 baseline, with every other term cancelling to nothing.
 
 
-| #   | Attribute              | Computed from                           | Window     |
-| --- | ---------------------- | --------------------------------------- | ---------- |
-| 1   | Serve strength         | `(1stWon + 2ndWon) / svpt`              | 52 weeks   |
-| 2   | Ace rate               | `ace / svpt`                            | 52 weeks   |
-| 3   | Double fault rate      | `df / svpt`                             | 52 weeks   |
-| 4   | Return strength        | points won receiving / points received  | 52 weeks   |
-| 5   | Break points saved     | `bpSaved / bpFaced`                     | 52 weeks   |
-| 6   | Break points converted | opponent `bpFaced - bpSaved`            | 52 weeks   |
-| 7   | Form                   | last 10 matches minus the 52-week level | 10 matches |
-| 8   | Age                    | from the player file's date of birth    | on the day |
+| #   | Attribute              | Computed from                            | Window     |
+| --- | ---------------------- | ---------------------------------------- | ---------- |
+| 1   | Serve strength         | `(1stWon + 2ndWon) / svpt`               | 52 weeks   |
+| 2   | Ace rate               | `ace / svpt`                             | 52 weeks   |
+| 3   | Double fault rate      | `df / svpt`                              | 52 weeks   |
+| 4   | Return strength        | points won receiving / points received   | 52 weeks   |
+| 5   | Break points saved     | `bpSaved / bpFaced`                      | 52 weeks   |
+| 6   | Break points converted | opponent `(bpFaced - bpSaved) / bpFaced` | 52 weeks   |
+| 7   | Form                   | last 10 matches minus the 52-week level  | 10 matches |
+| 8   | Age                    | from the player file's date of birth     | on the day |
+
+In the code the eight are stored as `x_0` to `x_7`, in this order.
 
 
 > **The one rule that cannot be broken.** A card for a match played on 5 June
@@ -208,7 +211,7 @@ p = 1 / (1 + e^(-z))
     i serves, j returns, one surface
 ```
 
-Four layers, each answering a different question. The first line adds up reasons,
+Four layers, each answering a different question. The first line adds up reasons;
 the second turns that total into a probability.
 
 `mu`**, where everyone starts.** The tour-average chance of winning a service
@@ -248,7 +251,7 @@ tell a big server apart from a grinder.
 - **The interaction term is the smallest step beyond adding up.** Constant, then
 linear, then the first cross term. Going further would fit noise, not tennis.
 - **A neural network would predict marginally better and explain nothing.** With
-eight attributes and 192,000 rows there is not much more signal to extract, and
+eight attributes and 186,000 rows there is not much more signal to extract, and
 the readable weights are the point: `a` tells you what matters on clay, `W`
 tells you which style troubles which.
 
@@ -278,7 +281,7 @@ tells you which style troubles which.
 The form cards are standardised against each season's own population, so `x = 0`
 always means "average for that season" and the cards carry no information about
 how good serving is in that era. That level lives only in `mu`. Fitted on every
-row since 1992, `mu` settles on the 33-year average, which by 2024 sat 1.1 to 1.5
+row since 1992, `mu` settles on the 33-year average, which by 2024 sat 1.2 to 1.6
 percentage points below the tour. Run 0 under-predicted serve on every surface by
 about that much.
 
@@ -301,9 +304,11 @@ It is also, for exactly that reason, the part most likely to fit noise: the most
 knobs, the least evidence behind any individual one. So it gets the heaviest
 regularisation, a penalty pulling unused entries back towards zero.
 
-Rather than trusting intuition, compute all three terms across the test season
-and report how much each actually moves the prediction. That table belongs in the
-README, and it is what decides whether the interaction term earned its place.
+Rather than trusting intuition, compute all three terms across the holdout seasons
+and report how much each actually moves the prediction. For Run 1 those figures are
+in `verification/reports/run1_season_delta/eval.md`: the interaction term averages
+under 0.02 in log-odds, against 0.07 to 0.13 for the serve and return terms. That is
+what decides whether the interaction term earned its place.
 
 ---
 
@@ -311,8 +316,8 @@ README, and it is what decides whether the interaction term earned its place.
 
 ## 8. One prediction, worked through
 
-Shrunk to two attributes instead of eight so the arithmetic is followable.
-Alcaraz serving to Sinner, on clay.
+Shrunk to two attributes instead of eight (serve strength, then return strength) so the
+arithmetic is followable. Alcaraz serving to Sinner, on clay, with illustrative figures.
 
 ```
 form cards        x_server   = [1.2, 0.8]     Alcaraz, above average on both
@@ -344,17 +349,17 @@ matrix just -0.014. That is what "most numbers, least influence" looks like.
 
 ## 9. How it learns
 
-He actually served 78 points and won 51, which is 65.4%. We predicted 64.2%, so
+Say he served 78 points and won 51, which is 65.4%. We predicted 64.2%, so
 we were slightly low. Converted into points rather than percentages:
 
 ```
-predicted points won   78 x 0.642 = 50.06
-actual points won                 = 51
-error                             = -0.94    we were 0.94 points too low
+predicted points won   78 x 0.6418 = 50.06
+actual points won                  = 51
+error, actual - predicted          = +0.94    we were 0.94 points too low
 ```
 
-That single error figure drives every adjustment. **Every one of the 243 numbers
-is nudged, on every single row.** The model does not choose which ones to change.
+That single error figure drives every adjustment. **Every one of the 81 numbers
+in the clay model is nudged, on every single row.** The model does not choose which ones to change.
 It changes all of them at once, and each one's nudge follows the same rule:
 
 > **nudge = learning rate x how wrong we were x how involved that number was**
@@ -362,7 +367,8 @@ It changes all of them at once, and each one's nudge follows the same rule:
 The two factors do different jobs:
 
 - **How wrong we were** is the error, a single number shared by every parameter
-on this row. Here, -0.94. It sets the direction and the overall scale.
+on this row. Here, +0.94, positive because we were too low. It sets the direction and
+the overall scale.
 - **How involved that number was** is specific to each parameter. It is whatever
 that parameter gets multiplied by inside the formula, which is exactly how much
 the prediction would move if you nudged it. Multiply a large input and you are
@@ -492,16 +498,18 @@ was actually large.
 
 **Nothing here is a search.** There is no trying values and seeing what happens.
 Each parameter's share of the blame is one multiplication, computed directly, and
-all 243 are updated in the same instant. That is all backpropagation is.
+all 81 in the clay model are updated in the same instant. That is all backpropagation is.
+In the code, rows go through in batches of 2,048 and the Adam optimiser scales each step, but
+the direction of every nudge comes from exactly this rule.
 
 ### Why it settles down
 
-Across 192,000 rows the random nudges cancel and the systematic ones accumulate.
+Across about 179,000 training rows the random nudges cancel and the systematic ones accumulate.
 If serve strength genuinely matters, its weight gets pushed up every time a
 strong server beats the prediction, and pushed down only occasionally by chance.
 It drifts upward until it reaches the value where it overpredicts as often as it
 underpredicts. At that point the pushes balance, the number stops moving, and the
-answer has been found. The same happens to all 243.
+answer has been found. The same happens to all 243, each surface on its own rows.
 
 Nothing clever is going on. It is a very patient process of being slightly less
 wrong each time.
@@ -529,7 +537,7 @@ percentages, one for each man. Everything above that is repetition.
 ```
 
 The output is not a single prediction but a spread: *"Alcaraz finishes world
-number one in 61% of simulated seasons, and in the top four in 94% of them."*
+number one in 48% of simulated seasons, and in the top four in 97% of them"* (Run 0, 2025).
 Substitute each real result as the season progresses and the spread narrows week
 by week, which is what "predicting the rankings throughout the season" actually
 means in practice.
@@ -544,9 +552,10 @@ means in practice.
 | Clay    | 61.9%                           | Slowest. Returners get more back    |
 
 
-Computed from the archive rather than quoted from memory. Four percentage points
+Computed from the archive (every match with serve statistics, 2016 onward) rather than quoted
+from memory. Four percentage points
 separate clay from grass, which is a large gap at point level and an enormous one
-by the time it compounds through a five-set match. It is the reason the model is
+by the time it compounds through a best-of-five match. It is the reason the model is
 fitted three times rather than once.
 
 ### As built
@@ -554,7 +563,7 @@ fitted three times rather than once.
 Steps 1 to 5 live in `atp_sim/` (`match.py`, `draws.py`, `points.py`, `season.py`,
 `report.py`) and `scripts/simulate_season.py`. Step 2 is the exact recursion, with a
 point-by-point Monte Carlo replay only as its test: 62% against 62% gives exactly 50%,
-65% against 58% gives 81.4% over three sets. Step 3 plays the real 2025 draws, rebuilt
+65% against 58% gives 81.4% in a best-of-three match. Step 3 plays the real 2025 draws, rebuilt
 from the results. Step 4 skips the best-19 rule, so year-end results are compared first
 with the real season scored on the same points table. Form cards stay at their real
 values, so simulated results never feed back: a clean A/B test of the serve model rather
@@ -571,11 +580,11 @@ Built as a controlled comparison rather than a single model, with one thing
 changed at each step.
 
 
-| Rung | Model                                                      | What it tests                                               | Status    |
-| ---- | ---------------------------------------------------------- | ----------------------------------------------------------- | --------- |
-| 1    | Two numbers per player, added up. No interaction term      | The baseline everything else must beat                      | Version 1 |
-| 2    | Eight named attributes plus the learned interaction matrix | Do style matchups exist, and are they worth the complexity? | Version 1 |
-| 3    | Player vectors learned from scratch instead of computed    | Can the model find structure nobody specified?              | Version 2 |
+| Rung | Model                                                      | What it tests                                               | Status                  |
+| ---- | ---------------------------------------------------------- | ----------------------------------------------------------- | ----------------------- |
+| 1    | Two numbers per player, added up. No interaction term      | The baseline everything else must beat                      | Not built yet           |
+| 2    | Eight named attributes plus the learned interaction matrix | Do style matchups exist, and are they worth the complexity? | Built (Run 0 and Run 1) |
+| 3    | Player vectors learned from scratch instead of computed    | Can the model find structure nobody specified?              | Not built yet           |
 
 
 A null result is still a result. If the interaction matrix improves prediction by
@@ -600,7 +609,7 @@ individual season forecast and there is no signal that would have warned of it.
 - **Not live.** The source archive stopped in May 2026, so the simulator replays
 completed seasons rather than forecasting the current one.
 
-Each belongs in the README as a stated limitation rather than being quietly
+Each is stated here as a limitation rather than being quietly
 omitted. A model that says what it cannot do is easier to trust about what it can.
 
 ---
@@ -617,9 +626,9 @@ Every number in this project traces back to one archive, through one mirror.
    travel with the data as `data/tennis_atp/UPSTREAM_README.md`: statistics are
    integer totals, exist for tour-level matches from 1991, are missing for some
    matches (the ATP has none, or they failed his sanity checks), and Davis Cup
-   statistics only appear from 2016.
+   statistics are missing until the last few seasons (from 2016 in these files).
 2. **Withdrawal.** The original repository was taken down before August 2026 and
-  returns 404. The Wayback Machine's last capture of it is dated 14 March 2026.
+  returns 404. The Wayback Machine's last capture of the live repository is dated 14 March 2026.
 3. **Mirror.** `fetch_data.sh` downloads `github.com/Aneeshers/tennis-sackmann-archive`,
   which states that all data was collected and compiled by Jeff Sackmann, links the
    upstream repositories, keeps the upstream README, says its ATP snapshot comes from
@@ -627,11 +636,13 @@ Every number in this project traces back to one archive, through one mirror.
    singles files, the players file, the ranking files and the licence are copied;
    qualifying, challenger, futures and doubles files are left out.
 4. **On disk.** 59 season files, 1968 to 2026, last event 25 May 2026.
+5. **Cross-checked.** On 21 September 2026 the files were compared with TennisMyLife and
+   with the official ATP website: `verification/reports/DATA_SOURCE_VERIFICATION.md`.
 
-What the build does to it is recorded in `runs/build_report.md`: identity merges,
+What the build does to it is recorded in `runs/build_report.md` (written by `scripts/build_rows.py`; not in the repository): identity merges,
 every excluded match by rule, and the three players whose date of birth contradicts
 the archive's own age column by decades. Independent checks of the raw files and of
-the finished table, run by a second model from the specification alone, live under
+the finished table, run by a second model, Antigravity (Gemini 3.5), from the specification alone, live under
 `verification/antigravity/`.
 
 ---

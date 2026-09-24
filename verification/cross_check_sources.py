@@ -5,8 +5,12 @@ player names plus round, within the same tournament (start dates within
 MAX_DATE_GAP_DAYS), then reports coverage and field-by-field agreement.
 
 Usage:  python verification/cross_check_sources.py [--start 1992] [--end 2026]
+Needs:  the TML season files (YYYY.csv from stats.tennismylife.org) in
+        verification/external/tml/, downloaded separately; they are not in the repository.
 Writes: runs/cross_check_summary.md
         runs/cross_check_mismatches.csv
+        runs/cross_check_sackmann_only.csv
+        runs/cross_check_tml_only.csv
 """
 
 from __future__ import annotations
@@ -48,7 +52,7 @@ def load_tml(start: int, end: int) -> pd.DataFrame:
     for year in range(start, end + 1):
         path = os.path.join(TML_DIR, f"{year}.csv")
         if not os.path.exists(path):
-            raise FileNotFoundError(f"Missing TML file {path}")
+            raise FileNotFoundError(f"Missing TML file {path} (downloaded separately; see the module docstring)")
         df = pd.read_csv(path, low_memory=False)
         df["season"] = year
         frames.append(df)

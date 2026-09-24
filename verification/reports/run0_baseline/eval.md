@@ -1,4 +1,4 @@
-# Model progression log — Run 0 (baseline)
+# Model progression log: Run 0 (baseline)
 
 **Date logged:** 21 September 2026  
 **Purpose:** Freeze the first holdout evaluation so later changes show real progression, not a moving target.
@@ -12,7 +12,7 @@ This was the first full train + eval of the bilinear serve model. Results origin
 | Item | Value |
 |---|---|
 | Model file | `artifacts/models/run0_baseline/model.pt` |
-| Training rows | `runs/rows.parquet` |
+| Training rows | `runs/rows.parquet` (built locally by `scripts/build_rows.py`; gitignored) |
 | Train through | **2024** (seasons ≤ 2024) |
 | Holdout | **2025** and partial **2026** (7,664 rows) |
 | Parameters | 243 (81 × Hard / Clay / Grass) |
@@ -58,10 +58,10 @@ python scripts/evaluate_model.py --rows runs/rows.parquet --model artifacts/mode
 
 ## What Run 0 showed (interpretation)
 
-1. **Under-prediction everywhere** — servers win ~1–3 pp more than the model expects; worse in 2026.
+1. **Under-prediction everywhere:** servers win about 1 to 3 percentage points more than the model expects; worse in 2026.
 2. **Beats the constant baseline**, but only modestly (NLL and point-MAE slightly better).
-3. **Player terms are non-trivial** (serve / return / interaction roughly 0.05–0.12) — ranking players helps; the level shift is the main leftover error.
-4. **Data was later verified** (`DATA_SOURCE_VERIFICATION.md`) — bias is a modelling issue, not bad Sackmann numbers.
+3. **Player terms are non-trivial** (serve / return / interaction roughly 0.05 to 0.12): ranking players helps; the level shift is the main leftover error.
+4. **Data was later verified** (`DATA_SOURCE_VERIFICATION.md`): the bias is a modelling issue, not bad Sackmann numbers.
 5. **2026 grass missing** in this holdout because `data/tennis_atp` stops before the grass season.
 
 ---
@@ -86,4 +86,4 @@ After each future train/eval, write `verification/reports/runN_…/eval.md` and 
 | `verification/reports/MODEL_PROGRESSION.md` | Progression index |
 | `scripts/evaluate_model.py` | How these numbers were produced |
 | `verification/reports/DATA_SOURCE_VERIFICATION.md` | Why we keep the data despite bias |
-| `runs/build_report.md` | Training-table build |
+| `runs/build_report.md` | Training-table build (written locally by `scripts/build_rows.py`; gitignored) |

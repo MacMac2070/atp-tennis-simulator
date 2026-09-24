@@ -1,4 +1,4 @@
-"""The season loop (design §10, steps 3 to 5): real draws, simulated winners, points, repeated.
+"""The season loop (DESIGN.md §10, steps 3 to 5): real draws, simulated winners, points, repeated.
 
 The two runs share everything except the serve model: the same events, draws, form cards
 and random numbers. Each event has its own generator seeded from (seed, event index) and
@@ -156,7 +156,7 @@ def _break_tie(tied: list[int], pct: np.ndarray, beat: np.ndarray, rank: np.ndar
 
 
 def _play_finals(pe: PreparedEvent, u: np.ndarray) -> tuple[np.ndarray, np.ndarray]:
-    """Round robin set by set, then semi-finals (winner v other group's runner-up) and final."""
+    """Round robin set by set, then semi-finals (winner vs other group's runner-up) and final."""
     f = pe.event.finals
     sims = u.shape[1]
     wins = np.zeros((sims, 8), dtype=np.int64)

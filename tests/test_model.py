@@ -1,4 +1,4 @@
-"""Unit tests for the bilinear formula (design §8 worked example)."""
+"""Unit tests for the bilinear formula (DESIGN.md §8 worked example)."""
 
 from __future__ import annotations
 
@@ -15,7 +15,7 @@ def test_parameter_count():
 
 
 def test_worked_example_two_attrs():
-    """Alcaraz serving to Sinner on clay — shrunk to 2 attributes."""
+    """Alcaraz serving to Sinner on clay, shrunk to 2 attributes."""
     m = BilinearServeModel(n_attrs=2, init_mu=0.49)
     with torch.no_grad():
         m.a.copy_(torch.tensor([0.30, 0.05]))
@@ -41,7 +41,7 @@ def test_average_players_give_baseline():
 
 
 def test_gradient_matches_involvement_rule():
-    """Underprediction raises serve weights via NLL descent (design §9)."""
+    """Underprediction raises serve weights via NLL descent (DESIGN.md §9)."""
     m = BilinearServeModel(n_attrs=2, init_mu=0.0)
     with torch.no_grad():
         m.a.copy_(torch.tensor([0.30, 0.05]))

@@ -1,13 +1,13 @@
 # 🎾 ATP Season Simulator
 
 This repo explores a point-level model of professional tennis, used to replay whole ATP seasons and forecast
-the year-end rankings. It learns one thing, how often a player wins a point on his own
-serve, and builds everything else by repetition.
+the year-end rankings. It learns one thing: how often a player wins a point on his own
+serve. Everything else is built by repetition.
 
-**Scope:** ATP singles, hard, clay and grass, 1991 onward. (Carpet ignored)
+**Scope:** ATP singles, hard, clay and grass, 1991 onward (carpet ignored).  
 **Status:** training table built and verified · two frozen models (Run 0 and Run 1) · the
-2025 season simulated 10,000 times with each · 83 tests.
-**Technical design:** [`DESIGN_2.0.md`](DESIGN_2.0.md) — form cards, formula, training. Story stays here. Older draft: [`DESIGN.md`](DESIGN.md). Bit-level checks: [`verification/VERIFY_SPEC.md`](verification/VERIFY_SPEC.md).
+2025 season simulated 10,000 times with each · 83 tests.  
+**Technical design:** [`DESIGN_2.0.md`](DESIGN_2.0.md): form cards, formula, training. Story stays here. Older draft: [`DESIGN.md`](DESIGN.md). Bit-level checks: [`verification/VERIFY_SPEC.md`](verification/VERIFY_SPEC.md).
 
 ---
 
@@ -23,8 +23,8 @@ one repeated event.
 > **How often does this player win a point when he is serving?**
 > Everything else in this project is that number, repeated and stacked.
 
-Four points win a game, six games a set, two or three sets a match, seven matches a title,
-and a year of titles makes a ranking. 
+At least four points win a game, six games a set, two or three sets a match, up to seven
+matches a title, and a year of titles makes a ranking.
 
 ```mermaid
 flowchart TD
@@ -53,10 +53,10 @@ flowchart TD
 
 ## 📁 Where the data comes from
 
-Every professional match has an official record: who played, who won, and counting  
-statistics such as first serves in, points won, aces, double faults and break points. Jeff  
-Sackmann of Tennis Abstract collected these into the public archive most tennis research is  
-built on. 
+Every professional match has an official record: who played, who won, and counting
+statistics such as first serves in, points won, aces, double faults and break points. Jeff
+Sackmann of Tennis Abstract collected these into the public archive most tennis research is
+built on.
 
 > [!NOTE]
 > **The data has been checked against other sources.** Every match from 1992 to 2026 was
@@ -69,7 +69,7 @@ built on.
 ```mermaid
 flowchart TD
     A["199,389 matches<br/>1968 to 2026"] --> B{"Serve statistics<br/>recorded?"}
-    B -->|"before 1991: none"| X["❌ not usable"]
+    B -->|"before 1991: almost none"| X["❌ not usable"]
     B -->|"missing or impossible"| X
     B -->|"yes"| C{"Surface"}
     C -->|"carpet, retired around 2009"| Y["❌ dropped"]
@@ -85,7 +85,7 @@ flowchart TD
 
 
 Rows start in 1992 because 1991 only fills the first 52-week windows. Each match becomes
-**two rows**, one per server. Using Alcaraz and Sinner as examples:
+**two rows**, one per server. Using Alcaraz and Sinner as an illustration (the figures are made up):
 
 
 | Server  | Returner | Surface | Points served | Points won |
@@ -104,35 +104,37 @@ Match results are held back as an independent test of whether it is any good.
 ## 🪪 The form card
 
 Before each match the model gets a short report on each player, describing him **as he was
-that morning**. Eight numbers, built from his previous matches and scaled so that **0 means
-exactly tour average** and 1 means one standard deviation better. A player with only a
-handful of matches is pulled towards average rather than believed.
+when the tournament began**. Eight numbers, built from his previous matches and scaled
+against the previous season's players, so that **0 means tour average** and 1 means one
+standard deviation above it. A player with only a handful of matches is pulled towards
+average rather than believed.
 
 
-| #   | Attribute              | Built from                                | Window     |
-| --- | ---------------------- | ----------------------------------------- | ---------- |
-| 1   | Serve strength         | service points won                        | 52 weeks   |
-| 2   | Ace rate               | aces per service point                    | 52 weeks   |
-| 3   | Double fault rate      | double faults per service point           | 52 weeks   |
-| 4   | Return strength        | return points won                         | 52 weeks   |
-| 5   | Break points saved     | saved / faced                             | 52 weeks   |
-| 6   | Break points converted | converted / chances                       | 52 weeks   |
-| 7   | Form                   | last 10 matches against the 52-week level | 10 matches |
-| 8   | Age                    | date of birth                             | on the day |
+| #   | Attribute              | Built from                                                    | Window     |
+| --- | ---------------------- | ------------------------------------------------------------- | ---------- |
+| 1   | Serve strength         | share of service points won                                   | 52 weeks   |
+| 2   | Ace rate               | aces per service point                                        | 52 weeks   |
+| 3   | Double fault rate      | double faults per service point                               | 52 weeks   |
+| 4   | Return strength        | share of return points won                                    | 52 weeks   |
+| 5   | Break points saved     | saved / faced                                                 | 52 weeks   |
+| 6   | Break points converted | converted / chances                                           | 52 weeks   |
+| 7   | Form                   | service points won, last 10 matches against the 52-week level | 10 matches |
+| 8   | Age                    | date of birth                                                 | on the day |
 
+In the code the eight are stored as `x_0` to `x_7`, in this order.
 
 > [!CAUTION]
-> **The one rule that cannot be broken.** A card for a match on 5 June 2019 may only use
-> matches from before 5 June 2019. Let one later match slip in and the model is reading
+> **The one rule that cannot be broken.** A card for a tournament starting on 5 June 2019 may
+> only use matches from events that started before 5 June 2019. Let one later match slip in and the model is reading
 > tomorrow's newspaper: it looks brilliant and predicts nothing. The failure is silent, which
 > is why the first test written for this project is a leakage test.
 
 ```mermaid
 flowchart LR
-    subgraph past["✅ Allowed: before the match date"]
+    subgraph past["✅ Allowed: events before the start date"]
         M1["match"] --> M2["match"] --> M3["match"]
     end
-    subgraph future["🚫 Forbidden: after"]
+    subgraph future["🚫 Forbidden: that day and after"]
         F1["match"] --> F2["match"]
     end
     past --> AGG["Aggregate<br/>52-week window"] --> STD["Standardise"] --> CARD["🪪 form card"]
@@ -188,16 +190,16 @@ flowchart TD
 One prediction, shrunk to two attributes so the arithmetic is followable:
 
 
-| Layer         | In plain words                         | Alcaraz serving to Sinner, clay |
-| ------------- | -------------------------------------- | ------------------------------- |
-| μ             | the tour average on this surface       | 0.490                           |
-| + a · x_i     | what Alcaraz brings                    | +0.400                          |
-| − b · x_j     | what Sinner takes away                 | −0.293                          |
-| + x_i W x_j   | style against style                    | −0.014                          |
-| **z, then p** | the total, squashed into a probability | **0.583, so 64.2%**             |
+| Layer         | In plain words                                | Alcaraz serving to Sinner, clay |
+| ------------- | --------------------------------------------- | ------------------------------- |
+| μ             | the tour average on this surface, in log-odds | 0.490                           |
+| + a · x_i     | what Alcaraz brings                           | +0.400                          |
+| − b · x_j     | what Sinner takes away                        | −0.293                          |
+| + x_i W x_j   | style against style                           | −0.014                          |
+| **z, then p** | the total, squashed into a probability        | **0.583, so 64.2%**             |
 
 
-Why squash at all? Probabilities must stay between 0 and 1, and adding does not respect that (64% plus 20% plus 25% is 109%). So the sums happen in log-odds, where adding is always safe, and convert once at the end.
+Why squash at all? Probabilities must stay between 0 and 1, and adding does not respect that (64% plus 20% plus 25% is 109%). So the sums happen in log-odds, where adding is always safe, and the total is converted once at the end.
 
 > [!TIP]
 > **243 numbers is the entire model:** 81 per surface (μ, 8 in **a**, 8 in **b**, 64 in
@@ -211,7 +213,7 @@ Why squash at all? Probabilities must stay between 0 and 1, and adding does not 
 
 ## 📈 How it learns
 
-In that example Alcaraz actually served 78 points and won 51. The model said 64.2%, which is
+In that example Alcaraz served 78 points and won 51. The model said 64.2%, which is
 50.06 points: 0.94 points too low. That one error nudges all 81 numbers of the clay model at once.
 
 > [!NOTE]
@@ -219,14 +221,14 @@ In that example Alcaraz actually served 78 points and won 51. The model said 64.
 
 "Involved" means how far the prediction would move if that number moved. A weight that
 multiplies a large attribute is a long lever and takes a big share of the blame; one that
-multiplies zero sits at the pivot and takes none. Across 186,482 rows the random nudges cancel
+multiplies zero sits at the pivot and takes none. Across the 178,818 training rows (1992 to 2024) the random nudges cancel
 and the systematic ones add up, until every number stops moving.
 
 ```mermaid
 flowchart TD
     A["📋 Take a row"] --> B["🧮 Predict p = 0.642"]
-    B --> C["📏 Compare: 50.06 v 51 points"]
-    C --> D["❗ Error = −0.94"]
+    B --> C["📏 Compare: 50.06 vs 51 points"]
+    C --> D["❗ Error: 0.94 too low"]
     D --> E["🎚️ Nudge that surface's 81 numbers<br/>each by error × its involvement"]
     E --> F{"More rows?"}
     F -->|"yes"| A
@@ -283,8 +285,8 @@ large difference in match odds, because it is applied to every point of every ga
 | 65%                    | 58%                    | 81.4%             | 86.8%             |
 
 
-The surface sets the starting point: servers win 65.9% of points on grass, 64.2% on hard and
-61.9% on clay.
+The surface sets the starting point: from 2016 to 2026, servers won 65.9% of points on grass,
+64.2% on hard and 61.9% on clay.
 
 The simulator plays the real 2025 draws, rebuilt from the results, awards the 2025 ATP
 points and rolls the 52-week ledger. Both models face exactly the same random numbers, like
@@ -322,9 +324,9 @@ flowchart LR
 
 > [!NOTE]
 > **The main finding so far: both models are overconfident.** When Run 0 calls a player a
-> 95% favourite he wins 81% of the time; Run 1 manages 87%. That is why both lose to "the
-> higher-ranked player wins". The gearbox magnifies any error in the serve percentages, and
-> the model treats its estimates as exact. Allowing for that uncertainty is the next run.
+> 95% favourite he wins 81% of the time; Run 1 manages 87%. The gearbox magnifies any error
+> in the serve percentages, and the model treats its estimates as exact. Allowing for that
+> uncertainty is the next run. On accuracy, both still trail "the higher-ranked player wins".
 
 More detail: [model runs](verification/reports/MODEL_PROGRESSION.md) ·
 [the Run 0 to Run 1 fix](docs/serve_level_fix.md) ·
@@ -341,12 +343,15 @@ python3 -m pip install -r requirements.txt
 ./fetch_data.sh                       # download the match archive into data/
 python3 audit_data.py                 # what the data can support
 python3 scripts/build_rows.py         # build the training table in runs/ (about 1 s)
-python3 -m pytest -q                  # 83 tests, the leakage test first
+python3 -m pytest -q                  # 83 tests, leakage test included
 python3 scripts/train_model.py --train-through 2024 --out runs/model.pt
 python3 scripts/evaluate_model.py --model runs/model.pt
 python3 scripts/simulate_season.py --model artifacts/models/run1_season_delta/model.pt \
-    --season 2025 --n-sims 10000 --seed 42 --out artifacts/simulations/run1_season_delta/season_2025/
+    --season 2025 --n-sims 10000 --seed 42 --out runs/simulations/run1_season_delta/season_2025/
 ```
+
+The simulation writes to `runs/`, so the frozen results under `artifacts/simulations/` are never
+overwritten; its CSV files and `metrics.json` should match them byte for byte.
 
 
 
@@ -357,15 +362,15 @@ python3 scripts/simulate_season.py --model artifacts/models/run1_season_delta/mo
 | -------------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------ |
 | `atp_sim/`                       | The package. Data and cards: `data.py`, `form_cards.py`, `dataset.py`. Model: `model.py`, `train.py`. Simulator: `match.py`, `draws.py`, `points.py`, `season.py`, `report.py` |
 | `scripts/`                       | `build_rows.py`, `train_model.py`, `evaluate_model.py`, `simulate_season.py`, `compare_simulations.py`                                                                         |
-| `tests/`                         | The pytest suite; `test_leakage.py` is the one that must pass first                                                                                                            |
+| `tests/`                         | The pytest suite; `test_leakage.py` guards the one rule that cannot be broken                                                                                                  |
 | `artifacts/models/`              | Frozen weights for each run: `run0_baseline/`, `run1_season_delta/`                                                                                                            |
-| `artifacts/simulations/`         | The simulated seasons for each run, one folder per season                                                                                                                      |
+| `artifacts/simulations/`         | Simulation outputs for each run, one `season_YYYY/` folder per replayed season                                                                                                 |
 | `docs/`                          | Explainers with diagrams: the serve level fix, the season simulation                                                                                                           |
 | `verification/`                  | The exact definitions (`VERIFY_SPEC.md`), independent checks and all reports                                                                                                   |
-| `DESIGN_2.0.md`                  | Technical design: exact card/model/sim rules and why                                                                                                                           |
+| `DESIGN_2.0.md`                  | Technical design: the card, formula and training rules, and why                                                                                                                |
 | `DESIGN.md`                      | Older narrative draft (prefer `DESIGN_2.0.md` + this README)                                                                                                                   |
 | `fetch_data.sh`, `audit_data.py` | Download the archive; report what it can support                                                                                                                               |
-| `data/`, `runs/`                 | The raw archive and build outputs. Git-ignored                                                                                                                                 |
+| `data/`, `runs/`                 | The downloaded archive and local build outputs; gitignored                                                                                                                     |
 
 
 ---
@@ -376,9 +381,9 @@ python3 scripts/simulate_season.py --model artifacts/models/run1_season_delta/mo
 
 - **Not a shot-level model.** The archive records serve and return counts only, so the model
 knows nothing about footwork, forehands or court position.
-- **Cannot predict injuries.** A retirement in week three wrecks a season forecast, and  
+- **Not an injury forecaster.** A retirement in week three wrecks a season forecast, and
 nothing in the data would have warned of it.
-- **Simplified rankings.** In the simulator every event counts in full (no best-19 rule),
+- **Not the full ranking rules.** In the simulator every event counts in full (no best-19 rule),
 form cards stay at their real values, and the ATP Finals field is the real one.
 
 A model that says what it cannot do is easier to trust about what it can.

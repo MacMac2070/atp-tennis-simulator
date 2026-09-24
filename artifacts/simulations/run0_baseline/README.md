@@ -1,4 +1,4 @@
-# Simulations: run0_baseline
+# Simulations: `run0_baseline`
 
 Weights: `artifacts/models/run0_baseline/model.pt` (trained through 2024, sha256 `25f1b647dae6`).
 
@@ -17,7 +17,8 @@ Full write-up: `season_2025/summary.md`. Comparison with the other runs: `verifi
 ## Reproduce
 
 ```bash
-python scripts/simulate_season.py --model artifacts/models/run0_baseline/model.pt --season 2025 --n-sims 10000 --seed 42 --out artifacts/simulations/run0_baseline/season_2025/
+python scripts/simulate_season.py --model artifacts/models/run0_baseline/model.pt --season 2025 --n-sims 10000 --seed 42 --out runs/simulations/run0_baseline/season_2025/
 ```
 
+Writes to `runs/` (gitignored); every CSV file and `metrics.json` should match `season_2025/` here byte for byte.
 Other runs use the same season, seed and simulation count, so only the model differs.

@@ -1,4 +1,4 @@
-"""Fit one bilinear serve model per surface (design §§5, 9).
+"""Fit one bilinear serve model per surface (DESIGN.md §§5, 9).
 
 Run 1 adds a training-only per-season offset to mu (see `SeasonOffsets`). Pass the rows'
 seasons to `train_surface` and mu is anchored on the last of them; leave them out and the
@@ -50,10 +50,11 @@ def train_surface(
     verbose: bool = True,
     lr_decay: bool = False,
 ) -> BilinearServeModel:
-    """SGD on binomial NLL with heavy W regularisation.
+    """Mini-batch Adam on binomial NLL with heavy W regularisation.
 
-    With `season`, mu is initialised at and anchored on the last season's rate and every
-    earlier season gets a training-only delta. The returned model never contains delta;
+    With `season`, every season (the last included) gets a training-only level, started at
+    its own observed rate, while mu is held at 0; once training ends, mu takes the last
+    season's level. The returned model never contains delta;
     the fitted values are kept on `model.fitted_offsets` (a plain dict) for reporting.
 
     `lr_decay` cools the learning rate linearly to 5% of `lr` over the run, so the fit
@@ -192,7 +193,7 @@ def evaluate_terms(
     x_i: torch.Tensor,
     x_j: torch.Tensor,
 ) -> dict[str, float]:
-    """Mean absolute contribution of each formula layer (design §7)."""
+    """Mean absolute contribution of each formula layer (DESIGN.md §7)."""
     with torch.no_grad():
         t = model.term_breakdown(x_i, x_j)
     return {

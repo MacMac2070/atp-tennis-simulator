@@ -1,4 +1,4 @@
-"""From two serve-point probabilities to a match winner (design §10, step 2).
+"""From two serve-point probabilities to a match winner (DESIGN.md §10, step 2).
 
 Everything here is exact arithmetic on the standard assumption that every point is an
 independent coin with the server's probability. Functions take numpy arrays and work
@@ -82,7 +82,7 @@ def _tb_a_serves(k: int) -> bool:
 def p_tiebreak(pa: ArrayLike, pb: ArrayLike, target: int = TOUR_TB) -> np.ndarray:
     """Probability A wins a tiebreak to `target` (win by two) that A serves first.
 
-    Dynamic programme over the score. From target-1 all, every two points contain one
+    Dynamic programming over the score. From target-1 all, every two points contain one
     serve each, so the rest is a race: A wins a pair with pa(1 - pb), B with (1 - pa)pb.
     """
     a, b = _arrays(pa, pb)
@@ -139,7 +139,7 @@ def p_set(pa: ArrayLike, pb: ArrayLike, tb_target: int = TOUR_TB) -> np.ndarray:
 
 
 def p_match(pa: ArrayLike, pb: ArrayLike, best_of: int = 3, final_tb: int = TOUR_TB) -> np.ndarray:
-    """Probability A wins a best-of-3 or best-of-5 match.
+    """Probability A wins a best-of-three or best-of-five match.
 
     Sets are independent with the same probability, except the deciding set, which uses
     its own tiebreak target (10 at a Slam).

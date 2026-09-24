@@ -26,7 +26,7 @@ FORM_MATCHES = 10
 RATES = ("serve", "ace", "df", "ret", "bps", "bpc")
 K = {"serve": 200, "ace": 50, "df": 250, "ret": 300, "bps": 200, "bpc": 350}
 COUNT_COLS = ("svpt", "svwon", "ace", "df", "bpf", "bps", "rpt", "rwon", "obpf", "obps")
-# (x index, constants attr, card column) in the order of the x vector
+# (constants attr, card column), in the order of the x vector
 STD_ATTRS = (
     ("serve", "shr_serve"), ("ace", "shr_ace"), ("df", "shr_df"), ("ret", "shr_ret"),
     ("bps", "shr_bps"), ("bpc", "shr_bpc"), ("form", "form"), ("age", "age"),

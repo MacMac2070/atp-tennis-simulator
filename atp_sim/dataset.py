@@ -1,4 +1,4 @@
-"""The training table: one row per server per match (design section 3, VERIFY_SPEC 10, 11).
+"""The training table: one row per server per match (DESIGN.md §3; VERIFY_SPEC sections 10 and 11).
 
 Match outcomes are deliberately omitted. The two rows of a match are ordered by
 server id, never winner first, so row order cannot leak the result either.
@@ -259,14 +259,14 @@ def load_constants(path: str, season: int) -> tuple[torch.Tensor, torch.Tensor]:
 
 
 def rows_after(df: pd.DataFrame, last_season: int) -> pd.DataFrame:
-    """Held-out rows: seasons strictly after last_season. May be empty."""
+    """Holdout rows: seasons strictly after last_season. May be empty."""
     if "season" not in df.columns:
         raise ValueError("rows have no season column, cannot split chronologically")
     return df[df["season"] > last_season]
 
 
 def rows_through(df: pd.DataFrame, last_season: int) -> pd.DataFrame:
-    """Rows of seasons up to and including last_season (design section 9: splits are chronological)."""
+    """Rows of seasons up to and including last_season (splits are chronological)."""
     if "season" not in df.columns:
         raise ValueError("rows have no season column, cannot split chronologically")
     part = df[df["season"] <= last_season]

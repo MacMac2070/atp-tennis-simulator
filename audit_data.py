@@ -5,7 +5,7 @@ audit_data.py
 Step zero of the ATP simulator project: find out what the data can actually
 support before writing a single line of modelling code.
 
-We are eventually going to fit a point-level serve model of the form
+The project fits a point-level serve model of the form
 
     logit(p_serve, i against j) = mu + a.x_i - b.x_j + x_i^T W x_j
 
@@ -22,8 +22,9 @@ Usage
     ./fetch_data.sh
     python3 audit_data.py
 
-Data licence: Jeff Sackmann's tennis_atp repo is CC BY-NC-SA 4.0. Non-commercial
-use only, attribution required, share-alike. This must be stated in the README.
+Data licence: Jeff Sackmann's tennis_atp data (now fetched from an archival mirror) is
+CC BY-NC-SA 4.0. Non-commercial use only, attribution required, share-alike. The README
+states this.
 """
 
 import glob
@@ -32,13 +33,13 @@ import sys
 
 import pandas as pd
 
-# Where the cloned repo lives, relative to this file.
+# Where fetch_data.sh puts the data, relative to this file.
 DATA_DIR = os.path.join(os.path.dirname(os.path.abspath(__file__)), "data", "tennis_atp")
 
 # The serve statistics we need. Prefixed w_ for the match winner and l_ for the
 # loser in Sackmann's schema. svpt is service points played, 1stWon and 2ndWon
 # are points won on first and second serve, so (1stWon + 2ndWon) / svpt is the
-# serve-points-won rate that the model predicts.
+# rate of service points won that the model predicts.
 SERVE_COLS = ["svpt", "1stIn", "1stWon", "2ndWon", "ace", "df", "bpSaved", "bpFaced"]
 STAT_COLS = [f"{side}_{c}" for side in ("w", "l") for c in SERVE_COLS]
 
@@ -131,7 +132,7 @@ def data_hazards(df):
     """Things that will quietly corrupt the model if not handled.
 
     Retirements and walkovers produce partial or empty statistics that look
-    like real observations. Best-of-5 matches have different point counts.
+    like real observations. Best-of-five matches have different point counts.
     Missing dob breaks the age feature.
     """
     usable = df[df["w_svpt"].notna() & df["l_svpt"].notna()].copy()
@@ -146,14 +147,14 @@ def data_hazards(df):
         "missing winner dob": int(usable["winner_age"].isna().sum()),
         "missing surface": int(usable["surface"].isna().sum()),
         "svpt == 0 anomalies": int(((usable["w_svpt"] == 0) | (usable["l_svpt"] == 0)).sum()),
-        "serve pts won > svpt (impossible)": int(
+        "service points won > svpt (impossible)": int(
             ((usable["w_1stWon"] + usable["w_2ndWon"]) > usable["w_svpt"]).sum()
         ),
     }
 
 
 def tour_baseline(df, year_from):
-    """The mu in the model: tour-average serve points won, per surface.
+    """The mu in the model: tour-average service points won, per surface.
 
     Computed here so we have the real number rather than a remembered one, and
     so that the first sanity check on the fitted model has something to hit.
@@ -201,7 +202,7 @@ if __name__ == "__main__":
             print(f"  {k}: {v:,}")
 
         print("\n" + "=" * 78)
-        print(f"TOUR BASELINE SERVE POINTS WON (from {first_good}) -- this is mu")
+        print(f"TOUR BASELINE SERVICE POINTS WON (from {first_good}): this is mu")
         print("=" * 78)
         print(tour_baseline(df, first_good).to_string())
 
