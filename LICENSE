@@ -19,11 +19,3 @@ AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
 LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
 OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 SOFTWARE.
-
-This licence covers the code in this repository only. The ATP match data it
-works with was compiled by Jeff Sackmann (Tennis Abstract) and is licensed
-separately under CC BY-NC-SA 4.0 (non-commercial, attribution, share-alike). The
-full dataset is not included and is downloaded by fetch_data.sh. The files derived
-from it are shared under that same licence: the 12 sample rows in
-verification/reports/atp_spot_check_sample.csv, the model weights under
-artifacts/models/ and the simulation outputs under artifacts/simulations/.

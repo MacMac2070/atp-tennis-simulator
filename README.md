@@ -4,10 +4,10 @@ This repo explores a point-level model of professional tennis, used to replay wh
 the year-end rankings. It learns one thing: how often a player wins a point on his own
 serve. Everything else is built by repetition.
 
-**Scope:** ATP singles, hard, clay and grass, 1991 onward (carpet ignored).  
+**Scope:** ATP singles on hard, clay and grass, 1991 onward (carpet matches count towards form cards only).  
 **Status:** training table built and verified · two frozen models (Run 0 and Run 1) · the
 2025 season simulated 10,000 times with each · 83 tests.  
-**Technical design:** [`DESIGN_2.0.md`](DESIGN_2.0.md) covers form cards, formula and training; the story stays here. Older draft: [`DESIGN.md`](DESIGN.md). Bit-level checks: [`verification/VERIFY_SPEC.md`](verification/VERIFY_SPEC.md).
+**Technical design:** [`DESIGN_2.0.md`](DESIGN_2.0.md) covers form cards, formula and training; the story stays here. Older draft: [`DESIGN.md`](DESIGN.md). Exact definitions: [`verification/VERIFY_SPEC.md`](verification/VERIFY_SPEC.md).
 
 ---
 
@@ -61,7 +61,8 @@ built on.
 > [!NOTE]
 > **The data has been checked against other sources.** Every match from 1992 to 2026 was
 > compared with a second dataset (TennisMyLife): 99.8% appear in both, the winner differs in
-> only 3 of 108,801, and 98.1% match on all 16 serve statistics. Because that dataset was
+> only 3 of 108,801, and of the 98,272 matches where both have serve statistics, 99.1% agree
+> on all 16. Because that dataset was
 > partly built from Sackmann's, 12 random matches, three per decade, were also checked against
 > the official ATP website, and all 12 matched on every serve statistic. Full write-up:
 > [data source verification](verification/reports/DATA_SOURCE_VERIFICATION.md).
@@ -69,7 +70,7 @@ built on.
 ```mermaid
 flowchart TD
     A["199,389 matches<br/>1968 to 2026"] --> B{"Serve statistics<br/>recorded?"}
-    B -->|"before 1991: almost none"| X["❌ not usable"]
+    B -->|"before 1991: none"| X["❌ not usable"]
     B -->|"missing or impossible"| X
     B -->|"yes"| C{"Surface"}
     C -->|"carpet, retired around 2009"| Y["❌ dropped"]
@@ -84,7 +85,8 @@ flowchart TD
 
 
 
-Rows start in 1992 because 1991 only fills the first 52-week windows. Each match becomes
+Rows start in 1992 because 1991 is the warm-up year: it fills the first 52-week windows and
+sets the first standardising constants. Each match becomes
 **two rows**, one per server. Using Alcaraz and Sinner as an illustration (the figures are made up):
 
 
@@ -118,7 +120,7 @@ average rather than believed.
 | 4   | Return strength        | share of return points won                                    | 52 weeks   |
 | 5   | Break points saved     | saved / faced                                                 | 52 weeks   |
 | 6   | Break points converted | converted / chances                                           | 52 weeks   |
-| 7   | Form                   | service points won, last 10 matches against the 52-week level | 10 matches |
+| 7   | Form                   | service points won, last 10 matches minus the 52-week level   | 10 matches |
 | 8   | Age                    | date of birth                                                 | on the day |
 
 In the code the eight are stored as `x_0` to `x_7`, in this order.
@@ -187,7 +189,8 @@ flowchart TD
 
 
 
-One prediction, shrunk to two attributes so the arithmetic is followable:
+One prediction, shrunk to two attributes (serve strength and return strength) so the arithmetic
+is easy to follow:
 
 
 | Layer         | In plain words                                | Alcaraz serving to Sinner, clay |
@@ -246,7 +249,7 @@ flowchart TD
 
 Why each number moves as much as it does, explained with a shopping bill and every nudge worked
 out by hand: [`DESIGN_2.0.md` §3.1](DESIGN_2.0.md#31-one-row-one-nudge). Run 0 against Run 1
-is in §3.3.
+is in [§3.3](DESIGN_2.0.md#33-run-0-and-run-1-only-training-differs).
 
 ---
 
@@ -316,15 +319,15 @@ flowchart LR
 
 |                                         | Run 0 · baseline | Run 1 · season anchor | For reference                   |
 | --------------------------------------- | ---------------- | --------------------- | ------------------------------- |
-| 2025 hard-court serve bias              | −1.5 pp          | **−0.4 pp**           | 0 is perfect                    |
+| 2025 hard-court serve bias (pp)         | −1.5 pp          | **−0.4 pp**           | 0 is perfect                    |
 | Match log loss, 2,622 real 2025 matches | 0.6895           | **0.6545**            | coin flip 0.6931                |
 | Match accuracy                          | 61.0%            | 61.6%                 | higher-ranked player wins 64.3% |
 | Most likely year-end #1                 | Alcaraz, 47.7%   | Sinner, 70.9%         | real #1: Alcaraz                |
 
 
 > [!NOTE]
-> **The main finding so far: both models are overconfident.** When Run 0 calls a player a
-> 95% favourite he wins 81% of the time; Run 1 manages 87%. The gearbox magnifies any error
+> **The main finding so far: both models are overconfident.** Players Run 0 rates at 90% or
+> more (95% on average) win 81% of the time; for Run 1 the figure is 87%. The gearbox magnifies any error
 > in the serve percentages, and the model treats its estimates as exact. Allowing for that
 > uncertainty is the next run. On accuracy, both still trail "the higher-ranked player wins".
 
@@ -339,19 +342,23 @@ More detail: [model runs](verification/reports/MODEL_PROGRESSION.md) ·
 ## 🚀 Quick start
 
 ```bash
-python3 -m pip install -r requirements.txt
+git clone https://github.com/MacMac2070/atp-tennis-simulator.git
+cd atp-tennis-simulator
+python3 -m venv .venv && source .venv/bin/activate   # Python 3.10 or later
+python -m pip install -r requirements.txt
 ./fetch_data.sh                       # download the match archive into data/
-python3 audit_data.py                 # what the data can support
-python3 scripts/build_rows.py         # build the training table in runs/ (about 1 s)
-python3 -m pytest -q                  # 83 tests, leakage test included
-python3 scripts/train_model.py --train-through 2024 --out runs/model.pt
-python3 scripts/evaluate_model.py --model runs/model.pt
-python3 scripts/simulate_season.py --model artifacts/models/run1_season_delta/model.pt \
+python audit_data.py                  # what the data can support
+python scripts/build_rows.py          # build the training table in runs/ (a few seconds)
+python -m pytest -q                   # 83 tests, leakage test included
+python scripts/train_model.py --train-through 2024 --out runs/model.pt
+python scripts/evaluate_model.py --model runs/model.pt
+python scripts/simulate_season.py --model artifacts/models/run1_season_delta/model.pt \
     --season 2025 --n-sims 10000 --seed 42 --out runs/simulations/run1_season_delta/season_2025/
 ```
 
-The simulation writes to `runs/`, so the frozen results under `artifacts/simulations/` are never
-overwritten; its CSV files and `metrics.json` should match them byte for byte.
+Training and simulation both write to `runs/`; the scripts refuse to write into
+`artifacts/models/`, so the frozen runs are never overwritten. The simulation's CSV files and
+`metrics.json` should match those under `artifacts/simulations/` byte for byte.
 
 ---
 
@@ -372,6 +379,7 @@ overwritten; its CSV files and `metrics.json` should match them byte for byte.
 | `DESIGN_2.0.md`                  | Technical design: the card, formula and training rules, and why                                                                                                                |
 | `DESIGN.md`                      | Older narrative draft (prefer `DESIGN_2.0.md` + this README)                                                                                                                   |
 | `fetch_data.sh`, `audit_data.py` | Download the archive; report what it can support                                                                                                                               |
+| `LICENSE`, `LICENSE-DATA.md`     | MIT for the code; CC BY-NC-SA 4.0 for the match data and the files derived from it                                                                                             |
 | `data/`, `runs/`                 | The downloaded archive and local build outputs; gitignored                                                                                                                     |
 
 
@@ -397,14 +405,17 @@ A model that says what it cannot do is easier to trust about what it can.
 
 ## 📜 Data and licence
 
-Match data compiled by Jeff Sackmann (Tennis Abstract) and used under CC BY-NC-SA 4.0:
-non-commercial, attribution required, share-alike. The original repository was withdrawn in
-2026; `fetch_data.sh` downloads an archival mirror of the same files, which are not
-redistributed here in full. Full provenance: `DESIGN.md` [§13](DESIGN.md#13-data-provenance).
+Match data compiled by Jeff Sackmann (Tennis Abstract) and used under
+[CC BY-NC-SA 4.0](https://creativecommons.org/licenses/by-nc-sa/4.0/): non-commercial,
+attribution required, share-alike. The original repository was withdrawn in 2026;
+`fetch_data.sh` downloads a pinned archival mirror of the same files, which run to tournaments
+starting 25 May 2026 and are not redistributed here in full. Full provenance: `DESIGN.md`
+[§13](DESIGN.md#13-data-provenance).
 
-The code in this repository is released under the [MIT licence](LICENSE). The few files derived
-from the match data (a 12-row sample in `verification/reports/`, and the model weights and
-simulation outputs under `artifacts/`) are shared under the data's CC BY-NC-SA 4.0 licence.
+The code in this repository is released under the [MIT licence](LICENSE). The files derived
+from the match data (the model weights and simulation outputs under `artifacts/`, and the sample
+rows and match-level figures in `verification/`) stay under the data's CC BY-NC-SA 4.0 licence:
+see [`LICENSE-DATA.md`](LICENSE-DATA.md).
 
 ---
 
