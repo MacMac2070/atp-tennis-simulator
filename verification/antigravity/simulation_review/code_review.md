@@ -1,8 +1,8 @@
 # Simulator code review, 2026-09-23
 
 Two independent read-only reviews of `atp_sim/{match,points,draws,season,report}.py`,
-`scripts/simulate_season.py` and the tests, before the final runs: Antigravity (Gemini 3.5,
-conversation `f5bc1710-5083-4d3a-80c6-62862ec4ac58`) and the ecc `python-reviewer` agent.
+`scripts/simulate_season.py` and the tests, before the final runs: Antigravity (Gemini 3.5)
+and a separate Claude-based Python review agent (labelled "ecc" in the table below).
 Neither reviewer was shown the second simulator, which was built separately for comparison
 only and not kept.
 

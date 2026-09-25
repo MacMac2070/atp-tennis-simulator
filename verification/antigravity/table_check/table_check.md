@@ -14,7 +14,7 @@ Overall Verdict: **PASS**
 | **C4a** | Row count equals twice valid H/C/G matches (>= 1992) | **PASS** | Rows = 186,482 == 2 * 93,241 valid matches |
 | **C4b** | Every match_id appears exactly twice with swapped IDs | **PASS** | 93,241 unique match_ids, each exactly 2 rows with swapped server/returner |
 | **C4c** | svpt and won equal raw file values for server | **PASS** | 186,482/186,482 rows match raw match statistics exactly |
-| **C4d** | Column set matches Section 10 exactly, no forbidden regex | **PASS** | Exactly 36 columns; 0 match regex `win|los|score|rank|minutes|name|seed` |
+| **C4d** | Column set matches Section 10 exactly, no forbidden regex | **PASS** | Exactly 36 columns; 0 match regex `win\|los\|score\|rank\|minutes\|name\|seed` |
 | **C4e** | Every x value is finite | **PASS** | 2,983,712 x values evaluated; 100% finite (no NaN, Inf, -Inf) |
 | **C4f** | No Carpet, missing surface, season < 1992, or Next Gen/Laver Cup | **PASS** | 0 Carpet/missing surface, 0 season < 1992, 0 Next Gen / Laver Cup rows |
 | **C4g** | Two rows of each match ordered by server_id | **PASS** | 93,241/93,241 match pairs have server_id(row 1) < server_id(row 2) |
@@ -146,7 +146,7 @@ Overall Verdict: **PASS**
 |---|---|---|---:|---:|---|
 | 1992 | `x_i_5` | bpc | -0.1299 | 1.3067 | SD = 1.3067 > 1.3 |
 | 1992 | `x_i_6` | form | -0.2732 | 1.3290 | SD = 1.3290 > 1.3 |
-| 2012 | `x_i_5` | bpc | +0.5378 | 1.0623 | |mean| = 0.5378 > 0.5 |
+| 2012 | `x_i_5` | bpc | +0.5378 | 1.0623 | \|mean\| = 0.5378 > 0.5 |
 
 #### Full Summary of Mean and Population SD for x_i_* by Season:
 

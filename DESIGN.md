@@ -62,7 +62,7 @@ already known and cannot be fudged.
 | Coverage 2016 to 2024                 | Near complete                                               | 94 to 99% |
 | With serve statistics, three surfaces | Hard 52,302 / Clay 33,343 / Grass 10,403, before exclusions | 96,048    |
 | Rows (two servers per match)          | Before exclusions; the built table has 186,482              | 192,096   |
-| Median matches per player per season  | The tour is mostly one-off qualifiers                       | 4         |
+| Median matches per player per season  | 2016 onward (5 from 1991 onward); mostly one-off qualifiers | 4         |
 
 
 Carpet appears in the archive but the surface was retired around 2009, so it is
@@ -159,7 +159,7 @@ not visible to it: version 1 does not order matches within an event.
 - The 52-week window is `[D - 364 days, D)`; the last-10 window is the ten most
 recent matches inside it.
 - Counts are summed first, then shrunk towards the previous season's tour rate:
-`(points won + k x tour rate) / (points played + k)`, with k = 200 service
+`(points won + K × tour rate) / (points played + K)`, with K = 200 service
 points for serve strength, 50 for aces, 250 for double faults, 300 return points
 for return strength, 200 break points for saves and 350 for conversions. A player
 with no history sits exactly on the tour rate.
@@ -186,7 +186,8 @@ pipeline that built it is wrong, and no amount of training will fix it.
 
 **Learned, adjusted every step:**
 
-- `mu`, the surface baseline
+- `mu`, the surface baseline (in Run 1, held at 0 while training and set at the end to
+  the level of the last training season, 2024; see §7)
 - `a`, how much each attribute is worth to a server
 - `b`, how much each attribute is worth to a returner
 - `W`, how the two players' attributes trade against each other
@@ -205,7 +206,7 @@ reversing it is the last experiment on the list.
 
 ## 6. The formula
 
-```
+```text
 z = mu + a·x_i - b·x_j + x_iᵀ W x_j
 
 p = 1 / (1 + e^(-z))
@@ -268,7 +269,7 @@ tells you which style troubles which.
 | ------ | -------------------- | ----------------------------------------------------------------------------------------------------------- | ------ | ---------------------------------------- | ------- |
 | `x_i`  | Server's form card   | Eight standardised attributes describing the man serving, as he was when the tournament began               | 8      | Computed from past matches               | Frozen  |
 | `x_j`  | Returner's form card | The same eight attributes for the man receiving                                                             | 8      | Computed from past matches               | Frozen  |
-| `mu`   | Baseline             | Tour-average log-odds of winning a service point on this surface                                            | 1      | Learned, started at the observed average | Learned |
+| `mu`   | Baseline             | Tour-average log-odds of winning a service point on this surface                                            | 1      | Learned, started at the observed average (Run 0; for Run 1 see below) | Learned |
 | `a`    | Serve weights        | How much each attribute helps you when you are serving                                                      | 8      | Learned, started at zero                 | Learned |
 | `b`    | Return weights       | How much each attribute of your opponent hurts you when he is receiving                                     | 8      | Learned, started at zero                 | Learned |
 | `W`    | Interaction matrix   | 8 by 8 grid. Entry (k, l) says what happens when I am strong on attribute k and he is strong on attribute l | 64     | Learned, started at zero                 | Learned |
@@ -321,7 +322,7 @@ what decides whether the interaction term earned its place.
 Shrunk to two attributes instead of eight (serve strength, then return strength) so the
 arithmetic is followable. Alcaraz serving to Sinner, on clay, with illustrative figures.
 
-```
+```text
 form cards        x_server   = [1.2, 0.8]     Alcaraz, above average on both
                   x_returner = [0.9, 1.1]     Sinner, strong returner
 
@@ -343,7 +344,7 @@ prediction        Alcaraz wins 64.2% of his service points in this match
 ```
 
 Look at the sizes. Serve term 0.400, return term 0.293, and the whole interaction
-matrix just -0.014. That is what "most numbers, least influence" looks like.
+matrix just −0.014. That is what "most numbers, least influence" looks like.
 
 ---
 
@@ -354,8 +355,8 @@ matrix just -0.014. That is what "most numbers, least influence" looks like.
 Say he served 78 points and won 51, which is 65.4%. We predicted 64.2%, so
 we were slightly low. Converted into points rather than percentages:
 
-```
-predicted points won   78 x 0.6418 = 50.06
+```text
+predicted points won   78 × 0.6418 = 50.06
 actual points won                  = 51
 error, actual - predicted          = +0.94    we were 0.94 points too low
 ```
@@ -364,13 +365,14 @@ That single error figure drives every adjustment. **Every one of the 81 numbers
 in the clay model is nudged, on every clay row.** The model does not choose which ones
 to change. It changes all of them at once, and each one's nudge follows the same rule:
 
-> **nudge = learning rate x how wrong we were x how involved that number was**
+> **nudge = learning rate × how wrong we were × how involved that number was**
 
 The two factors do different jobs:
 
 - **How wrong we were** is the error, a single number shared by every parameter
 on this row. Here, +0.94, positive because we were too low. It sets the direction and
-the overall scale.
+the overall scale. Because the error is actual minus predicted, every nudge moves its
+number the way that raises the prediction towards the 51 points actually won.
 - **How involved that number was** is specific to each parameter. It is whatever
 that parameter gets multiplied by inside the formula, which is exactly how much
 the prediction would move if you nudged it. Multiply a large input and you are
@@ -397,7 +399,7 @@ and bump one parameter at a time by +0.01, recomputing `z` each time.
 
 **Test 1: bump** `a[0]` **from 0.30 to 0.31**
 
-```
+```text
 a·x_server was  0.30(1.2) + 0.05(0.8) = 0.400
 a·x_server now  0.31(1.2) + 0.05(0.8) = 0.412
 z moved by +0.012
@@ -408,29 +410,29 @@ which is `x_server[0]`.
 
 **Test 2: bump** `b[1]` **from 0.25 to 0.26**
 
-```
+```text
 b·x_returner was  0.02(0.9) + 0.25(1.1) = 0.293
 b·x_returner now  0.02(0.9) + 0.26(1.1) = 0.304
 that term went UP by 0.011, but it is subtracted
 z moved by -0.011
 ```
 
-Per unit: -0.011 / 0.01 = **-1.1**, which is minus `x_returner[1]`.
+Per unit: −0.011 / 0.01 = **−1.1**, which is minus `x_returner[1]`.
 
 **Test 3: bump** `W[0,1]` **from 0.03 to 0.04**
 
-```
-that term was  0.03 x 1.2 x 1.1 = 0.0396
-that term now  0.04 x 1.2 x 1.1 = 0.0528
+```text
+that term was  0.03 × 1.2 × 1.1 = 0.0396
+that term now  0.04 × 1.2 × 1.1 = 0.0528
 z moved by +0.0132
 ```
 
-Per unit: 0.0132 / 0.01 = **1.32**, which is `1.2 x 1.1`, the two attributes it
+Per unit: 0.0132 / 0.01 = **1.32**, which is `1.2 × 1.1`, the two attributes it
 connects.
 
 **Test 4: bump** `mu` **from 0.49 to 0.50**
 
-```
+```text
 z moved by +0.01
 ```
 
@@ -444,14 +446,14 @@ Collect those four answers together:
 | Parameter | Its term in the formula | Involvement |
 | --------- | ----------------------- | ----------- |
 | `mu`      | `mu`                    | 1           |
-| `a[0]`    | `a[0] x 1.2`            | 1.2         |
-| `b[1]`    | `- b[1] x 1.1`          | -1.1        |
-| `W[0,1]`  | `W[0,1] x 1.2 x 1.1`    | 1.32        |
+| `a[0]`    | `a[0] × 1.2`            | 1.2         |
+| `b[1]`    | `− b[1] × 1.1`          | −1.1        |
+| `W[0,1]`  | `W[0,1] × 1.2 × 1.1`    | 1.32        |
 
 
 In every case the involvement is **whatever that parameter is multiplied by**,
 with a minus sign if its term is subtracted. Nothing more. Which is obvious once
-seen: if a parameter appears as `a[0] x 1.2`, then adding 1 to `a[0]` adds 1.2 to
+seen: if a parameter appears as `a[0] × 1.2`, then adding 1 to `a[0]` adds 1.2 to
 the total. So the tests never need running. Read the multiplier off the formula.
 
 ### Why "involvement" is the right word
@@ -459,10 +461,10 @@ the total. So the tests never need running. Read the multiplier off the formula.
 Suppose the returner had been exactly tour average on the second attribute, so
 `x_returner[1] = 0`. Then:
 
-```
+```text
 b[1]     involvement = -0       = 0
-W[0,1]   involvement = 1.2 x 0  = 0
-W[1,1]   involvement = 0.8 x 0  = 0
+W[0,1]   involvement = 1.2 × 0  = 0
+W[1,1]   involvement = 0.8 × 0  = 0
 ```
 
 Those three parameters had nothing to do with this prediction. Bump them by
@@ -479,12 +481,12 @@ Applied to the two-attribute example above, with a learning rate of 0.001:
 | `mu`          | 0.49   | 1.00        | +0.00094 | 0.49094  |
 | `a[0]` serve  | 0.30   | 1.20        | +0.00113 | 0.30113  |
 | `a[1]` return | 0.05   | 0.80        | +0.00075 | 0.05075  |
-| `b[0]` serve  | 0.02   | -0.90       | -0.00085 | 0.01915  |
-| `b[1]` return | 0.25   | -1.10       | -0.00103 | 0.24897  |
-| `W[0,0]`      | -0.04  | 1.08        | +0.00102 | -0.03898 |
+| `b[0]` serve  | 0.02   | −0.90       | −0.00085 | 0.01915  |
+| `b[1]` return | 0.25   | −1.10       | −0.00103 | 0.24897  |
+| `W[0,0]`      | −0.04  | 1.08        | +0.00102 | −0.03898 |
 | `W[0,1]`      | 0.03   | 1.32        | +0.00124 | 0.03124  |
 | `W[1,0]`      | 0.01   | 0.72        | +0.00068 | 0.01068  |
-| `W[1,1]`      | -0.02  | 0.88        | +0.00083 | -0.01917 |
+| `W[1,1]`      | −0.02  | 0.88        | +0.00083 | −0.01917 |
 
 
 Three things worth noticing.
@@ -509,8 +511,8 @@ the direction of every nudge comes from exactly this rule.
 Across about 179,000 training rows the random nudges cancel and the systematic ones accumulate.
 If serve strength genuinely matters, its weight gets pushed up every time a
 strong server beats the prediction, and pushed down only occasionally by chance.
-It drifts upward until it reaches the value where it overpredicts as often as it
-underpredicts. At that point the pushes balance, the number stops moving, and the
+It drifts upwards until it reaches the value where it over-predicts as often as it
+under-predicts. At that point the pushes balance, the number stops moving, and the
 answer has been found. The same happens to all 243, each surface on its own rows.
 
 Nothing clever is going on. It is a very patient process of being slightly less
@@ -526,23 +528,23 @@ Once the 243 numbers are settled, the model can be asked about any two players w
 have never met. Give it Alcaraz and Sinner on clay and it returns two service
 percentages, one for each man. Everything above that is repetition.
 
-```
-  1. The model                two form cards + surface   ->  2 percentages
-                                      |
-  2. Points into a match      games, deuce, tiebreaks    ->  who wins
-                                      |
-  3. Matches into a tournament play the draw round by round -> who lifts it
-                                      |
-  4. Tournaments into a season award points, roll the 52-week ledger -> the table
-                                      |
-  5. Run the season 10,000 times                          ->  a distribution
+```text
+  1. The model                  two form cards + surface               ->  2 percentages
+                                    |
+  2. Points into a match        games, deuce, tiebreaks                ->  who wins
+                                    |
+  3. Matches into a tournament  play the draw round by round           ->  who lifts it
+                                    |
+  4. Tournaments into a season  award points, roll the 52-week ledger  ->  the table
+                                    |
+  5. Run the season 10,000 times                                       ->  a distribution
 ```
 
 The output is not a single prediction but a spread: *"Alcaraz finishes world
 number one in 48% of simulated seasons, and in the top four in 97% of them"* (Run 0, 2025).
 Substituting each real result as the season progresses would narrow the spread week
 by week, which is what "predicting the rankings throughout the season" would mean in
-practice; that mode is not built yet (see As built below).
+practice; that mode is not built yet (see [As built](#as-built) below).
 
 ### The surface baselines, which is where step 1 starts
 
@@ -623,16 +625,16 @@ says what it cannot do is easier to trust about what it can.
 Every number in this project traces back to one archive, through one mirror.
 
 1. **Origin.** Jeff Sackmann (Tennis Abstract) compiled tour-level ATP results and
-  match statistics from the ATP's official records and published them at
+   match statistics from the ATP's official records and published them at
    `github.com/JeffSackmann/tennis_atp` under CC BY-NC-SA 4.0. His own notes
    travel with the data as `data/tennis_atp/UPSTREAM_README.md`: statistics are
    integer totals, exist for tour-level matches from 1991, are missing for some
    matches (the ATP has none, or they failed his sanity checks), and Davis Cup
    statistics are missing until the last few seasons (from 2016 in these files).
 2. **Withdrawal.** The original repository was taken down before August 2026 and
-  returns 404. The Wayback Machine's last capture of the live repository is dated 14 March 2026.
+   returns 404. The Wayback Machine's last capture of the live repository is dated 14 March 2026.
 3. **Mirror.** `fetch_data.sh` downloads `github.com/Aneeshers/tennis-sackmann-archive`,
-  which states that all data was collected and compiled by Jeff Sackmann, links the
+   which states that all data was collected and compiled by Jeff Sackmann, links the
    upstream repositories, keeps the upstream README, says its ATP snapshot comes from
    a June 2026 commit, and redistributes under the same licence. Only the main-tour
    singles files, the players file, the ranking files and the licence are copied;
@@ -643,9 +645,9 @@ Every number in this project traces back to one archive, through one mirror.
 
 What the build does to it is recorded in `runs/build_report.md` (written by `scripts/build_rows.py`; not in the repository): identity merges,
 every excluded match by rule, and the three players whose date of birth contradicts
-the archive's own age column by decades. Independent checks of the raw files and of
-the finished table, run by a second model, Antigravity (Gemini 3.5), from the specification alone, live under
-`verification/antigravity/`.
+the archive's own age column by decades. The raw files and the finished table were then
+checked independently by Gemini 3.5 (in Google Antigravity), working from the specification
+alone; see `verification/antigravity/`.
 
 ---
 

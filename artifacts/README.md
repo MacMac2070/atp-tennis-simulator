@@ -6,7 +6,7 @@ This folder is the **versioned history** of the project's modelling work.
 
 | Run | Idea | Role |
 |---|---|---|
-| **Run 0** (`run0_baseline`) | First model trained: one baseline `μ` per surface, fitted on all years | Baseline to beat |
+| **Run 0** (`run0_baseline`) | First model trained: one baseline `μ` per surface, fitted on 1992 to 2024 | Baseline to beat |
 | **Run 1** (`run1_season_delta`) | Same prediction formula; train so `μ` = 2024 serve level | Improvement to compare against Run 0 |
 
 Both are **frozen**. Do not overwrite. New ideas become `run2_…`, `run3_…`.
@@ -27,6 +27,10 @@ Each `season_2025/` holds `config.json`, `metrics.json`, `summary.md`, `matches.
 `tournaments.csv`, `rankings_year_end.csv` and `rankings_weekly.csv`, with the same
 columns in both runs. Run 0 vs Run 1 vs actual: `verification/reports/simulations_2025.md`.
 How the simulator works: `docs/season_simulation.md`.
+
+Each `config.json` records `code.commit` (224f503) as the local commit the run was made from,
+while the simulator code was not yet committed (`code_uncommitted: true`); 224f503 is not in
+the public history. `code.committed_as` (f7bc0ec) is the public commit that holds the same code.
 
 Eval write-ups (tables, bias, vs previous run):
 

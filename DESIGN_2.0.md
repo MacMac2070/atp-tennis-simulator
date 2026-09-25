@@ -31,7 +31,7 @@ when the event began**. Eight numbers, built from his previous matches and scale
 last season's players, so that **0 means tour average** and 1 means one standard deviation
 above it. A player with only a handful of matches is pulled towards average rather than
 believed. Surface is not
-on the card: Hard, Clay and Grass each get their own copy of the formula instead.
+on the card: hard, clay and grass each get their own copy of the formula instead.
 
 | # | Attribute | Built from | Window |
 | --- | --- | --- | --- |
@@ -60,7 +60,7 @@ flowchart LR
     subgraph future["🚫 Forbidden: day D and after"]
         F1["match"] --> F2["match"]
     end
-    past --> CNT["1. Count<br/>52-week window"] --> SHR["2. Shrink<br/>towards the tour average"] --> STD["3. Standardise<br/>against last season"] --> CARD["🪪 form card"]
+    past --> CNT["Step 1: Count<br/>52-week window"] --> SHR["Step 2: Shrink<br/>towards the tour average"] --> STD["Step 3: Standardise<br/>against last season"] --> CARD["🪪 form card"]
     future -.->|"LEAKAGE"| CARD
 
     classDef ok fill:#1c5d4a,stroke:#123f32,color:#fff
@@ -69,7 +69,7 @@ flowchart LR
     class F1,F2 bad
 ```
 
-### How a card is built, in three steps
+### 1.1 How a card is built, in three steps
 
 **1. Count.** Add up his match statistics over the 52 weeks before the event (day D − 364 up
 to the day before D), across every surface. Form uses only his last 10 matches in that window.
@@ -103,9 +103,9 @@ serving was in that era. That level lives only in μ, which is exactly what Run 
 Age comes from the date of birth; a missing or suspect one counts as average (0). 1991 is the
 warm-up year: its cards feed the 1992 figures, and training rows start in 1992.
 
-### From cards to training rows
+### 1.2 From cards to training rows
 
-Every valid Hard, Clay or Grass match from 1992 onward becomes **two rows**, one per server.
+Every valid hard, clay or grass match from 1992 onward becomes **two rows**, one per server.
 Each row holds the server's card, the returner's card, and the server's points served and won.
 It never holds who won the match, the score, ranks, names or seeds.
 
@@ -155,7 +155,7 @@ flowchart TD
 | b | 8 | which card numbers help the returner | the same |
 | W | 8 × 8 | style against style | replace μ; it is a small correction around the linear terms |
 
-**243 numbers in total:** 81 per surface, for Hard, Clay and Grass. Carpet is never trained. The
+**243 numbers in total:** 81 per surface, for hard, clay and grass. Carpet is never trained. The
 form cards are **inputs** and never change during learning; only μ, a, b and W move.
 
 Why log-odds and then a squash? Adding in probability space can leave the range 0 to 1; adding in
@@ -171,7 +171,8 @@ Run 0 and Run 1 differ only in training, never at prediction time.
 ### 3.1 One row, one nudge
 
 A training row is the two cards, the surface, and the server's points served and won. Take the
-README's example, shrunk to two attributes: Alcaraz serving to Sinner on clay, with Alcaraz's
+README's example, shrunk to two attributes, serve strength and return strength (card
+attributes 1 and 4, numbered 1 and 2 below): Alcaraz serving to Sinner on clay, with Alcaraz's
 card (1.2, 0.8) and Sinner's (0.9, 1.1). The model said Alcaraz would win 64.2% of his 78 service
 points, which is 50.06. He won 51. **The prediction was 0.94 points too low**, and that one error
 has to be shared out among the numbers that made it.
@@ -307,7 +308,7 @@ add up, until nothing is moving.
 
 ### 3.2 Three surfaces, same recipe
 
-`train_all_surfaces` fits Hard, Clay and Grass **independently**, each on its own rows. The saved
+`train_all_surfaces` fits hard, clay and grass **independently**, each on its own rows. The saved
 object is a `SurfaceBundle`: the 243 numbers, the card mean and standard deviation for
 season `train_through` + 1 (the first unseen season), and `train_through`.
 
@@ -359,8 +360,8 @@ flowchart TD
 
 **Why a full level per season rather than μ plus a small δ.** μ and a per-season δ are nearly
 interchangeable, so Adam crawls. One free intercept per season lets each year's rows set their
-own level. The season levels carry no penalty: even a light one, summed over 32 seasons,
-pulled the anchor measurably off its own data.
+own level. The season levels carry no penalty: even a light one, summed over the 33 season
+levels (1992 to 2024), pulled the anchor measurably off its own data.
 
 **Why the anchor is the last training season.** The model will be asked about season T+1, and
 the freshest evidence about the tour's level is season T. The cards already use season Y−1's
@@ -381,7 +382,7 @@ formula at prediction time, and the saved model's size.
 
 ---
 
-## 4. Where to look next
+## 🧭 4. Where to look next
 
 | Want | Open |
 | --- | --- |

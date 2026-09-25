@@ -4,7 +4,8 @@
 of the two frozen serve models, and both sets of replays are scored against what actually happened.
 
 The prediction formula does not change. The simulator only consumes it:
-`z = mu + a·x_i - b·x_j + x_iᵀ W x_j`, per surface, exactly as in `DESIGN_2.0.md` §2.
+`z = μ + a·x_i − b·x_j + x_iᵀWx_j`, per surface, exactly as in
+[`DESIGN_2.0.md` §2](../DESIGN_2.0.md#-2-the-formula).
 
 ---
 
@@ -54,7 +55,7 @@ Grand Slams is included. Who serves first turns out not to matter, which the tes
 
 The archive has results, not draw sheets. But in a knockout draw every player in a round
 either won a match in the round before or had a bye, so linking each match to the two it
-was fed by recovers the exact tree. All 60 events of 2025 rebuild, and the check raises on
+was fed by recovers the exact tree. All 60 events of 2025 rebuild, and the check raises an error on
 anything that does not fit. The CSV's own `draw_size` is not trusted: it is wrong for 39
 events in 2024.
 
@@ -88,13 +89,13 @@ difference between the two result folders is the model's.
 
 Three findings:
 
-1. **Both models are overconfident.** When Run 0 makes a player a 95% favourite he wins 81%
-   of the time; Run 1 manages 87%. The gearbox is the reason: it magnifies any error in the serve
+1. **Both models are overconfident.** Players Run 0 rates at 90% or more (95% on average) win
+   81% of the time; for Run 1 the figure is 87%. The gearbox is the reason: it magnifies any error in the serve
    percentages, and the model treats its estimates as exact. Allowing for that uncertainty
    would pull every match probability towards 50%. That would improve log loss but not
    accuracy, where both trail "the higher-ranked player wins" (61.0% and 61.6% against 64.3%).
 2. **Run 1 is the better model on most scores:** match log loss overall, on hard and clay and in every
-   tournament category, tournament log loss, Spearman and rank error. Anchoring `mu` on 2024
+   tournament category, tournament log loss, Spearman and rank error. Anchoring μ on 2024
    fixed the serve level, and the match odds improved with it. It is slightly worse on
    grass match log loss (0.6575 against 0.6550), less accurate on grass (60.7% against 62.0%),
    ATP 250 and ATP 500 matches, and puts the real champion in its top three less often (27
@@ -107,10 +108,8 @@ Three findings:
 Full tables: `verification/reports/simulations_2025.md`, and each run's
 `artifacts/simulations/run*/season_2025/summary.md`.
 
-**An independent check.** A second simulator was built separately from the same brief, without
-sharing any code, for comparison only; it was not kept. It gave the same win probability for
-every one of the 2,622 real matches to four decimal places, and the same title and year-end
-figures within Monte Carlo noise.
+**An independent check.** A second simulator, built separately for comparison and not kept, agreed
+on every match probability. Its outputs are not in this repository.
 
 ---
 

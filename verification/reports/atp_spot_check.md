@@ -2,7 +2,7 @@
 
 Sample: 3 matches per decade, drawn with `random_state=20260921` from tour-level main-draw matches
 (levels G, M, A, F) with serve stats, excluding walkovers and retirements. Drawn before any website
-was opened. Rows saved in `atp_spot_check_sample.csv`. Checked on atptour.com on 2026-09-21.
+was opened. Rows saved in `atp_spot_check_sample.csv`. Checked on atptour.com on 21 September 2026.
 
 Fields compared for both players: winner, score, round, aces, double faults, 1st serves in / total
 service points, 1st serve points won, 2nd serve points won, break points saved / faced, duration.

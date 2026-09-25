@@ -5,8 +5,8 @@ Both frozen. Season simulations use the same run names under `artifacts/simulati
 
 | Run | Weights | Eval | Formula | Train through | Holdout bias (Hard, 2025 and 2026 pooled) | Status |
 |---|---|---|---|---|---|---|
-| **0** | [`artifacts/models/run0_baseline`](../../artifacts/models/run0_baseline/) | [`eval.md`](run0_baseline/eval.md) | `μ + a·xᵢ − b·xⱼ + xᵢᵀWxⱼ` | 2024 | **−0.0186** | Frozen |
-| **1** | [`artifacts/models/run1_season_delta`](../../artifacts/models/run1_season_delta/) | [`eval.md`](run1_season_delta/eval.md) | Train with `δ_season` (`δ_2024=0`); save so `μ` = 2024 level | 2024 | **−0.0078** (2025: −0.0042) | Frozen |
+| **0** | [`artifacts/models/run0_baseline`](../../artifacts/models/run0_baseline/) | [`eval.md`](run0_baseline/eval.md) | `μ + a·xᵢ − b·xⱼ + xᵢᵀWxⱼ` | 2024 | **−0.0186** (2025: −0.0152) | Frozen |
+| **1** | [`artifacts/models/run1_season_delta`](../../artifacts/models/run1_season_delta/) | [`eval.md`](run1_season_delta/eval.md) | Train with `δ_season` (`δ_2024 = 0`); save so `μ` = 2024 level | 2024 | **−0.0078** (2025: −0.0042) | Frozen |
 
 ## Folder layout
 

@@ -1,8 +1,7 @@
 # 2025 ATP points table and rules: independent check
 
-Checked on 2026-09-23 by Antigravity (Gemini 3.5, read-only web run, conversation
-`c7274086-9fc5-4876-a545-a6a802d6eed2`) before `atp_sim/points.py` was finalised, then
-tested against the real 2025 results.
+Checked on 23 September 2026 by Antigravity (Gemini 3.5, read-only web run) before
+`atp_sim/points.py` was finalised, then tested against the real 2025 results.
 
 ## Verdict
 

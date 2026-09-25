@@ -1,6 +1,6 @@
 # Serve level fix: Run 0 to Run 1
 
-Run 0 under-predicts service points won by 1 to 3 points per hundred on the 2025 and 2026 (January to May) holdout seasons. This note explains why, what Run 1 changes, and what it leaves alone.
+Run 0 under-predicts service points won by 1.0 to 1.5 percentage points (pp) in 2025 and 1.9 to 2.7 pp in January to May 2026. This note explains why, what Run 1 changes, and what it leaves alone.
 
 ## Is the formula changing?
 
@@ -15,7 +15,7 @@ The saved model, its shape (81 numbers per surface) and the prediction formula d
 
 ## What Run 0 found
 
-Model trained through 2024, scored on 2025 and January to May 2026 pooled (grass: 2025 only, as the archive has no 2026 grass). `bias = predicted − actual`.
+Model trained through 2024, scored on **2025 and January to May 2026, pooled** (grass: 2025 only, as the archive has no 2026 grass). `bias = predicted − actual`. The season-by-season split is in the table under [Expected result and the honest limit](#expected-result-and-the-honest-limit).
 
 | Surface | Holdout rows | Actual | Predicted | Bias |
 |---|---|---|---|---|
@@ -54,13 +54,15 @@ flowchart TD
 
 The form cards (`atp_sim/form_cards.py`, `standardise_cards`) are standardised against the previous season's population, so `x = 0` means "an average player of the time" and the cards say nothing about the absolute level of the era. The only place the level lives is the scalar μ in `BilinearServeModel`, which is fitted on every row from 1992 and lands on the pooled 33-year rate.
 
-Serve rates have crept up by about 0.06 points per hundred per year on hard and clay since 2005. Over three decades that puts the 2024 tour 1.2 to 1.6 percentage points (pp) above the pooled average:
+Serve rates have crept up by about 0.06 pp per year on hard and clay since 2005. Over three decades that puts the 2024 tour 1.2 to 1.6 pp above the pooled average:
 
 | Surface | Pooled 1992 to 2024 (what Run 0 μ learns) | 2024 | 2025 actual | 2026 actual (to 17 May; Roland Garros has no serve statistics) |
 |---|---|---|---|---|
 | Hard | 0.6327 | 0.6443 | 0.6467 | 0.6586 |
 | Clay | 0.6069 | 0.6203 | 0.6211 | 0.6271 |
 | Grass | 0.6500 | 0.6655 | 0.6602 | none in archive |
+
+These rates come from the model's training rows: matches with usable serve statistics that pass the row filters in `verification/VERIFY_SPEC.md`. The source check (`verification/reports/DATA_SOURCE_VERIFICATION.md`; full table in `verification/reports/cross_check_summary.md`) counts every match with serve statistics, including the Next Gen Finals and Laver Cup, which the filters drop for their non-tour scoring, and one 2024 Roland Garros match with impossible statistics. So its 2024 figures (hard 0.6445, clay 0.6201) differ in the fourth decimal.
 
 Run 0 predicts close to the pooled level, so the gap between the pooled level and the 2025 actual rate (1.4, 1.4 and 1.0 pp) is almost the whole of the 2025 bias, and most of it had already opened by 2024. The further rise in 2026 is real (January to May rates in 2023 to 2025 match their full seasons) and happened after the training cutoff, so no model trained through 2024 can know it.
 
@@ -71,7 +73,7 @@ During training, each season gets its own additive correction δ to μ. The last
 - Each training row now carries its season (`rows_to_tensors` in `atp_sim/dataset.py`).
 - `train_surface` in `atp_sim/train.py` adds the season's level (`SeasonOffsets`) to the logit inside the loop. `BilinearServeModel.forward` is untouched.
 - `SurfaceBundle.save` writes the same 243 numbers as before.
-- Implementation detail: rather than μ plus a per-season δ (nearly collinear, so Adam crawls), training fits one full intercept per season and sets μ to the anchor's intercept at the end. Reported as δ = level − level(2024). The season levels are not regularised (a light L2 summed over 32 seasons pulled the anchor 0.5 pp off its data) and the learning rate is cooled linearly to 5% so the intercepts settle instead of jittering by about 1 pp (`--lr-decay`, default on).
+- Implementation detail: rather than μ plus a per-season δ (nearly collinear, so Adam crawls), training fits one full intercept per season and sets μ to the anchor's intercept at the end. Reported as δ = level − level(2024). The season levels are not regularised (a light L2 summed over the 33 season levels pulled the anchor 0.5 pp off its data) and the learning rate is cooled linearly to 5% so the intercepts settle instead of jittering by about 1 pp (`--lr-decay`, default on).
 - The evaluator gains a second baseline, "always guess the last training season's rate", which is the bar Run 1 has to beat. The old "pooled average" baseline becomes a straw man once μ is anchored.
 
 | Thing | Run 0 | Run 1 |
@@ -89,6 +91,8 @@ It is not a fixed year. The anchor is `--train-through`, the last season the fit
 One season is about 6,000 rows across the three surfaces (2024: 3,408 hard, 1,926 clay, 648 grass), which pins the level to roughly ±0.3 pp on hard and clay, well inside the 1.2 to 1.6 pp gap being fixed; grass, with the fewest rows, is noisier.
 
 ## Expected result and the honest limit
+
+Two scores, both lower-is-better. **NLL** is the binomial negative log-likelihood per service point: for every point served, minus the log of the probability the model gave to what actually happened, averaged over all points. **Point-MAE** is, row by row, the gap between predicted and actual points won (|p × points served − points won|), summed and divided by all points served.
 
 | Surface, season | Run 0 bias | Run 1 expected | Run 1 actual | NLL Run 0 → Run 1 | Point-MAE Run 0 → Run 1 |
 |---|---|---|---|---|---|

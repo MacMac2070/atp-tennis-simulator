@@ -3,7 +3,7 @@
 **Date logged:** 21 September 2026  
 **Purpose:** Freeze the first holdout evaluation so later changes show real progression, not a moving target.
 
-This was the first full train + eval of the bilinear serve model. Results originally only appeared in a terminal session; this file is the durable record.
+This was the first full train + eval of the bilinear serve model.
 
 ---
 
@@ -29,7 +29,9 @@ python scripts/evaluate_model.py --rows runs/rows.parquet --model artifacts/mode
 ## Holdout results (Run 0)
 
 `bias = predicted − actual` (negative ⇒ under-predicts serve).  
-`constant` = always guess that surface's training-era serve rate.
+`constant` = always guess that surface's training-era serve rate.  
+`NLL` = binomial negative log-likelihood per service point: how surprised the model is by the points actually won (lower is better).  
+`point-MAE` = sum of |p × points served − points won| ÷ sum of points served, where p is the predicted chance of winning a service point: the average miss in points won, per point served (lower is better).
 
 ### Hard (training-era rate 0.6327)
 
@@ -52,7 +54,7 @@ python scripts/evaluate_model.py --rows runs/rows.parquet --model artifacts/mode
 | Season | Rows | Actual | Predicted | Bias | NLL (const) | Point-MAE (const) |
 |---|---|---|---|---|---|---|
 | 2025 | 590 | 0.6602 | 0.6499 | **−0.0103** | 0.63951 (0.64115) | 0.0536 (0.0571) |
-| 2026 | — | — | — | — | no rows (archive ends ~May) | — |
+| 2026 | n/a | n/a | n/a | n/a | no rows (archive ends ~May) | n/a |
 
 ---
 
@@ -72,9 +74,6 @@ python scripts/evaluate_model.py --rows runs/rows.parquet --model artifacts/mode
 |---|---|---|---|
 | **0 (this file)** | First fit through 2024 | **−0.0186** | Frozen under `artifacts/models/run0_baseline/` |
 | 1 | Season intercept `δ_season`, `μ` anchored on 2024 | **−0.0078** | See [`run1_season_delta/eval.md`](../run1_season_delta/eval.md) |
-| 2 | *(not yet)* | | |
-
-After each future train/eval, write `verification/reports/runN_…/eval.md` and update `MODEL_PROGRESSION.md`.
 
 ---
 

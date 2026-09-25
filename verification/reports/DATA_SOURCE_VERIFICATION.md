@@ -25,8 +25,9 @@ suspect: that the underlying data was wrong.
 | **tennisdata.app** | Season CSVs 2021 to 2026. | **Not used.** The download page sits behind a "prove you are not a bot" check, so the files could not be fetched automatically. |
 
 A second, independent implementation of the 2026 comparison was run by Antigravity (Gemini 3.5). Its
-counts matched ours (0 winner disagreements, the same 9 score differences, near-identical serve
-totals), so the comparison itself is not the product of a bug in one script.
+counts closely matched ours (1,379 pairs against our 1,386; 0 winner disagreements, the same 9 score
+differences, near-identical serve totals), so the comparison itself is not the product of a bug in
+one script.
 
 **A caveat on independence.** TML is not a fully separate source. It was originally built from
 Sackmann's files and now collects new matches from atptour.com. So agreement between TML and
@@ -46,10 +47,13 @@ Matches were paired on the two players' names, the round and the tournament date
 | Same winner | 108,798 | **99.997%** |
 | Same score | 108,423 | **99.65%** |
 | Same surface | 108,528 | **99.75%** |
-| Identical on all 16 serve statistics | 106,717 | **98.1%** |
+| Serve statistics in both sources | 98,272 | 90.3% of paired |
+| Of those, identical on all 16 | 97,421 | **99.1%** |
+
+1,233 matches have serve statistics in only one source, and about 9,300 have none in either.
 
 The number that matters most for the model is the share of service points won, by surface and
-season. The two sources agree to within 0.002 in every case:
+season. The two sources agree to about 0.002 or better in every case:
 
 | Season | Surface | Sackmann | TML |
 |---|---|---|---|
@@ -99,9 +103,6 @@ conflict: a 2025 Davis Cup match tiebreak recorded as [8-10] in one source and [
   identical in 104 of the 114 Australian Open 2026 matches but in only 55 of the 100 US Open 2025
   matches (at most 9 points apart).
 
-*Corrected 24 September 2026: these clusters were first listed under the wrong bullets. The counts
-come from `runs/cross_check_mismatches.csv`.*
-
 **Surface: 273 matches.** Mostly carpet versus hard for four 1990s indoor events (Philadelphia 1993;
 Singapore, Basel and Shanghai 1998) and some Davis Cup ties. Also Santiago 2025: Sackmann says clay,
 TML says hard.
@@ -126,7 +127,7 @@ showed "no rows" for grass in 2026.
      serves (95%) and "0 service games played". Sackmann has 55 of 89, which is believable. The ATP
      site's Grand Slam feed looks faulty, so "correcting" Sackmann towards it would make the data worse.
 3. **The differences are far too small to explain the model's error.** The largest gap between
-   sources in serve rate is 0.002. The model's hard-court bias is 0.015 to 0.027, roughly ten times larger.
+   sources in serve rate is about 0.002. The model's hard-court bias is 0.015 to 0.027, roughly ten times larger.
    Like worrying about a 2 mm measuring error on a part that is 20 mm out of tolerance.
 4. **Switching would add risk for no gain.** TML uses different player IDs (ATP's alphanumeric codes
    rather than Sackmann's numbers), so swapping sources would mean re-mapping every player by name,
@@ -160,6 +161,6 @@ holdout bias to −0.0042 in 2025 (−0.0078 over 2025 and 2026); see
 | `verification/reports/cross_check_summary.md` | Season-by-season tables behind the numbers above (a copy of the script's `runs/cross_check_summary.md`). |
 | `runs/cross_check_mismatches.csv` | Every mismatching match, both sources side by side. Written locally by the script; not in the repository. |
 | `verification/reports/atp_spot_check.md` | The 12 ATP website checks with page addresses. |
-| `verification/reports/atp_spot_check_sample.csv` | The 12 sampled rows and the random seed used. |
+| `verification/reports/atp_spot_check_sample.csv` | The 12 sampled rows (the random seed is in `atp_spot_check.md`). |
 | `verification/antigravity/source_check/` | Antigravity's independent 2026 check. |
 | `verification/external/SOURCES.md` | Download addresses, dates and file hashes for the TML files. Local only: the TML downloads are not redistributed. |

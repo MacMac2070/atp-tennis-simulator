@@ -19,11 +19,11 @@ Reproduce:
 
 ```bash
 python scripts/train_model.py --rows runs/rows.parquet --train-through 2024 \
-    --out artifacts/models/run1_season_delta/model.pt
+    --out runs/model.pt
 python scripts/evaluate_model.py --rows runs/rows.parquet \
-    --model artifacts/models/run1_season_delta/model.pt
+    --model runs/model.pt
 ```
 
-Do not overwrite these files.
+Compare the result with the frozen `model.pt` in this folder. Do not overwrite these files.
 
 Simulation outputs: `artifacts/simulations/run1_season_delta/` (the 2025 season simulated 10,000 times).

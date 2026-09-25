@@ -20,9 +20,11 @@
 Command:
 
 ```bash
-python scripts/train_model.py --rows runs/rows.parquet --train-through 2024 --out artifacts/models/run1_season_delta/model.pt
-python scripts/evaluate_model.py --rows runs/rows.parquet --model artifacts/models/run1_season_delta/model.pt
+python scripts/train_model.py --rows runs/rows.parquet --train-through 2024 --out runs/model.pt
+python scripts/evaluate_model.py --rows runs/rows.parquet --model runs/model.pt
 ```
+
+Compare the result with the frozen `artifacts/models/run1_season_delta/model.pt`; nothing should ever be written into `artifacts/models/`.
 
 ### The change, in one paragraph
 
@@ -31,8 +33,8 @@ The form cards are standardised season by season against the season before, so `
 ### Recipe notes (what had to change to make the anchor hold)
 
 - **Per-season levels, not μ plus a delta.** μ and a per-season delta are nearly collinear (only the anchor's 3% of rows separate them) and Adam crawled along that direction. Fitting one full intercept per season, each set by its own rows, converges cleanly. Reported as δ = level − level(2024).
-- **No L2 on the season levels.** Even a 1e-4 penalty summed over 32 seasons pulled the 2024 level 0.5 pp off its data. Removed.
-- **Learning-rate cool-down** (linear to 5% over the run, `--lr-decay`, default on). At a fixed lr of 0.05 the intercepts jitter by about 1 pp; with the cool-down the in-sample 2024 level lands within 0.06 pp of the data on two seeds. Run 0's frozen weights are unaffected. Side effect: the fit is tighter overall (training point-MAE on Hard 0.0584 → 0.0563) and the interaction term is smaller (0.05 → 0.02 mean |contribution|), so part of the NLL/MAE gain below is better convergence, not only the anchor. The bias change is the anchor.
+- **No L2 on the season levels.** Even a 1e-4 penalty summed over the 33 season levels (1992 to 2024) pulled the 2024 level 0.5 pp off its data. Removed.
+- **Learning-rate cool-down** (linear to 5% over the run, `--lr-decay`, default on). At a fixed lr of 0.05 the intercepts jitter by about 1 pp; with the cool-down the in-sample 2024 level lands within 0.06 pp of the data on two seeds. Run 0's frozen weights are unaffected. Side effect: the fit is tighter overall (on 1992 to 2024 hard rows, point-MAE 0.0575 for the frozen Run 1 model against 0.0588 for Run 0) and the interaction term is smaller (0.05 → 0.02 mean |contribution|), so part of the NLL/MAE gain below is better convergence, not only the anchor. The bias change is the anchor.
 
 ### Fitted season offsets (log-odds relative to 2024, discarded on save)
 
@@ -42,14 +44,15 @@ The form cards are standardised season by season against the season before, so `
 | Clay | −0.103 | −0.066 | −0.008 | −0.047 | −0.030 | 0 |
 | Grass | −0.189 | −0.103 | −0.003 | −0.057 | −0.043 | 0 |
 
-They track the raw per-season serve rates (1992 about 3 pp below 2024, and a Covid-era dip on clay and grass).
+They track the raw per-season serve rates (1992 about 3 pp below 2024, and a Covid-era dip on clay; the 2020 grass level rests on only 4 rows, from 2 Davis Cup matches).
 
 ---
 
 ## Holdout results (Run 1)
 
 `bias = predicted − actual` (negative ⇒ under-predicts serve).  
-`pooled` = always guess that surface's 1992 to 2024 rate (Run 0's baseline). `last` = always guess its 2024 rate (the bar an anchored μ must beat). `drift` = actual − 2024 rate, i.e. how far the tour moved after the cutoff. `model μ` = sigmoid(μ): the prediction when both cards are 0, which is not the same as the average prediction over the season's rows.
+`pooled` = always guess that surface's 1992 to 2024 rate (Run 0's baseline). `last` = always guess its 2024 rate (the bar an anchored μ must beat). `drift` = actual − 2024 rate, i.e. how far the tour moved after the cutoff. `model μ` = sigmoid(μ): the prediction when both cards are 0, which is not the same as the average prediction over the season's rows.  
+`NLL` = binomial negative log-likelihood per service point: how surprised the model is by the points actually won (lower is better). `point-MAE` = sum of |p × points served − points won| ÷ sum of points served, where p is the predicted chance of winning a service point: the average miss in points won, per point served (lower is better).
 
 ### Hard (pooled 0.6327, 2024 rate 0.6443, model μ → 0.6370)
 
@@ -72,7 +75,7 @@ They track the raw per-season serve rates (1992 about 3 pp below 2024, and a Cov
 | Season | Rows | Actual | Predicted | Bias | Drift | NLL (pooled / last) | Point-MAE (pooled / last) |
 |---|---|---|---|---|---|---|---|
 | 2025 | 590 | 0.6602 | 0.6671 | **+0.0070** | −0.0054 | 0.63907 (0.64115 / 0.64099) | 0.0518 (0.0571 / 0.0568) |
-| 2026 | — | — | — | — | — | no rows (archive ends ~May) | — |
+| 2026 | n/a | n/a | n/a | n/a | n/a | no rows (archive ends ~May) | n/a |
 
 Term magnitudes on the holdout (mean |contribution|, log-odds): Hard serve 0.112 / return 0.085 / interaction 0.017; Clay 0.075 / 0.077 / 0.013; Grass 0.127 / 0.072 / 0.017.
 
@@ -96,9 +99,9 @@ Run 0 numbers from `verification/reports/run0_baseline/eval.md`. Positive Δbias
 
 ## What Run 1 showed (interpretation)
 
-1. **The level shift is gone on 2025.** Hard −0.4 pp, Clay −0.1 pp: close to the ±0.3 pp noise of a single season's rate. The 1.2 to 1.6 pp gap was the pooled μ, as diagnosed.
+1. **The level shift is gone on 2025.** −0.4 pp on hard, −0.1 pp on clay: close to the ±0.3 pp noise of a single season's rate. The 1.2 to 1.6 pp gap was the pooled μ, as diagnosed.
 2. **Beats the harder baseline.** Run 1 has lower NLL and point-MAE than the last-season constant on every surface and season. Run 0 only beat the pooled constant, which is a straw man once μ is anchored.
-3. **2026 still reads low on Hard (−1.6 pp), and that is drift.** The 2026 tour is +1.4 pp above 2024 (`drift` column). The archive stops in May 2026 and the model has never seen a 2026 match, so this is data freshness, not model error. Training through a later season (topped up from TML if needed) would move the anchor, not the method.
+3. **2026 still reads low on hard (−1.6 pp), and that is drift.** The 2026 tour is +1.4 pp above 2024 (`drift` column). The archive stops in May 2026 and the model has never seen a 2026 match, so this is data freshness, not model error. Training through a later season (topped up from TML if needed) would move the anchor, not the method.
 4. **Grass now over-predicts by 0.7 pp.** 2024 was an unusually strong grass season (66.6%, the highest since 2015) and 2025 came back down (66.0%). Anchoring on one season inherits that season's noise; grass has the fewest rows (about 600 per season) so it is the most exposed. Still better than Run 0 on NLL and MAE.
 5. **Interaction term shrank** from about 0.05 to about 0.02 mean |contribution|. That is the learning-rate cool-down letting `W` settle under its L2 rather than jittering, not the anchor. It strengthens the `DESIGN.md` suspicion that `W` earns little.
 
@@ -108,7 +111,7 @@ Run 0 numbers from `verification/reports/run0_baseline/eval.md`. Positive Δbias
 
 | Path | Role |
 |---|---|
-| `artifacts/models/run1_season_delta/model.pt` | Frozen Run 1 weights (also copied locally to the gitignored `runs/model.pt` for script defaults) |
+| `artifacts/models/run1_season_delta/model.pt` | Frozen Run 1 weights |
 | `artifacts/models/run0_baseline/model.pt` | Frozen Run 0 weights, untouched |
 | `verification/reports/run0_baseline/eval.md` | Run 0 holdout tables |
 | `verification/reports/MODEL_PROGRESSION.md` | Progression index |

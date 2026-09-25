@@ -2,8 +2,7 @@
 
 This is the complete specification of `runs/rows.parquet`, `runs/cards.parquet` and
 `runs/constants.csv`. An independent checker needs only this file, the raw CSVs in
-`data/tennis_atp/` and the output files. Python with pandas and pyarrow is available
-as `python3` and as `.venv/bin/python` (the project's virtual environment).
+`data/tennis_atp/`, the output files and Python 3 with the packages in `requirements.txt`.
 
 ## 1. Files and seasons
 Match files: `data/tennis_atp/atp_matches_YYYY.csv` for YYYY = 1991 .. 2026 (tour-level
@@ -14,7 +13,8 @@ singles only). Players: `data/tennis_atp/atp_players.csv`.
 ## 2. Identity merges (applied to winner_id and loser_id before anything else)
 211776 -> 212021 (Martin Landaluce), 209870 -> 211326 (Gunawan Trismuwantara).
 
-## 3. Valid match: exclusion rules, applied in this order; a match is counted under the FIRST rule it fails
+## 3. Valid match: exclusion rules
+The rules are applied in this order, and a match is counted under the first rule it fails.
 The 16 stat columns are, for side in (w, l): `{side}_svpt, {side}_1stIn, {side}_1stWon,
 {side}_2ndWon, {side}_ace, {side}_df, {side}_bpSaved, {side}_bpFaced`.
 1. `stats_missing`: any of the 16 is NaN.
