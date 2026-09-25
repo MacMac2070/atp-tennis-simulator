@@ -5,7 +5,7 @@ of the two frozen serve models, and both sets of replays are scored against what
 
 The prediction formula does not change. The simulator only consumes it:
 `z = μ + a·x_i − b·x_j + x_iᵀWx_j`, per surface, exactly as in
-[`DESIGN_2.0.md` §2](../DESIGN_2.0.md#-2-the-formula).
+[`DESIGN.md` §2](../DESIGN.md#-2-the-formula).
 
 ---
 

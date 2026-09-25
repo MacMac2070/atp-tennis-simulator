@@ -1,4 +1,4 @@
-"""ATP point-level bilinear serve model (DESIGN.md §6) and the season simulator built on it."""
+"""ATP point-level bilinear serve model (DESIGN.md §2) and the season simulator built on it."""
 
 from .model import ATTR_NAMES, N_ATTRS, BilinearServeModel, SurfaceBundle
 

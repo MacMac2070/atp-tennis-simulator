@@ -1,4 +1,4 @@
-"""Fit one bilinear serve model per surface (DESIGN.md §§5, 9).
+"""Fit one bilinear serve model per surface (DESIGN.md §3).
 
 Run 1 adds a training-only per-season offset to mu (see `SeasonOffsets`). Pass the rows'
 seasons to `train_surface` and mu is anchored on the last of them; leave them out and the
@@ -193,7 +193,7 @@ def evaluate_terms(
     x_i: torch.Tensor,
     x_j: torch.Tensor,
 ) -> dict[str, float]:
-    """Mean absolute contribution of each formula layer (DESIGN.md §7)."""
+    """Mean absolute contribution of each formula layer (DESIGN.md §2.2)."""
     with torch.no_grad():
         t = model.term_breakdown(x_i, x_j)
     return {

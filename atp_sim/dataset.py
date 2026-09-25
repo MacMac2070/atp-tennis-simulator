@@ -1,4 +1,4 @@
-"""The training table: one row per server per match (DESIGN.md §3; VERIFY_SPEC sections 10 and 11).
+"""The training table: one row per server per match (DESIGN.md §1.2; VERIFY_SPEC sections 10 and 11).
 
 Match outcomes are deliberately omitted. The two rows of a match are ordered by
 server id, never winner first, so row order cannot leak the result either.

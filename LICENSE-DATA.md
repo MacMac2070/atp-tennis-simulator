@@ -20,4 +20,4 @@ that are derived from it are shared under the same CC BY-NC-SA 4.0 licence:
   figures quoted in the reports under `verification/`.
 
 Some of those reports also quote a few figures from TennisMyLife and the official ATP website, for
-comparison only. Full provenance: [`DESIGN.md` §13](DESIGN.md#13-data-provenance).
+comparison only. Full provenance: [`docs/data_provenance.md`](docs/data_provenance.md).

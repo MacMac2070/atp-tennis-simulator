@@ -1,4 +1,4 @@
-"""Unit tests for the bilinear formula (DESIGN.md §8 worked example)."""
+"""Unit tests for the bilinear formula (the worked example in DESIGN.md §3.1)."""
 
 from __future__ import annotations
 
@@ -41,7 +41,7 @@ def test_average_players_give_baseline():
 
 
 def test_gradient_matches_involvement_rule():
-    """Underprediction raises serve weights via NLL descent (DESIGN.md §9)."""
+    """Underprediction raises serve weights via NLL descent (DESIGN.md §3.1)."""
     m = BilinearServeModel(n_attrs=2, init_mu=0.0)
     with torch.no_grad():
         m.a.copy_(torch.tensor([0.30, 0.05]))

@@ -7,7 +7,7 @@ serve. Everything else is built by repetition.
 **Scope:** ATP singles on hard, clay and grass, 1991 onward (carpet matches count towards form cards only).  
 **Status:** training table built and verified · two frozen models (Run 0 and Run 1) · the
 2025 season simulated 10,000 times with each · 83 tests.  
-**Technical design:** [`DESIGN_2.0.md`](DESIGN_2.0.md) covers form cards, formula and training; the story stays here. Older draft: [`DESIGN.md`](DESIGN.md). Exact definitions: [`verification/VERIFY_SPEC.md`](verification/VERIFY_SPEC.md).
+**Technical design:** [`DESIGN.md`](DESIGN.md) covers form cards, formula and training; the story stays here. Data provenance: [`docs/data_provenance.md`](docs/data_provenance.md). Exact definitions: [`verification/VERIFY_SPEC.md`](verification/VERIFY_SPEC.md).
 
 ---
 
@@ -248,8 +248,8 @@ flowchart TD
 
 
 Why each number moves as much as it does, explained with a shopping bill and every nudge worked
-out by hand: [`DESIGN_2.0.md` §3.1](DESIGN_2.0.md#31-one-row-one-nudge). Run 0 against Run 1
-is in [§3.3](DESIGN_2.0.md#33-run-0-and-run-1-only-training-differs).
+out by hand: [`DESIGN.md` §3.1](DESIGN.md#31-one-row-one-nudge). Run 0 against Run 1
+is in [§3.3](DESIGN.md#33-run-0-and-run-1-only-training-differs).
 
 ---
 
@@ -374,10 +374,9 @@ Training and simulation both write to `runs/`; the scripts refuse to write into
 | `tests/`                         | The pytest suite; `test_leakage.py` guards the one rule that cannot be broken                                                                                                  |
 | `artifacts/models/`              | Frozen weights for each run: `run0_baseline/`, `run1_season_delta/`                                                                                                            |
 | `artifacts/simulations/`         | Simulation outputs for each run, one `season_YYYY/` folder per replayed season                                                                                                 |
-| `docs/`                          | Explainers with diagrams: the serve level fix, the season simulation                                                                                                           |
+| `docs/`                          | Explainers: the serve level fix, the season simulation, the data provenance                                                                                                    |
 | `verification/`                  | The exact definitions (`VERIFY_SPEC.md`), independent checks and all reports                                                                                                   |
-| `DESIGN_2.0.md`                  | Technical design: the card, formula and training rules, and why                                                                                                                |
-| `DESIGN.md`                      | Older narrative draft (prefer `DESIGN_2.0.md` + this README)                                                                                                                   |
+| `DESIGN.md`                      | Technical design: the card, formula and training rules, and why; the experiments still to run                                                                                  |
 | `fetch_data.sh`, `audit_data.py` | Download the archive; report what it can support                                                                                                                               |
 | `LICENSE`, `LICENSE-DATA.md`     | MIT for the code; CC BY-NC-SA 4.0 for the match data and the files derived from it                                                                                             |
 | `data/`, `runs/`                 | The downloaded archive and local build outputs; gitignored                                                                                                                     |
@@ -389,6 +388,10 @@ Training and simulation both write to `runs/`; the scripts refuse to write into
 
 ## 🚫 What this is not
 
+- **Not a betting model.** It is a study of how far a transparent, readable model can get, not an
+attempt to beat a market.
+- **Not live.** The archive stops with Roland Garros 2026, so the simulator replays completed
+seasons rather than forecasting the current one.
 - **Not a shot-level model.** The archive records serve and return counts only, so the model
 knows nothing about footwork, forehands or court position.
 - **Not an injury forecaster.** A retirement in week three wrecks a season forecast, and
@@ -409,8 +412,8 @@ Match data compiled by Jeff Sackmann (Tennis Abstract) and used under
 [CC BY-NC-SA 4.0](https://creativecommons.org/licenses/by-nc-sa/4.0/): non-commercial,
 attribution required, share-alike. The original repository was withdrawn in 2026;
 `fetch_data.sh` downloads a pinned archival mirror of the same files, which run to tournaments
-starting 25 May 2026 and are not redistributed here in full. Full provenance: `DESIGN.md`
-[§13](DESIGN.md#13-data-provenance).
+starting 25 May 2026 and are not redistributed here in full. Full provenance:
+[`docs/data_provenance.md`](docs/data_provenance.md).
 
 The code in this repository is released under the [MIT licence](LICENSE). The files derived
 from the match data (the model weights and simulation outputs under `artifacts/`, and the sample

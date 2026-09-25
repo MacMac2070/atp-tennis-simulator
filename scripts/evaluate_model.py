@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-"""Check a fitted model on the seasons it never saw (DESIGN.md §7).
+"""Check a fitted model on the seasons it never saw (DESIGN.md §3.3).
 
 Two constant baselines are printed. `pooled` always guesses the surface's training-era
 rate (Run 0's straw man). `last` always guesses the last training season's rate, which is

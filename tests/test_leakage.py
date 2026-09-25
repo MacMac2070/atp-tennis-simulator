@@ -1,4 +1,4 @@
-"""Leakage tests: the first tests this project must pass (DESIGN.md §4).
+"""Leakage tests: the first tests this project must pass (DESIGN.md §1).
 
 A card for date D may only use matches strictly before D. Deleting every match dated
 D or later from the archive must leave the card, its shrunk rates and its x values

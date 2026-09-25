@@ -103,7 +103,7 @@ Run 0 numbers from `verification/reports/run0_baseline/eval.md`. Positive Δbias
 2. **Beats the harder baseline.** Run 1 has lower NLL and point-MAE than the last-season constant on every surface and season. Run 0 only beat the pooled constant, which is a straw man once μ is anchored.
 3. **2026 still reads low on hard (−1.6 pp), and that is drift.** The 2026 tour is +1.4 pp above 2024 (`drift` column). The archive stops in May 2026 and the model has never seen a 2026 match, so this is data freshness, not model error. Training through a later season (topped up from TML if needed) would move the anchor, not the method.
 4. **Grass now over-predicts by 0.7 pp.** 2024 was an unusually strong grass season (66.6%, the highest since 2015) and 2025 came back down (66.0%). Anchoring on one season inherits that season's noise; grass has the fewest rows (about 600 per season) so it is the most exposed. Still better than Run 0 on NLL and MAE.
-5. **Interaction term shrank** from about 0.05 to about 0.02 mean |contribution|. That is the learning-rate cool-down letting `W` settle under its L2 rather than jittering, not the anchor. It strengthens the `DESIGN.md` suspicion that `W` earns little.
+5. **Interaction term shrank** from about 0.05 to about 0.02 mean |contribution|. That is the learning-rate cool-down letting `W` settle under its L2 rather than jittering, not the anchor. It strengthens the suspicion in `DESIGN.md` §2.2 that `W` earns little.
 
 ---
 

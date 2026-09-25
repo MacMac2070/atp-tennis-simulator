@@ -1,4 +1,4 @@
-"""From two serve-point probabilities to a match winner (DESIGN.md §10, step 2).
+"""From two serve-point probabilities to a match winner (docs/season_simulation.md, step 2).
 
 Everything here is exact arithmetic on the standard assumption that every point is an
 independent coin with the server's probability. Functions take numpy arrays and work
