@@ -4,8 +4,6 @@ from __future__ import annotations
 
 import re
 
-import numpy as np
-import pandas as pd
 
 from atp_sim.data import LIVE_SURFACES
 from atp_sim.dataset import FORBIDDEN_RE, ROW_COLUMNS, build_rows, rows_to_tensors

@@ -6,7 +6,7 @@ import numpy as np
 import pandas as pd
 
 from atp_sim.data import ID_MERGES, clean_players_dob, parse_players, prepare_matches
-from tests.conftest import CORE_MATCHES, INVALID_MATCHES, RAW_PLAYERS, mk, raw_frame
+from tests.conftest import CORE_MATCHES, INVALID_MATCHES, mk, raw_frame
 
 
 def test_each_rule_excludes_exactly_one_row():

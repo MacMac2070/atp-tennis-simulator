@@ -36,7 +36,7 @@ def test_worked_example_two_attrs():
 def test_average_players_give_baseline():
     m = BilinearServeModel(n_attrs=8, init_mu=0.58)
     x = torch.zeros(8)
-    p = float(m(x, x))
+    p = float(m(x, x).detach())
     assert abs(p - 1 / (1 + math.exp(-0.58))) < 1e-6
 
 
@@ -58,5 +58,5 @@ def test_gradient_matches_involvement_rule():
 
     assert m.a.grad is not None
     pred_pts = float(p.detach()) * 78
-    if pred_pts < 51:
-        assert float(m.a.grad[0]) < 0
+    assert pred_pts < 51, "the set-up must under-predict for this test to mean anything"
+    assert float(m.a.grad[0]) < 0

@@ -177,7 +177,7 @@ def regularised_loss(
     """Per-point NLL plus heavy L2 on W (DESIGN.md §7) and light L2 on a, b.
 
     Season levels (`SeasonOffsets`) are deliberately not regularised: each rests on
-    thousands of rows, and even a light penalty summed over thirty seasons pulls the
+    thousands of rows, and even a light penalty summed over 33 seasons pulls the
     anchor season's level measurably off its data.
     """
     nll = binomial_nll(p, won, played)

@@ -8,7 +8,7 @@ from __future__ import annotations
 
 import os
 import time
-from dataclasses import dataclass, field
+from dataclasses import dataclass
 from typing import Iterable
 
 import numpy as np
@@ -16,12 +16,12 @@ import pandas as pd
 import torch
 
 from .data import (
-    DATA_DIR, EXCLUSION_RULES, ID_MERGES, LIVE_SURFACES,
+    EXCLUSION_RULES, ID_MERGES, LIVE_SURFACES,
     clean_players_dob, load_matches, load_players, prepare_matches,
 )
 from .form_cards import (
-    ATTR_NAMES, EPOCH, KEY_SCALE, N_ATTRS, RATES, STD_ATTRS, WINDOW_DAYS,
-    build_cards, build_log, standardise,
+    ATTR_NAMES, EPOCH, KEY_SCALE, N_ATTRS, STD_ATTRS, WINDOW_DAYS,
+    build_cards, build_log,
 )
 
 X_I = [f"x_i_{k}" for k in range(N_ATTRS)]

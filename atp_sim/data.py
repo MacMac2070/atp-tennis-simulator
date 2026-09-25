@@ -48,7 +48,6 @@ def load_matches(
             continue
         df = pd.read_csv(path, low_memory=False)
         df["season"] = year
-        df["year"] = year  # kept for audit_data.py compatibility
         frames.append(df)
     if not frames:
         raise FileNotFoundError(f"No match files in {data_dir}. Run ./fetch_data.sh first.")

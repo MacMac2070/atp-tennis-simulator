@@ -124,10 +124,10 @@ def test_train_surface_anchors_mu_on_the_last_season():
     anchored = train_surface(x_i, x_j, won, svpt, season=season, epochs=60, batch_size=64,
                              verbose=False)
     # Run 0 behaviour: mu is the pooled level
-    assert math.isclose(float(pooled(x_i[0], x_j[0])), 0.63, abs_tol=0.01)
+    assert math.isclose(float(pooled(x_i[0], x_j[0]).detach()), 0.63, abs_tol=0.01)
     assert pooled.fitted_offsets is None
     # Run 1 behaviour: mu is the 2024 level, 2023 carries its own deficit
-    assert math.isclose(float(anchored(x_i[0], x_j[0])), 0.66, abs_tol=0.01)
+    assert math.isclose(float(anchored(x_i[0], x_j[0]).detach()), 0.66, abs_tol=0.01)
     d = anchored.fitted_offsets
     assert set(d) == {2023, 2024} and d[2024] == 0.0
     assert math.isclose(d[2023], init_mu_from_rate(0.60) - init_mu_from_rate(0.66), abs_tol=0.06)

@@ -31,6 +31,11 @@ def main() -> None:
                         "season instead of jittering by about --lr in log-odds (default: on)")
     args = p.parse_args()
 
+    out = os.path.abspath(args.out)
+    if out.startswith(os.path.join(ROOT, "artifacts", "models") + os.sep):
+        sys.exit("Refusing to write into artifacts/models/: frozen model folders are read-only. "
+                 "Train into runs/ and compare with the frozen copy.")
+
     df, _, _ = load_rows(args.rows)
     train = rows_through(df, args.train_through)
     held_out = len(df) - len(train)
@@ -63,9 +68,6 @@ def main() -> None:
     parent = os.path.dirname(args.out)
     if parent:
         os.makedirs(parent, exist_ok=True)
-    out_dir = os.path.dirname(args.out)
-    if out_dir:
-        os.makedirs(out_dir, exist_ok=True)
     bundle.save(args.out)
     print(f"\nSaved {bundle.total_parameters()} parameters → {args.out} (season offsets are not saved)")
 

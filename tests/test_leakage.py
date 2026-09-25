@@ -10,9 +10,9 @@ from __future__ import annotations
 import numpy as np
 import pandas as pd
 
-from atp_sim.data import LIVE_SURFACES, clean_players_dob, parse_players, prepare_matches
+from atp_sim.data import LIVE_SURFACES, parse_players, prepare_matches
 from atp_sim.form_cards import build_cards
-from tests.conftest import CORE_MATCHES, RAW_PLAYERS, mk, raw_frame
+from tests.conftest import CORE_MATCHES, mk, raw_frame
 
 CARD_VALUE_COLS = [
     "n_52w", "n_10", "svpt_52", "svwon_52", "ace_52", "df_52", "bpf_52", "bps_52",

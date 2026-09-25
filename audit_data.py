@@ -27,7 +27,6 @@ CC BY-NC-SA 4.0. Non-commercial use only, attribution required, share-alike. The
 states this.
 """
 
-import glob
 import os
 import sys
 

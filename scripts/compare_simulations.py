@@ -202,7 +202,8 @@ def run_readme(r: dict, season: int, note_path: str) -> str:
 
 def main() -> None:
     p = argparse.ArgumentParser(description=__doc__, formatter_class=argparse.RawDescriptionHelpFormatter)
-    p.add_argument("runs", nargs="+", help="run folders under artifacts/simulations/")
+    p.add_argument("runs", nargs="+",
+                   help="run folders, e.g. under artifacts/simulations/ or runs/simulations/")
     p.add_argument("--season", type=int, default=2025)
     p.add_argument("--out", default=None, help="default verification/reports/simulations_<season>.md")
     args = p.parse_args()
