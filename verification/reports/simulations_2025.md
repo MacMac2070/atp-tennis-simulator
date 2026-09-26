@@ -1,6 +1,6 @@
 # 2025 season simulations: `run0_baseline` vs `run1_season_delta` vs actual
 
-Same 60 events, real draws, form cards, seed 42 and 10,000 simulated seasons for every run; only the serve model differs (common random numbers: each match slot draws the same random number in every run). Code: commit `f7bc0ec`. The runs were made on this code just before it was committed; every CSV file and `metrics.json` was reproduced byte for byte from the committed code on 24 September 2026.
+Same 60 events, real draws, form cards, seed 42 and 10,000 simulated seasons for every run; only the serve model differs (common random numbers: each match slot draws the same random number in every run). Code: commit `9cd3984`. The runs were made on this code just before it was committed; every CSV file and `metrics.json` was reproduced byte for byte from the committed code on 24 September 2026.
 
 | Run | Model | Trained through | sha256 |
 |---|---:|---:|---:|

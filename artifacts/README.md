@@ -30,7 +30,7 @@ How the simulator works: `docs/season_simulation.md`.
 
 Each `config.json` records `code.commit` (224f503) as the local commit the run was made from,
 while the simulator code was not yet committed (`code_uncommitted: true`); 224f503 is not in
-the public history. `code.committed_as` (f7bc0ec) is the public commit that holds the same code.
+the public history. `code.committed_as` (9cd3984) is the public commit that holds the same code.
 
 Eval write-ups (tables, bias, vs previous run):
 
