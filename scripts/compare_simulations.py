@@ -166,7 +166,8 @@ def compare_note(runs: list[dict], season: int) -> str:
     L += ["", "## Limitations (all runs)", ""] + [f"- {x}" for x in LIMITATIONS]
     L += ["", "## Reproduce", "",
           "Writes to `runs/` (gitignored), so the frozen files are never overwritten; every CSV file and "
-          "`metrics.json` should match them byte for byte.", "", "```bash"]
+          "`summary.md` should match them byte for byte, and `metrics.json` agrees to about 8 decimal "
+          "places across machines and library versions.", "", "```bash"]
     for r in runs:
         L.append(f"python scripts/simulate_season.py --model {r['config']['model']} --season {season} "
                  f"--n-sims {c0['n_sims']} --seed {c0['seed']} --out runs/simulations/{r['name']}/season_{season}/")
@@ -195,8 +196,9 @@ def run_readme(r: dict, season: int, note_path: str) -> str:
         f"python scripts/simulate_season.py --model {c['model']} --season {season} --n-sims {c['n_sims']} "
         f"--seed {c['seed']} --out runs/simulations/{r['name']}/season_{season}/",
         "```", "",
-        f"Writes to `runs/` (gitignored); every CSV file and `metrics.json` should match `season_{season}/` "
-        "here byte for byte.",
+        f"Writes to `runs/` (gitignored); every CSV file and `summary.md` should match `season_{season}/` "
+        "here byte for byte, and `metrics.json` agrees to about 8 decimal places across machines and "
+        "library versions.",
         "Other runs use the same season, seed and simulation count, so only the model differs.", ""])
 
 

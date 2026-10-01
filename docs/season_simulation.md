@@ -128,7 +128,7 @@ on every match probability. Its outputs are not in this repository.
 ## Reproduce
 
 These write to `runs/` (gitignored), so the frozen results under `artifacts/simulations/` are
-never overwritten; every CSV file and `metrics.json` should match them byte for byte.
+never overwritten; every CSV file and `summary.md` should match them byte for byte, and `metrics.json` agrees to about 8 decimal places across machines and library versions.
 
 ```bash
 python scripts/simulate_season.py --model artifacts/models/run0_baseline/model.pt \

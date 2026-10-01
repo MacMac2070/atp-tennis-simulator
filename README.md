@@ -358,7 +358,8 @@ python scripts/simulate_season.py --model artifacts/models/run1_season_delta/mod
 
 Training and simulation both write to `runs/`; the scripts refuse to write into
 `artifacts/models/`, so the frozen runs are never overwritten. The simulation's CSV files and
-`metrics.json` should match those under `artifacts/simulations/` byte for byte.
+`summary.md` should match those under `artifacts/simulations/` byte for byte, and `metrics.json`
+agrees to about 8 decimal places across machines and library versions.
 
 ---
 

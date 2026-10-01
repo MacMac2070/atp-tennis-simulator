@@ -99,7 +99,7 @@ def prepare_matches(raw: pd.DataFrame) -> tuple[pd.DataFrame, dict[str, int]]:
     reason = pd.Series(np.full(len(df), None, dtype=object), index=df.index)
 
     def mark(mask: pd.Series, label: str) -> None:
-        mask = mask.fillna(False).astype(bool)
+        mask = mask.astype("boolean").fillna(False).astype(bool)
         reason[mask & reason.isna()] = label
 
     mark(stats.isna().any(axis=1), "stats_missing")
@@ -119,8 +119,8 @@ def prepare_matches(raw: pd.DataFrame) -> tuple[pd.DataFrame, dict[str, int]]:
         )
     mark(impossible, "impossible_stat")
     passed = reason.isna()
-    dup = pd.Series(False, index=df.index)
-    dup[passed] = df.loc[passed].duplicated(DUPLICATE_KEY, keep="first")
+    dup = (df.loc[passed].duplicated(DUPLICATE_KEY, keep="first")
+           .reindex(df.index, fill_value=False).astype(bool))
     mark(dup, "duplicate")
 
     exclusions = {rule: int((reason == rule).sum()) for rule in EXCLUSION_RULES}

@@ -51,7 +51,7 @@ def main() -> None:
         sel = tb["season"] == T
         last_rate = float(tb["won"][sel].sum() / tb["svpt"][sel].sum().clamp_min(1.0))
         print(f"=== {surface}  (pooled rate {rate:.4f}, {T} rate {last_rate:.4f}, "
-              f"model mu → {float(model.mu.sigmoid()):.4f}) ===")
+              f"model mu → {float(model.mu.detach().sigmoid()):.4f}) ===")
         for label, part in [(str(s), held[held["season"] == s]) for s in seasons] + [("all", held)]:
             batch = rows_to_tensors(part, [surface]).get(surface)
             if batch is None:
